@@ -7,6 +7,7 @@
         <script src="components/input-field-string.js"></script>
         <script src="components/input-field-number.js"></script>
         <script src="components/input-field-boolean.js"></script>
+        <script src="components/input-field-array-dropdown.js"></script>
         <script>
             var allPossibleOptions = {
                 name: undefined,
@@ -44,6 +45,13 @@
                 standard: (new Date()).toLocaleDateString('en-CA'),
             }
 
+            var arrayDropdownOptions = {
+                name: 'fehlerkategorie',
+                label: 'Fehlerkategorie',
+                standard: 'auf dem Kopf',
+                items: ['fehlt', 'verdreht', 'auf dem Kopf', 'Ltfehler', 'Bestckfehler'],
+            }
+
         </script>
     </head>
     <body>
@@ -53,6 +61,7 @@
             <input-field-number x-data="{...allPossibleOptions, ...numOptions}"></input-field-number>
             <input-field-boolean x-data="{...allPossibleOptions, ...boolOptions}"></input-field-boolean>
             <input-field-date x-data="{...allPossibleOptions, ...dateOptions}"></input-field-date>
+            <input-field-array-dropdown x-data="{...allPossibleOptions, ...arrayDropdownOptions}"></input-field-array-dropdown>
         <div></div>
         </form>
     </body>

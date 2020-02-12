@@ -5,11 +5,7 @@ class InputFieldBoolean extends InputField {
             <label x-bind:for="name" x-html="label"></label>
             <span style="font-style: italic;" x-show="InputField.test(pflichtfeld)">Pflichtfeld</span>
         </div>
-    `
-    
-    constructor(){
-        super();
-    }
+    `;
 }
 
 customElements.define('input-field-boolean', InputFieldBoolean);

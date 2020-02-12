@@ -6,10 +6,6 @@ class InputFieldDate extends InputField {
             <span style="font-style: italic;" x-show="InputField.test(pflichtfeld)">Pflichtfeld</span>
         </div>
         `;
-    
-    constructor(){
-        super();
-    }
 }
 
 customElements.define('input-field-date', InputFieldDate);

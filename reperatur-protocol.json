@@ -1,0 +1,56 @@
+{
+    "felder": [
+        {
+            "name": "artikelnummer",
+            "feldtyp": "input-field-string",
+            "label": "Artikelnummer:",
+            "platzhalter": "Artikelnummer Eingeben ...", 
+            "muster": "[0-9]{10}"
+        },
+        {
+            "name": "qsabgeschlossen", 
+            "feldtyp": "input-field-boolean",
+            "label": "QS-abgeschlossen:", 
+            "standard": true
+        },
+        {
+            "name": "anzahl", 
+            "label": "Anzahl:", 
+            "feldtyp": "input-field-number",
+            "standard": 4
+        },
+        {
+            "name": "eingangsdatum", 
+            "label": "Eingangsdatum:", 
+            "feldtyp": "input-field-date",
+            "standard": "2020-02-12"
+        },
+        {
+            "name": "fehlerkategorie",
+            "label": "Fehlerkategorie",
+            "feldtyp": "input-field-array-dropdown",
+            "standard": "auf dem Kopf",
+            "items": ["fehlt", "verdreht", "auf dem Kopf", "Lötfehler", "Bestückfehler"]
+        },
+        {
+            "name": "produktionsfehler",
+            "label": "Produktionsfehler",
+            "feldtyp": "input-field-object",
+            "subform": [
+                {
+                    "name": "eingangsdatum", 
+                    "label": "Eingangsdatum:", 
+                    "feldtyp": "input-field-date",
+                    "standard": "2020-02-12"
+                },
+                {
+                    "name": "fehlerkategorie",
+                    "label": "Fehlerkategorie",
+                    "feldtyp": "input-field-array-dropdown",
+                    "standard": "auf dem Kopf",
+                    "items": ["fehlt", "verdreht", "auf dem Kopf", "Ltfehler", "Bestckfehler"]
+                }
+            ]
+        }
+    ]
+}
