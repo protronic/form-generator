@@ -1,10 +1,9 @@
-div.form-element {
-    margin: 5px;
+form {
+    width: 50%;
 }
 
 div.form-element {
-    margin-top: 10px; 
-    margin-bottom: 10px;
+    margin: 5px;
 }
 
 div.form-group {
@@ -13,4 +12,58 @@ div.form-group {
 
 span.pflichtfeld {
     float: right;
+}
+
+.form-element {
+    border: 1px solid lightgray;
+    padding: 5px;
+    margin-top: 10px; 
+    margin-bottom: 10px;
+}
+
+.form-list > *[name] {
+    display: inline-block;
+    width: 100%;
+}
+
+.form-list {
+    width: 90%;
+    display: grid;
+    grid-template-columns: 95% 5%;
+    box-sizing: content-box;
+    
+}
+
+.form-list > button {
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 100%;
+    height: 95%;
+    background-color: rgba(200, 0, 0, 0.5);
+}
+
+.form-list-addbtn {
+    width: 92%;
+    background-color: rgba(0, 200, 0, 0.5);
+    box-sizing: content-box;
+}
+
+.form-element > label {
+    font-weight: bold;
+}
+
+.form-list label {
+    font-weight: normal;
+}
+
+.form-group label {
+    font-weight: normal;
+}
+
+.form-group * label {
+    font-weight: lighter;
+}
+
+label {
+    margin-right: 10px;
 }

@@ -27,19 +27,26 @@ class InputField extends HTMLElement {
     }
 
     convertValue(key, value){
-        return value;
+        return JSON.parse(value);
+    }
+
+    saveValue(key, value){
+        return JSON.stringify(value);
+    }
+
+    getModel(){
+        throw Error('Not Implemented');
     }
 }
 
-class InputFieldText extends InputField{
-    
-    
-    constructor(){
+class GenericInputField extends InputField{
+    constructor(inputType){
         super();
         this.defaultOptions = {
             ...this.defaultOptions,
             platzhalter: '',
-            muster: '.*'
+            muster: '.*',
+            inputType: inputType
         };
     }
 
@@ -53,15 +60,53 @@ class InputFieldText extends InputField{
                     value="${this.options.standard}" 
                     pattern="${this.options.muster}" 
                     ${this.options.deaktiviert ? 'disabled' : ''}
-                    type="text" 
+                    type="${this.options.inputType}" 
                 >
-                <span class="pflichtfeld" style="font-style: italic;" style="visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
+                <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
             </div>
         `;
+    }
+
+    getModel(){
+        let model = this.querySelector(`#${this.options.name}`).value;
+        console.log(this.options.name, model)
+        return model;
+    }
+}
+
+class InputFieldText extends GenericInputField{
+    constructor(){
+        super('text');
     }
 }
 
 customElements.define('input-field-text', InputFieldText);
+
+class InputFieldEmail extends GenericInputField{
+    constructor(){
+        super('email');
+    }
+}
+
+customElements.define('input-field-email', InputFieldEmail);
+
+class InputFieldTel extends GenericInputField{
+    constructor(){
+        super('tel');
+    }
+}
+
+customElements.define('input-field-tel', InputFieldTel);
+
+class InputFieldTextarea extends GenericInputField{
+    constructor(){
+        super('textarea');
+    }
+}
+
+customElements.define('input-field-textarea', InputFieldTextarea);
+
+
 
 class InputFieldDropdown extends InputField {
     constructor(){
@@ -83,17 +128,15 @@ class InputFieldDropdown extends InputField {
                 
                 ${this.options.items.map(item => `<option value="${item}" ${this.options.standard === item ? 'selected' : ''}>${item}</option>`).join('/n')}
             </select>
-            <span class="pflichtfeld" style="font-style: italic;" style="visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
+            <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
         </div>
         `;
     }
 
-    convertValue(key, value){
-        if(key === 'items'){
-            return value.trim().slice(1, -1).split(',').map(item => item.trim());
-        } else {
-            return super.convertValue(key, value);
-        }
+    getModel(){
+        let model = this.querySelector('select').value;
+        console.log(this.options.name, model);
+        return model;
     }
 }
 
@@ -109,15 +152,13 @@ class InputFieldObject extends InputField{
     }
 
     applyTemplate(){
-        let saveValue = (key, value) => key === 'subform' ? JSON.stringify(value) : value;
-
         this.innerHTML = `
         <div class="form-element">
             <label for="${this.options.name}">${this.options.label}</label>
-            <div class="form-group">
+            <div id="${this.options.name}" class="form-group">
                 ${Object.keys(this.options.subform).map(key => {
                     let sub = this.options.subform[key];
-                    let result = `<${sub.feldtyp} ${Object.keys(sub).map(key => `${key}="${saveValue(key, sub[key])}"`).join(' ')}></${sub.feldtyp}>`;
+                    let result = `<${sub.feldtyp} ${Object.keys(sub).map(key => `${key}='${this.saveValue(key, sub[key])}'`).join(' ')}></${sub.feldtyp}>`;
                     return result;
                 }).join('\n')}
             </div>
@@ -125,13 +166,180 @@ class InputFieldObject extends InputField{
         `;
     }
 
-    convertValue(key, value){
-        if(key === 'subform'){
-            return JSON.parse(value);
-        } else {
-            return super.convertValue(key, value);
-        }
-    }    
+    getModel(){
+        let model = {};
+        this.querySelector(`#${this.options.name}`).childNodes.forEach(objProps => {
+            model[objProps.getAttribute('name')] = objProps.getModel();
+        })
+        console.log(this.options.name, model);
+    }
 }
 
 customElements.define('input-field-object', InputFieldObject);
+
+
+class InputFieldRadio extends InputField {
+    constructor(){
+        super();
+        this.defaultOptions = {
+            ...this.defaultOptions,
+            items: []
+        }
+    }
+
+    applyTemplate(){
+        this.innerHTML = `
+        <div class="form-element">
+            <label for="${this.options.name}">${this.options.label}</label>
+            <div id="${this.options.name}" class="form-radio-group">
+                ${this.options.items.map(item => {
+                    return `
+                            <input type="radio" id="${this.options.name}-${item}" name="${this.options.name}" value="${item}" ${this.options.standard === item ? 'checked' : ''}>
+                            <label for="${this.options.name}-${item}">${item}</label>
+                        `;
+                }).join('<br>')}
+                <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
+            </div>
+        </div>
+        `;
+    }
+
+    getModel(){
+        let model = this.querySelector('select').value;
+        console.log(this.options.name, model);
+        return model;
+    }
+}
+
+customElements.define('input-field-radio', InputFieldRadio);
+
+
+class InputFieldDate extends InputField{
+    constructor(){
+        super();
+        this.defaultOptions = {
+            ...this.defaultOptions,
+            standard: (new Date()).toLocaleDateString('en-CA'),
+            min: undefined,
+            max: undefined
+        };
+    }
+
+    applyTemplate(){
+        this.innerHTML = `
+            <div class="form-element">
+                <label for="${this.options.name}">${this.options.label}</label>
+                <input 
+                    id="${this.options.name}" 
+                    value="${this.options.standard}" 
+                    ${this.options.deaktiviert ? 'disabled' : ''}
+                    type="date" 
+                >
+                <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
+            </div>
+        `;
+    }
+
+    getModel(){
+        let model = this.querySelector('input[checked]').value;
+        console.log(this.options.name, model);
+        return model;
+    }
+}
+
+customElements.define('input-field-date', InputFieldDate);
+
+class InputFieldBoolean extends InputField{
+    constructor(){
+        super();
+        this.defaultOptions = {
+            ...this.defaultOptions,
+            standard: false,
+        };
+    }
+
+    applyTemplate(){
+        this.innerHTML = `
+            <div class="form-element">
+                <label for="${this.options.name}">${this.options.label}</label>
+                <input 
+                    id="${this.options.name}" 
+                    ${this.options.standard ? 'checked' : ''}
+                    ${this.options.deaktiviert ? 'disabled' : ''}
+                    type="checkbox" 
+                >
+                <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
+            </div>
+        `;
+    }
+
+    getModel(){
+        let model = this.querySelector(`#${this.options.name}`).hasAttribute('checked');
+        console.log(this.options.name, model);
+        return model;
+    }
+}
+
+customElements.define('input-field-boolean', InputFieldBoolean);
+
+function addListItem(event){
+    let self = event.srcElement.parentElement.parentElement; 
+
+
+    let lfdNr = event.srcElement.previousElementSibling.childNodes.length ? 0 : event.srcElement.previousElementSibling.childNodes.length;
+
+    let newEle = `
+        ${self.options.vorlage.map(formElement => {
+            return `<${formElement.feldtyp} ${Object.keys(formElement).map(key => `${key}='${self.saveValue(key, formElement[key], lfdNr)}'`).join(' ')}></${formElement.feldtyp}>`
+        }).join('\n')}
+        <button class="form-list-removebtn" onclick="(function(event){event.srcElement.previousElementSibling.remove(); event.srcElement.remove()})(event)" type="button">${self.options.entfernenLabel}</button>
+    `;
+
+    event.srcElement.previousElementSibling.innerHTML += newEle;
+}
+
+class InputFieldList extends InputField {
+    constructor(){
+        super();
+        this.defaultOptions = {
+            ...this.defaultOptions,
+            vorlage: [],
+            hinzufügenLabel: '+',
+            entfernenLabel: '-'
+        };
+    }
+
+    applyTemplate(){
+        this.innerHTML = `
+            <div class="form-element">
+                <label for="${this.options.name}">${this.options.label}</label>
+                <fieldset class="form-list" id="${this.options.name}" ${this.options.deaktiviert ? 'disabled' : ''}>
+
+                </fieldset>
+                <button id="${this.options.name}-button" type="button" class="form-list-addbtn" onclick="addListItem(event)">${this.options.hinzufügenLabel}</button>
+                <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
+            </div>
+
+        `;
+    }
+
+    saveValue(key, value, index){
+        if(key === 'name'){
+            console.log(JSON.stringify(`${value}-${index}`))
+            return JSON.stringify(`${value}-${index}`);
+        } else {
+            return JSON.stringify(value);
+        }
+    }
+
+    getModel(){
+        let model = [];
+        this.querySelectorAll(`#${this.options.name} > :not(button)`).forEach(listEle => {
+            model += [listEle.getModel()];
+        });
+        console.log(this.options.name, model);
+        return model;
+    }
+}
+
+customElements.define('input-field-list', InputFieldList);

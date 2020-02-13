@@ -4,17 +4,12 @@
         <link rel="stylesheet" type="text/css" href="style.css">
         <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v1.10.1/dist/alpine.js" defer></script>
         <script src="input-field.js"></script>
+        <script src="form-creator.js"></script>
         <script>
             
         </script>
     </head>
     <body>
-        <form 
-            class="form-element">
-            <input-field-text name="artikelnummer" label="Artikelnummer:" pflichtfeld=true platzhalter="eingabe hier"></input-field-text>
-            <input-field-dropdown name="dropdown" label="dropdown" items="[test, 1^23]"></input-field-dropdown>
-            <input-field-object name="object" label="Objekt:" subform='[{"feldtyp": "input-field-text", "name": "artikel", "label": "Artikel:"}, {"feldtyp": "input-field-dropdown", "name": "droppy", "label": "Auswahl", "items": "[tes, tesrfa]"}]'></input-field-object>
-        <div></div>
-        </form>
+        <form-creator schemaLink="reperatur-protocol.json"></form-creator>
     </body>
 </html>
