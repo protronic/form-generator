@@ -1,68 +1,15 @@
 <!DOCTYPE html>
 <html>
     <head>
+        <link rel="stylesheet" type="text/css" href="style.css">
         <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v1.10.1/dist/alpine.js" defer></script>
-        <script src="components/input-field.js"></script>
-        <script src="components/input-field-date.js"></script>
-        <script src="components/input-field-string.js"></script>
-        <script src="components/input-field-number.js"></script>
-        <script src="components/input-field-boolean.js"></script>
-        <script src="components/input-field-array-dropdown.js"></script>
+        <script src="input-field.js"></script>
+        <script src="form-creator.js"></script>
         <script>
-            var allPossibleOptions = {
-                name: undefined,
-                label: '',
-                beschreibung: '',
-                platzhalter: '',
-                deaktiviert: false,
-                muster: '.*',
-                standard: '',
-                pflichtfeld: false,
-            }
-
-            var stringOptions = {
-                name: 'artikelnummer', 
-                label: 'Artikelnummer:', 
-                platzhalter: 'Artikelnummer Eingeben ...', 
-                muster: '[0-9]{10}',
-            }
-
-            var boolOptions = {
-                name: 'qsabgeschlossen', 
-                label: 'QS-abgeschlossen:', 
-                standard: true,
-            }
-
-            var numOptions = {
-                name: 'anzahl', 
-                label: 'Anzahl:', 
-                standard: 4,
-            }
-
-            var dateOptions = {
-                name: 'eingangsdatum', 
-                label: 'Eingangsdatum:', 
-                standard: (new Date()).toLocaleDateString('en-CA'),
-            }
-
-            var arrayDropdownOptions = {
-                name: 'fehlerkategorie',
-                label: 'Fehlerkategorie',
-                standard: 'auf dem Kopf',
-                items: ['fehlt', 'verdreht', 'auf dem Kopf', 'Ltfehler', 'Bestckfehler'],
-            }
-
+            
         </script>
     </head>
     <body>
-        <form 
-            class="form-element">
-            <input-field-string x-data="{...allPossibleOptions, ...stringOptions}"></input-field-string>
-            <input-field-number x-data="{...allPossibleOptions, ...numOptions}"></input-field-number>
-            <input-field-boolean x-data="{...allPossibleOptions, ...boolOptions}"></input-field-boolean>
-            <input-field-date x-data="{...allPossibleOptions, ...dateOptions}"></input-field-date>
-            <input-field-array-dropdown x-data="{...allPossibleOptions, ...arrayDropdownOptions}"></input-field-array-dropdown>
-        <div></div>
-        </form>
+        <form-creator schemaLink="reperatur-protocol.json"></form-creator>
     </body>
 </html>
