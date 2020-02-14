@@ -142,19 +142,35 @@ class InputFieldDropdown extends InputField {
 
 customElements.define('input-field-dropdown', InputFieldDropdown);
 
+function collapseObjectGroup(event){
+    let collapseBtn = event.srcElement;
+    let self = collapseBtn.parentElement.parentElement;
+    console.log(collapseBtn, self)
+    if(!self.collapsed){
+        collapseBtn.nextElementSibling.classList.add("hidden");
+        collapseBtn.innerText = 'ausklappen';
+        self.collapsed = !self.collapsed;
+    } else {
+        collapseBtn.nextElementSibling.classList.remove("hidden");
+        collapseBtn.innerText = 'einklappen';
+        self.collapsed = !self.collapsed;
+    }
+}
+
 class InputFieldObject extends InputField{
     constructor(){
         super();
         this.defaultOptions = {
             ...this.defaultOptions,
             subform: {}
-        }
+        };
+        this.collapsed = false;
     }
 
     applyTemplate(){
         this.innerHTML = `
         <div class="form-element">
-            <label for="${this.options.name}">${this.options.label}</label>
+            <label for="${this.options.name}">${this.options.label}</label><button class="form-object-collapse" type="button" onclick="collapseObjectGroup(event)">einklappen</button>
             <div id="${this.options.name}" class="form-group">
                 ${Object.keys(this.options.subform).map(key => {
                     let sub = this.options.subform[key];
@@ -168,9 +184,10 @@ class InputFieldObject extends InputField{
 
     getModel(){
         let model = {};
-        this.querySelector(`#${this.options.name}`).childNodes.forEach(objProps => {
+        for(let objProps of this.querySelector(`#${this.options.name}`).children) {
+            console.log(objProps)
             model[objProps.getAttribute('name')] = objProps.getModel();
-        })
+        }
         console.log(this.options.name, model);
     }
 }
@@ -205,7 +222,12 @@ class InputFieldRadio extends InputField {
     }
 
     getModel(){
-        let model = this.querySelector('select').value;
+        let model = undefined;
+        this.querySelectorAll('input').forEach(inputElement => {
+            if(inputElement.hasAttribute('checked')){
+                model = inputElement.value;
+            }
+        })
         console.log(this.options.name, model);
         return model;
     }
@@ -241,7 +263,7 @@ class InputFieldDate extends InputField{
     }
 
     getModel(){
-        let model = this.querySelector('input[checked]').value;
+        let model = this.querySelector('input[checked]') ? this.querySelector('input[checked]').value : null;
         console.log(this.options.name, model);
         return model;
     }
@@ -312,10 +334,10 @@ class InputFieldList extends InputField {
     applyTemplate(){
         this.innerHTML = `
             <div class="form-element">
-                <label for="${this.options.name}">${this.options.label}</label>
-                <fieldset class="form-list" id="${this.options.name}" ${this.options.deaktiviert ? 'disabled' : ''}>
+                <label for="${this.options.name}">${this.options.label}</label><br>
+                <div class="form-list" id="${this.options.name}" ${this.options.deaktiviert ? 'disabled' : ''}>
 
-                </fieldset>
+                </div>
                 <button id="${this.options.name}-button" type="button" class="form-list-addbtn" onclick="addListItem(event)">${this.options.hinzufügenLabel}</button>
                 <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
             </div>

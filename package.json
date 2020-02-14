@@ -1,0 +1,23 @@
+{
+  "name": "json-form-gen",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "serve": "http-server alpineless"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RobertSeidler/form-alpine.git"
+  },
+  "author": "Robert Seidler",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RobertSeidler/form-alpine/issues"
+  },
+  "homepage": "https://github.com/RobertSeidler/form-alpine#readme",
+  "devDependencies": {
+    "http-server": "^0.12.1"
+  }
+}

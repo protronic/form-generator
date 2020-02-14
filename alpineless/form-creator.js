@@ -10,7 +10,7 @@ class FormCreator extends HTMLElement{
             .then(schema => {
                 this.schema = schema;
                 this.renderSchema(schema.felder);
-                
+                this.testModelCreation();
             })
     }
 
@@ -23,6 +23,20 @@ class FormCreator extends HTMLElement{
                 ).join('\n')}
             </form>
         `
+    }
+
+    testModelCreation(){
+        let btn = document.createElement('button');
+        btn.setAttribute('type', 'button');
+        btn.addEventListener('click', (event) => {
+            let model = [];
+            this.querySelectorAll('form > *').forEach(element => {
+                model += [element.getModel()]
+            });
+            console.log(model)
+        });
+        btn.innerText = 'teste model generierung';
+        this.append(btn)
     }
 
     saveValue(key, value){
