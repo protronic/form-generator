@@ -69,7 +69,6 @@ class GenericInputField extends InputField{
 
     getModel(){
         let model = this.querySelector(`#${this.options.name}`).value;
-        console.log(this.options.name, model)
         return model;
     }
 }
@@ -130,7 +129,6 @@ class InputFieldTextarea extends InputField{
 
     getModel(){
         let model = this.querySelector(`#${this.options.name}`).value;
-        console.log(this.options.name, model)
         return model;
     }
 }
@@ -166,7 +164,6 @@ class InputFieldDropdown extends InputField {
 
     getModel(){
         let model = this.querySelector('select').value;
-        console.log(this.options.name, model);
         return model;
     }
 }
@@ -176,7 +173,6 @@ customElements.define('input-field-dropdown', InputFieldDropdown);
 function collapseObjectGroup(event){
     let collapseBtn = event.srcElement;
     let self = collapseBtn.parentElement.parentElement;
-    console.log(collapseBtn, self)
     if(!self.collapsed){
         collapseBtn.nextElementSibling.classList.add("hidden");
         collapseBtn.innerText = 'ausklappen';
@@ -216,10 +212,8 @@ class InputFieldObject extends InputField{
     getModel(){
         let model = {};
         for(let objProps of this.querySelector(`#${this.options.name}`).children) {
-            console.log(objProps)
             model[JSON.parse(objProps.getAttribute('name'))] = objProps.getModel();
         }
-        console.log(this.options.name, model);
         return model;
     }
 }
@@ -230,9 +224,6 @@ customElements.define('input-field-object', InputFieldObject);
 function radioButtonChange(event, value){
 
     let self = event.srcElement.parentElement.parentElement;
-    console.log(self)
-    console.log(value)
-
     self.currentValue = value;
 }
 
@@ -270,7 +261,6 @@ class InputFieldRadio extends InputField {
                 model = inputElement.value;
             }
         })
-        console.log(this.options.name, model);
         return model;
     }
 }
@@ -306,12 +296,17 @@ class InputFieldDate extends InputField{
 
     getModel(){
         let model = this.querySelector('input').value;  
-        console.log(this.options.name, model);
         return model;
     }
 }
 
 customElements.define('input-field-date', InputFieldDate);
+
+function checkboxChangeListener(event, changedValue){
+    
+    console.log(event)
+    console.log(changedValue)
+}
 
 class InputFieldBoolean extends InputField{
     constructor(){
@@ -326,11 +321,12 @@ class InputFieldBoolean extends InputField{
         this.innerHTML = `
             <div class="form-element">
                 <label for="${this.options.name}">${this.options.label}</label>
-                <input 
+                <input  
                     id="${this.options.name}" 
                     ${this.options.standard ? 'checked' : ''}
                     ${this.options.deaktiviert ? 'disabled' : ''}
                     type="checkbox" 
+                    onchange="checkboxChangeListener(event, '${this.options.name}')"
                 >
                 <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
             </div>
@@ -339,7 +335,6 @@ class InputFieldBoolean extends InputField{
 
     getModel(){
         let model = this.querySelector(`#${this.options.name}`).hasAttribute('checked');
-        console.log(this.options.name, model);
         return model;
     }
 }
@@ -348,10 +343,7 @@ customElements.define('input-field-boolean', InputFieldBoolean);
 
 function addListItem(event){
     let self = event.srcElement.parentElement.parentElement; 
-
-
     let lfdNr = event.srcElement.previousElementSibling.childNodes.length ? 0 : event.srcElement.previousElementSibling.childNodes.length;
-
     let newEle = `
         ${self.options.vorlage.map(formElement => {
             return `<${formElement.feldtyp} ${Object.keys(formElement).map(key => `${key}='${self.saveValue(key, formElement[key], lfdNr)}'`).join(' ')}></${formElement.feldtyp}>`
@@ -359,7 +351,7 @@ function addListItem(event){
         <button class="form-list-removebtn" onclick="(function(event){event.srcElement.previousElementSibling.remove(); event.srcElement.remove()})(event)" type="button">${self.options.entfernenLabel}</button>
     `;
 
-    event.srcElement.previousElementSibling.insertAdjacentHTML('beforeend', newEle)
+    event.srcElement.previousElementSibling.insertAdjacentHTML('beforeend', newEle);
 }
 
 class InputFieldList extends InputField {
@@ -399,11 +391,47 @@ class InputFieldList extends InputField {
     getModel(){
         let model = [];
         this.querySelectorAll(`#${this.options.name} > :not(button)`).forEach(listEle => {
-            model += [listEle.getModel()];
+            model.push(listEle.getModel());
         });
-        console.log(this.options.name, model);
         return model;
     }
 }
 
 customElements.define('input-field-list', InputFieldList);
+
+function genericQuery(input, query, db){
+    return fetch(uri,  {
+        method: 'POST',
+        body: JSON.stringify({q: query.replace('?', input)}),
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(response => response.json());
+}
+
+class InputFieldNachschlagen extends InputFieldText {
+    constructor(){
+        super();
+        this.defaultOptions = {
+            ...this.defaultOptions,
+            ausgabeLabel: '',
+            query: undefined,
+            maxZeilen: 1
+        }   
+    }
+    
+    connectedCallback(){
+        super.connectedCallback();
+        
+        let input = this.querySelector('input');
+
+        input.addEventListener('input', (event) => {
+            if(event.target.validity.valid && event.target.value !== ''){
+                genericQuery.then(data => (data.map()))
+            }
+        })
+        input.insertAdjacentHTML('afterend', `
+
+        `)
+    }
+}

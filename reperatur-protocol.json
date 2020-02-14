@@ -1,4 +1,5 @@
 {
+    "formular": "Reparaturbericht",
     "felder": [
         {
             "name": "kundennummer",
@@ -93,6 +94,11 @@
             "label": "Fehlerbeschreibung des Kunden:",
             "feldtyp": "input-field-textarea",
             "platzhalter": ""
+        },
+        {
+            "name": "keinfehler",
+            "label": "Kein Fehler?",
+            "feldtyp": "input-field-boolean"
         },
         {
             "name": "produktionsfehlerliste",
@@ -233,7 +239,7 @@
         },
         {
             "name": "gutschrift",
-            "label": "Gutschrift erteilt",
+            "label": "Gutschrift erteilt?",
             "feldtyp": "input-field-boolean",
             "standard": false
         },

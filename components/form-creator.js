@@ -11,7 +11,16 @@ class FormCreator extends HTMLElement{
                 this.schema = schema;
                 this.renderSchema(schema.felder);
                 this.testModelCreation();
+                this.renderGeneralInfo(schema);
             })
+    }
+
+    renderGeneralInfo(schema){
+        this.insertAdjacentHTML('afterbegin', `
+            <div class="formular-title">
+                <h2>${schema.formular}</h2>
+            </div>
+        `)
     }
 
     renderSchema(schemafelder){

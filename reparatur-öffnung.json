@@ -1,0 +1,99 @@
+{
+    "formular": "Reparaturöffnung",
+    "felder": [
+        {
+            "name": "kundennummer",
+            "feldtyp": "input-field-text",
+            "label": "Kundennummer:",
+            "platzhalter": "zb: 10000", 
+            "muster": "[0-9]{5}"
+        },
+        {
+            "name": "kontakt",
+            "feldtyp": "input-field-object",
+            "label": "Ansprechpartner:",
+            "subform": [
+                {
+                    "name": "anrede",
+                    "label": "Anrede:",
+                    "feldtyp": "input-field-radio",
+                    "items": ["Herr", "Frau"]
+                },
+                {
+                    "name": "name",
+                    "label": "Vollständiger Name:",
+                    "feldtyp": "input-field-text"
+                },
+                {
+                    "name": "telefon",
+                    "label": "Telefon:",
+                    "feldtyp": "input-field-tel"
+                },
+                {
+                    "name": "fax",
+                    "label": "Fax:",
+                    "feldtyp": "input-field-tel"
+                },
+                {
+                    "name": "email",
+                    "label": "E-Mail:",
+                    "feldtyp": "input-field-email"
+                },
+                {
+                    "name": "anschrift",
+                    "label": "Anschrift:",
+                    "feldtyp": "input-field-text"
+                },
+                {
+                    "name": "sonstiges",
+                    "label": "Sonstiges:",
+                    "feldtyp": "input-field-textarea"
+                }
+            ]
+        },
+        {
+            "name": "eingangsdatum", 
+            "label": "Eingangsdatum:", 
+            "feldtyp": "input-field-date"
+        },
+        {
+            "name": "artikelnummer",
+            "label": "Artikelnummer:",
+            "feldtyp": "input-field-text",
+            "platzhalter": "zb: 1006000061", 
+            "muster": "[0-9]{10}"
+        },
+        {
+            "name": "seriennummer",
+            "label": "Seriennummer:",
+            "feldtyp": "input-field-text"
+        },
+        {
+            "name": "platinennnummern",
+            "label": "Platinennummern:",
+            "feldtyp": "input-field-list",
+            "vorlage": [
+                {
+                    "name": "platinennummer",
+                    "feldtyp": "input-field-text"
+                }
+            ]
+        },
+        {
+            "name": "qsnummer",
+            "label": "QS-Nummer:",
+            "feldtyp": "input-field-text"
+        },
+        {
+            "name": "auftragsnummer",
+            "label": "Auftragsnummer:",
+            "feldtyp": "input-field-text"
+        },
+        {
+            "name": "fehlerbeschreibung-kunde",
+            "label": "Fehlerbeschreibung des Kunden:",
+            "feldtyp": "input-field-textarea",
+            "platzhalter": ""
+        }
+    ]
+}
