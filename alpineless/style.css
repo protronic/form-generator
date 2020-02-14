@@ -7,7 +7,7 @@ div.form-element {
 }
 
 div.form-group {
-  border: 1px solid gray;
+  border: 1px solid lightgray;
 }
 
 span.pflichtfeld {
@@ -58,6 +58,7 @@ span.pflichtfeld {
 
 .form-element > label {
   font-weight: bold;
+  vertical-align: top;
 }
 
 .form-list label {
@@ -84,7 +85,7 @@ label {
 .form-object-collapse {
     float: right;
     font-size: small;
-    margin: 0px;
+    margin-top: -3px;
     border-radius: 10px;
 }
 
@@ -92,4 +93,10 @@ label {
     /* visibility: collapse; */
     display: none;
     height: 0;
+}
+
+input[type="textarea"] {
+    height: 5em;
+    width: 50%;
+    word-wrap: break-word;
 }

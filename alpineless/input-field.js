@@ -46,7 +46,10 @@ class GenericInputField extends InputField{
             ...this.defaultOptions,
             platzhalter: '',
             muster: '.*',
-            inputType: inputType
+            inputType: inputType,
+            rows: 4,
+            cols: 50,
+            wrap: 'hard'
         };
     }
 
@@ -60,7 +63,9 @@ class GenericInputField extends InputField{
                     value="${this.options.standard}" 
                     pattern="${this.options.muster}" 
                     ${this.options.deaktiviert ? 'disabled' : ''}
-                    type="${this.options.inputType}" 
+                    type="${this.options.inputType}"
+                    rows="${this.options.rows}"
+                    cols="${this.options.cols}"
                 >
                 <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
             </div>
@@ -101,6 +106,9 @@ customElements.define('input-field-tel', InputFieldTel);
 class InputFieldTextarea extends GenericInputField{
     constructor(){
         super('textarea');
+        this.defaultOptions = {
+            ...this.defaultOptions,
+        };
     }
 }
 
@@ -317,7 +325,7 @@ function addListItem(event){
         <button class="form-list-removebtn" onclick="(function(event){event.srcElement.previousElementSibling.remove(); event.srcElement.remove()})(event)" type="button">${self.options.entfernenLabel}</button>
     `;
 
-    event.srcElement.previousElementSibling.innerHTML += newEle;
+    event.srcElement.previousElementSibling.insertAdjacentHTML('beforeend', newEle)
 }
 
 class InputFieldList extends InputField {
