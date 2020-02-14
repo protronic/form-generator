@@ -29,9 +29,9 @@ class FormCreator extends HTMLElement{
         let btn = document.createElement('button');
         btn.setAttribute('type', 'button');
         btn.addEventListener('click', (event) => {
-            let model = [];
+            let model = {};
             this.querySelectorAll('form > *').forEach(element => {
-                model += [element.getModel()]
+                model[element.options.name] = element.getModel()
             });
             console.log(model)
         });
