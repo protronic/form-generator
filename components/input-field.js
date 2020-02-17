@@ -9,7 +9,7 @@ class InputField extends HTMLElement {
         pflichtfeld: false,
     };
     options = {};
-
+    model = {};
     constructor(){
         super();
     }
@@ -17,6 +17,7 @@ class InputField extends HTMLElement {
     connectedCallback(){
         Object.keys(this.defaultOptions).forEach(key => {
             // console.log(key, this.getAttribute(key) || this.defaultOptions[key])
+
             this.options[key] = this.convertValue(key, this.getAttribute(key)) || this.defaultOptions[key];
         })
         this.applyTemplate();
@@ -27,10 +28,12 @@ class InputField extends HTMLElement {
     }
 
     convertValue(key, value){
+        console.log(key, value);
         return JSON.parse(value);
     }
 
     saveValue(key, value){
+        if(key === 'query') value = value.split("'").join("&#39;");
         return JSON.stringify(value);
     }
 
@@ -53,7 +56,7 @@ class GenericInputField extends InputField{
     applyTemplate(){
         this.innerHTML = `
             <div class="form-element">
-                <label for="${this.options.name}">${this.options.label}</label>
+                ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
                 <input 
                     id="${this.options.name}" 
                     placeholder="${this.options.platzhalter}" 
@@ -112,7 +115,7 @@ class InputFieldTextarea extends InputField{
     applyTemplate(){
         this.innerHTML = `
             <div class="form-element">
-                <label for="${this.options.name}">${this.options.label}</label>
+                ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
                 <textarea 
                     id="${this.options.name}" 
                     placeholder="${this.options.platzhalter}" 
@@ -149,7 +152,7 @@ class InputFieldDropdown extends InputField {
     applyTemplate(){
         this.innerHTML = `
         <div class="form-element">
-            <label for="${this.options.name}">${this.options.label}</label>
+            ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
             <select 
                 id="${this.options.name}" 
                 ${this.options.deaktiviert ? 'disabled' : ''}
@@ -173,12 +176,13 @@ customElements.define('input-field-dropdown', InputFieldDropdown);
 function collapseObjectGroup(event){
     let collapseBtn = event.srcElement;
     let self = collapseBtn.parentElement.parentElement;
+    let collapseEle = self.querySelector(`#${self.options.name}`)
     if(!self.collapsed){
-        collapseBtn.nextElementSibling.classList.add("hidden");
+        collapseEle.classList.add("hidden");
         collapseBtn.innerText = 'ausklappen';
         self.collapsed = !self.collapsed;
     } else {
-        collapseBtn.nextElementSibling.classList.remove("hidden");
+        collapseEle.classList.remove("hidden");
         collapseBtn.innerText = 'einklappen';
         self.collapsed = !self.collapsed;
     }
@@ -197,7 +201,8 @@ class InputFieldObject extends InputField{
     applyTemplate(){
         this.innerHTML = `
         <div class="form-element">
-            <label for="${this.options.name}">${this.options.label}</label><button class="form-object-collapse" type="button" onclick="collapseObjectGroup(event)">einklappen</button>
+            <button class="form-object-collapse" type="button" onclick="collapseObjectGroup(event)">einklappen</button>
+            ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
             <div id="${this.options.name}" class="form-group">
                 ${Object.keys(this.options.subform).map(key => {
                     let sub = this.options.subform[key];
@@ -212,9 +217,14 @@ class InputFieldObject extends InputField{
     getModel(){
         let model = {};
         for(let objProps of this.querySelector(`#${this.options.name}`).children) {
-            model[JSON.parse(objProps.getAttribute('name'))] = objProps.getModel();
+            let partialModel = objProps.getModel();
+            if(partialModel)
+                model[JSON.parse(objProps.getAttribute('name'))] = partialModel;
         }
-        return model;
+        if(Object.keys(model).length === 0)
+            return undefined;
+        else
+            return model;
     }
 }
 
@@ -240,7 +250,7 @@ class InputFieldRadio extends InputField {
     applyTemplate(){
         this.innerHTML = `
         <div class="form-element">
-            <label for="${this.options.name}">${this.options.label}</label>
+            ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
             <form name="${this.options.name}-radio" id="${this.options.name}" class="form-radio-group"><br>
                 ${this.options.items.map(item => {
                     return `
@@ -282,7 +292,7 @@ class InputFieldDate extends InputField{
     applyTemplate(){
         this.innerHTML = `
             <div class="form-element">
-                <label for="${this.options.name}">${this.options.label}</label>
+                ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
                 <input 
                     id="${this.options.name}" 
                     value="${this.options.standard}" 
@@ -320,7 +330,7 @@ class InputFieldBoolean extends InputField{
     applyTemplate(){
         this.innerHTML = `
             <div class="form-element">
-                <label for="${this.options.name}">${this.options.label}</label>
+                ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
                 <input  
                     id="${this.options.name}" 
                     ${this.options.standard ? 'checked' : ''}
@@ -368,7 +378,7 @@ class InputFieldList extends InputField {
     applyTemplate(){
         this.innerHTML = `
             <div class="form-element">
-                <label for="${this.options.name}">${this.options.label}</label><br>
+                ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
                 <div class="form-list" id="${this.options.name}" ${this.options.deaktiviert ? 'disabled' : ''}>
 
                 </div>
@@ -393,20 +403,27 @@ class InputFieldList extends InputField {
         this.querySelectorAll(`#${this.options.name} > :not(button)`).forEach(listEle => {
             model.push(listEle.getModel());
         });
-        return model;
+        if(model.length === 0)
+            return undefined
+        else
+            return model;
     }
 }
 
 customElements.define('input-field-list', InputFieldList);
 
 function genericQuery(input, query, db){
+    let uri = 'http://prot-subuntu:8081/master';
+
     return fetch(uri,  {
         method: 'POST',
-        body: JSON.stringify({q: query.replace('?', input)}),
+        body: JSON.stringify({q: query.split('?').join(`${input}`)}),
         headers: {
             'Content-Type': 'application/json'
         }
-    }).then(response => response.json());
+    })
+        .then(response => response.json())
+        .then(data => data.recordset);
 }
 
 class InputFieldNachschlagen extends InputFieldText {
@@ -422,16 +439,30 @@ class InputFieldNachschlagen extends InputFieldText {
     
     connectedCallback(){
         super.connectedCallback();
-        
+        console.log('test')
         let input = this.querySelector('input');
 
         input.addEventListener('input', (event) => {
             if(event.target.validity.valid && event.target.value !== ''){
-                genericQuery.then(data => (data.map()))
+                genericQuery(input.value, this.options.query)
+                    .then(data => data.map(entry => Object.keys(entry).map(key => `${key}: ${entry[key]}`).join('<br>')))
+                    .then(data => {
+                        if(data[0]) {
+                            this.querySelector('.test-display').innerHTML = data[0];
+                            this.valid = true;
+                        } else {
+                            this.valid = false;
+                        }
+                    })
+            } else {
+                this.querySelector('.test-display').innerText = ''
+                this.valid = false;
             }
         })
         input.insertAdjacentHTML('afterend', `
-
+            <br><span class="test-display"></span>
         `)
     }
 }
+
+customElements.define('input-field-nachschlagen', InputFieldNachschlagen);

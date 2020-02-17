@@ -59,9 +59,10 @@
         {
             "name": "artikelnummer",
             "label": "Artikelnummer:",
-            "feldtyp": "input-field-text",
+            "feldtyp": "input-field-nachschlagen",
             "platzhalter": "zb: 1006000061", 
-            "muster": "[0-9]{10}"
+            "muster": "[0-9]{10}|[0-9]{7}",
+            "query": "SELECT Artikelnummer, Matchcode FROM [prot-sage11].OLReweAbf.dbo.KHKArtikel WHERE Artikelnummer LIKE '?' OR Dimensionstext LIKE '?'"
         },
         {
             "name": "seriennummer",

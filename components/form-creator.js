@@ -40,17 +40,21 @@ class FormCreator extends HTMLElement{
         btn.addEventListener('click', (event) => {
             let model = {};
             this.querySelectorAll('form > *').forEach(element => {
-                model[element.options.name] = element.getModel()
+                let partialModel = element.getModel()
+                if(partialModel)
+                    model[element.options.name] = partialModel
             });
             console.log(model)
+            localStorage.setItem('last', JSON.stringify(model))
         });
         btn.innerText = 'teste model generierung';
         this.append(btn)
     }
 
     saveValue(key, value){
+        // if(value) value = value;
         // console.log(JSON.stringify(value));
-        // console.log(encodeURI(value));
+        if(key === 'query') value = value.split("'").join("&#39;");
         return JSON.stringify(value);
     }
 
