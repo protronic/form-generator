@@ -19,7 +19,7 @@ function prepareModel(model, formular){
 function uploadModel(model, formular){
     let serialModel = prepareModel(model, formular);
     console.log(`{"q": "INSERT INTO model (log) VALUES ('${serialModel}');SELECT TOP 1 _id FROM model WHERE log = '${serialModel}' ORDER BY _id DESC;"}`)
-    fetch('http://prot-subuntu:8081/formly', {
+    return fetch('http://prot-subuntu:8081/formly', {
         method: 'POST',
         body: `{"q": "INSERT INTO model (log) VALUES ('${serialModel}');SELECT TOP 1 _id FROM model WHERE log = '${serialModel}' ORDER BY _id DESC;"}`,
         headers: {
