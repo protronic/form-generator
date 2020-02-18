@@ -59,9 +59,10 @@
         {
             "name": "artikelnummer",
             "label": "Artikelnummer:",
-            "feldtyp": "input-field-text",
+            "feldtyp": "input-field-nachschlagen",
             "platzhalter": "zb: 1006000061", 
-            "muster": "[0-9]{10}"
+            "muster": "[0-9]{10}|[0-9]{7}",
+            "query": "SELECT Artikelnummer, Matchcode FROM [prot-sage11].OLReweAbf.dbo.KHKArtikel WHERE Artikelnummer LIKE '?' OR Dimensionstext LIKE '?'"
         },
         {
             "name": "seriennummer",
@@ -108,6 +109,7 @@
                 {
                     "name": "produktionsfehler",
                     "feldtyp": "input-field-object",
+                    "label": " ",
                     "subform": [
                         {
                             "name": "designator", 
@@ -131,8 +133,10 @@
                         {
                             "name": "ersetzte-artikelnummern",
                             "label": "Artikelnummern ersetzt:",
-                            "feldtyp": "input-field-text",
-                            "platzhalter": "TODO: add bedingt sichtbare felder"
+                            "feldtyp": "input-field-abhaengig",
+                            "pflichtfeld": true,
+                            "abhaengigFeld": "behebung",
+                            "wertSichtbar": "Ersetzen"
                         }
                     ]
                 }
@@ -146,6 +150,7 @@
                 {
                     "name": "mechanischefehler",
                     "feldtyp": "input-field-object",
+                    "label": " ",
                     "subform": [
                         {
                             "name": "komponente", 
@@ -173,8 +178,10 @@
                         {
                             "name": "ersetzte-artikelnummern",
                             "label": "Artikelnummern ersetzt:",
-                            "feldtyp": "input-field-text",
-                            "platzhalter": "TODO: add bedingt sichtbare felder"
+                            "feldtyp": "input-field-abhaengig",
+                            "pflichtfeld": true,
+                            "abhaengigFeld": "behebung",
+                            "wertSichtbar": "Ersetzen"
                         }
                     ]
                 }
@@ -188,6 +195,7 @@
                 {
                     "name": "elektronischefehler",
                     "feldtyp": "input-field-object",
+                    "label": " ",
                     "subform": [
                         {
                             "name": "komponente", 
@@ -215,8 +223,10 @@
                         {
                             "name": "ersetzte-artikelnummern",
                             "label": "Artikelnummern ersetzt:",
-                            "feldtyp": "input-field-text",
-                            "platzhalter": "TODO: add bedingt sichtbare felder"
+                            "feldtyp": "input-field-abhaengig",
+                            "pflichtfeld": true,
+                            "abhaengigFeld": "behebung",
+                            "wertSichtbar": "Ersetzen"
                         }
                     ]
                 }

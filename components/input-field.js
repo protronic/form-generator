@@ -2,24 +2,41 @@ class InputField extends HTMLElement {
     schema = {};
     template = '';
     defaultOptions = {
+        initialModel: '',
         name: '',
         label: '',
+        beschreibung: '',
         standard: '',
         deaktiviert: false,
         pflichtfeld: false,
     };
+    rootElement = this;
     options = {};
     model = {};
+    valid = true;
+    validityMessage = undefined;
     constructor(){
         super();
+
+        this.addEventListener('focusout', this.checkValidity)
     }
 
     connectedCallback(){
         Object.keys(this.defaultOptions).forEach(key => {
             // console.log(key, this.getAttribute(key) || this.defaultOptions[key])
 
+            // if(key === 'initialModel') console.log(this.getAttribute(key), typeof this.getAttribute(key));
             this.options[key] = this.convertValue(key, this.getAttribute(key)) || this.defaultOptions[key];
-        })
+        });
+
+        if(this.options.initialModel == undefined || this.options.initialModel == ''){
+            this.options.initialModel = this.options.standard;
+        }
+
+        if(this.options.beschreibung === ''){
+            this.options.beschreibung = this.options.label;
+        }
+
         this.applyTemplate();
     }
 
@@ -28,13 +45,47 @@ class InputField extends HTMLElement {
     }
 
     convertValue(key, value){
-        console.log(key, value);
-        return JSON.parse(value);
+        try{
+            if(value != undefined)
+                return JSON.parse(value);
+            else 
+                return '';
+        } catch(err){
+            console.log(key, value.toSource(), typeof value);
+            console.error(err)
+        }
     }
 
     saveValue(key, value){
         if(key === 'query') value = value.split("'").join("&#39;");
         return JSON.stringify(value);
+    }
+
+    checkValidity(){
+        if (this.options.pflichtfeld && this.getModel() == undefined){
+            this.setValidityStatus(false, 'Dies ist ein Pflichtfeld, und muss ausgefüllt werden.');
+            return false;
+        } else {
+            this.setValidityStatus(true, '');
+            return true;
+        }
+    }
+
+    setValidityStatus(valid, message, warning){
+        this.valid = valid;
+        this.validityMessage = message;
+        this.setAttribute('data-tooltip', message);
+
+        if(valid){
+            this.classList.remove('invalid', 'warning');
+        } else {
+            this.classList.add('invalid');
+            if(warning) this.classList.add('warning');
+        }
+    }
+
+    setModel(){
+        throw Error('Not Implemented')
     }
 
     getModel(){
@@ -54,25 +105,40 @@ class GenericInputField extends InputField{
     }
 
     applyTemplate(){
-        this.innerHTML = `
+        this.rootElement.insertAdjacentHTML('beforeend', `
             <div class="form-element">
                 ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
                 <input 
                     id="${this.options.name}" 
                     placeholder="${this.options.platzhalter}" 
-                    value="${this.options.standard}" 
+                    ${(this.options.initialModel) ? `value="${this.options.initialModel}"` : ''}
                     pattern="${this.options.muster}" 
                     ${this.options.deaktiviert ? 'disabled' : ''}
                     type="${this.options.inputType}"
+                    title="${this.options.beschreibung}"
                 >
                 <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
             </div>
-        `;
+        `);
     }
 
     getModel(){
         let model = this.querySelector(`#${this.options.name}`).value;
         return model;
+    }
+
+    checkValidity(){
+        let valid = super.checkValidity();
+        let input = this.querySelector('input');
+        let inputValidity = input.validity.valid;
+
+        if(!inputValidity){
+            this.setValidityStatus(false, input.validationMessage);
+        } else {
+            this.setValidityStatus(true, '');
+        }
+
+        return valid && inputValidity;
     }
 }
 
@@ -113,21 +179,20 @@ class InputFieldTextarea extends InputField{
     }
 
     applyTemplate(){
-        this.innerHTML = `
+        this.rootElement.insertAdjacentHTML('beforeend', `
             <div class="form-element">
                 ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
                 <textarea 
                     id="${this.options.name}" 
-                    placeholder="${this.options.platzhalter}" 
-                    value="${this.options.standard}" 
+                    placeholder="${this.options.platzhalter}"  
                     ${this.options.deaktiviert ? 'disabled' : ''}
                     cols="${this.options.cols}"
                     rows="${this.options.rows}"
                     wrap="${this.options.wrap}"
-                ></textarea>
+                >${(this.options.initialModel) ? this.options.initialModel : ''}</textarea>
                 <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
             </div>
-        `;
+        `);
     }
 
     getModel(){
@@ -150,19 +215,19 @@ class InputFieldDropdown extends InputField {
     }
 
     applyTemplate(){
-        this.innerHTML = `
-        <div class="form-element">
-            ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
-            <select 
-                id="${this.options.name}" 
-                ${this.options.deaktiviert ? 'disabled' : ''}
-            >
-                
-                ${this.options.items.map(item => `<option value="${item}" ${this.options.standard === item ? 'selected' : ''}>${item}</option>`).join('/n')}
-            </select>
-            <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
-        </div>
-        `;
+        this.rootElement.insertAdjacentHTML('beforeend', `
+            <div class="form-element">
+                ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
+                <select 
+                    id="${this.options.name}" 
+                    ${this.options.deaktiviert ? 'disabled' : ''}
+                >
+                    
+                    ${this.options.items.map(item => `<option value="${item}" ${this.options.initialModel === item ? 'selected' : ''}>${item}</option>`).join('/n')}
+                </select>
+                <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
+            </div>
+        `);
     }
 
     getModel(){
@@ -172,6 +237,78 @@ class InputFieldDropdown extends InputField {
 }
 
 customElements.define('input-field-dropdown', InputFieldDropdown);
+
+/** evtl könnte es auch von InputFieldNachschlagen erben ... */
+class InputFieldAbhaengig extends InputFieldText {
+    constructor(){
+        super();
+        this.defaultOptions = {
+            ...this.defaultOptions,
+            abhaengigFeld: '',
+            wertSichtbar: '',
+            interval: 500,
+            //wertUnsichtbar: '',  erstmal default hidden, bei bedarf, kann logik erweitert werden.
+        }
+        this.hideField();   
+    }
+
+    applyTemplate(){
+        let checkDependence = (dependent, event) => {
+            if(dependent.getModel() === this.options.wertSichtbar){
+                this.showField();
+            } else {
+                this.hideField();
+            }
+        };
+
+        super.applyTemplate();
+        (() => {
+            let dependent = this.parentElement.querySelector(`*[name='${this.saveValue('abhaengigFeld', this.options.abhaengigFeld)}']`);
+            dependent.addEventListener('focusout', checkDependence.bind(this, dependent));
+            setInterval(checkDependence.bind(this, dependent), this.options.interval);
+        })();
+        // setTimeout(() => {
+        //     let dependent = this.parentElement.querySelector(`*[name='${this.saveValue('abhaengigFeld', this.options.abhaengigFeld)}']`);
+        //     dependent.addEventListener('focusout', (event) => {
+        //         if(dependent.getModel() === this.options.wertSichtbar){
+        //             this.showField();
+        //         } else {
+        //             this.hideField();
+        //         }
+        //     })
+        // }, 500);
+        // requestAnimationFrame();
+    }
+
+    hideField(){
+        this.visibility = false;
+        this.classList.add('hidden');
+    }
+
+    showField(){
+        this.visibility = true;
+        this.classList.remove('hidden');
+    }
+
+    getModel(){
+        if(this.visibility){
+            return super.getModel();
+        } else {
+            return undefined;
+        }
+    }
+
+    checkValidity(){
+        if(this.visibility){
+            return super.checkValidity();
+        } else {
+            return true;
+        }
+    }
+}
+
+customElements.define('input-field-abhaengig', InputFieldAbhaengig);
+
 
 function collapseObjectGroup(event){
     let collapseBtn = event.srcElement;
@@ -199,19 +336,23 @@ class InputFieldObject extends InputField{
     }
 
     applyTemplate(){
-        this.innerHTML = `
-        <div class="form-element">
-            <button class="form-object-collapse" type="button" onclick="collapseObjectGroup(event)">einklappen</button>
-            ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
-            <div id="${this.options.name}" class="form-group">
-                ${Object.keys(this.options.subform).map(key => {
-                    let sub = this.options.subform[key];
-                    let result = `<${sub.feldtyp} ${Object.keys(sub).map(key => `${key}='${this.saveValue(key, sub[key])}'`).join(' ')}></${sub.feldtyp}>`;
-                    return result;
-                }).join('\n')}
+        this.rootElement.insertAdjacentHTML('beforeend', `
+            <div class="form-element">
+                <button class="form-object-collapse" type="button" tabIndex="-1" onclick="collapseObjectGroup(event)">einklappen</button>
+                ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
+                <div id="${this.options.name}" class="form-group">
+                    ${Object.keys(this.options.subform).map(key => {
+                        let sub = this.options.subform[key];
+                        let result = `
+                            <${sub.feldtyp} 
+                                ${Object.keys(sub).map(key => `${key}='${this.saveValue(key, sub[key])}'`).join(' ')}
+                                ${this.options.initialModel && (this.options.initialModel[sub.name]) ?  `initialModel='${this.saveValue('initialModel', this.options.initialModel[sub.name])}'` : ''} 
+                            ></${sub.feldtyp}>`;
+                        return result;
+                    }).join('\n')}
+                </div>
             </div>
-        </div>
-        `;
+        `);
     }
 
     getModel(){
@@ -226,15 +367,23 @@ class InputFieldObject extends InputField{
         else
             return model;
     }
+
+    checkValidity(){
+        let valid = true;
+        for(let objProps of this.querySelector(`#${this.options.name}`).children) {
+            let partialValidity = objProps.checkValidity();
+            valid = valid && partialValidity;
+        }
+        return valid;
+    }
 }
 
 customElements.define('input-field-object', InputFieldObject);
 
 
-function radioButtonChange(event, value){
-
-    let self = event.srcElement.parentElement.parentElement;
-    self.currentValue = value;
+function radioButtonClear(event){
+    let self = event.target.parentElement.parentElement;
+    self.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false)
 }
 
 class InputFieldRadio extends InputField {
@@ -242,32 +391,33 @@ class InputFieldRadio extends InputField {
         super();
         this.defaultOptions = {
             ...this.defaultOptions,
+            abwahlButtonLabel: 'Auswahl aufheben',
             items: []
         }
-        this.currentValue = ''
     }
 
     applyTemplate(){
-        this.innerHTML = `
-        <div class="form-element">
-            ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
-            <form name="${this.options.name}-radio" id="${this.options.name}" class="form-radio-group"><br>
-                ${this.options.items.map(item => {
-                    return `
-                            <input type="radio" id="${this.options.name}-${item}" name="${this.options.name}" value="${item}" ${this.options.standard === item ? 'checked' : ''} onchange="radioButtonChange(event, '${item}')">
-                            <label for="${this.options.name}-${item}">${item}</label>
-                        `;
-                }).join('<br>')}
-                <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
-            </form>
-        </div>
-        `;
+        this.rootElement.insertAdjacentHTML('beforeend', `
+            <div class="form-element">
+                <button type="button" class="clear-radio-btn" tabIndex="-1" onclick="radioButtonClear(event)">${this.options.abwahlButtonLabel}</button>
+                ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
+                <form name="${this.options.name}-radio" id="${this.options.name}" class="form-radio-group"><br>
+                    ${this.options.items.map(item => {
+                        return `
+                                <input type="radio" id="${this.options.name}-${item}" name="${this.options.name}" value="${item}" ${this.options.initialModel === item ? 'checked' : ''}>
+                                <label for="${this.options.name}-${item}">${item}</label>
+                            `;
+                    }).join('<br>')}
+                    <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
+                </form>
+            </div>
+        `);
     }
 
     getModel(){
-        let model = this.currentValue;
-        this.querySelectorAll('input').forEach(inputElement => {
-            if(inputElement.hasAttribute('checked')){
+        let model = undefined;
+        this.querySelectorAll('input[type="radio"]').forEach(inputElement => {
+            if(inputElement.checked){
                 model = inputElement.value;
             }
         })
@@ -290,18 +440,18 @@ class InputFieldDate extends InputField{
     }
 
     applyTemplate(){
-        this.innerHTML = `
+        this.rootElement.insertAdjacentHTML('beforeend', `
             <div class="form-element">
                 ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
                 <input 
                     id="${this.options.name}" 
-                    value="${this.options.standard}" 
+                    ${(this.options.initialModel != undefined) ? `value="${this.options.initialModel}"` : ''} 
                     ${this.options.deaktiviert ? 'disabled' : ''}
                     type="date" 
                 >
                 <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
             </div>
-        `;
+        `);
     }
 
     getModel(){
@@ -311,12 +461,6 @@ class InputFieldDate extends InputField{
 }
 
 customElements.define('input-field-date', InputFieldDate);
-
-function checkboxChangeListener(event, changedValue){
-    
-    console.log(event)
-    console.log(changedValue)
-}
 
 class InputFieldBoolean extends InputField{
     constructor(){
@@ -328,23 +472,22 @@ class InputFieldBoolean extends InputField{
     }
 
     applyTemplate(){
-        this.innerHTML = `
+        this.rootElement.insertAdjacentHTML('beforeend', `
             <div class="form-element">
                 ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
                 <input  
                     id="${this.options.name}" 
-                    ${this.options.standard ? 'checked' : ''}
+                    ${this.options.initialModel ? 'checked' : 'unchecked'}
                     ${this.options.deaktiviert ? 'disabled' : ''}
-                    type="checkbox" 
-                    onchange="checkboxChangeListener(event, '${this.options.name}')"
+                    type="checkbox"
                 >
                 <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
             </div>
-        `;
+        `);
     }
 
     getModel(){
-        let model = this.querySelector(`#${this.options.name}`).hasAttribute('checked');
+        let model = this.querySelector(`#${this.options.name}`).checked;
         return model;
     }
 }
@@ -354,12 +497,7 @@ customElements.define('input-field-boolean', InputFieldBoolean);
 function addListItem(event){
     let self = event.srcElement.parentElement.parentElement; 
     let lfdNr = event.srcElement.previousElementSibling.childNodes.length ? 0 : event.srcElement.previousElementSibling.childNodes.length;
-    let newEle = `
-        ${self.options.vorlage.map(formElement => {
-            return `<${formElement.feldtyp} ${Object.keys(formElement).map(key => `${key}='${self.saveValue(key, formElement[key], lfdNr)}'`).join(' ')}></${formElement.feldtyp}>`
-        }).join('\n')}
-        <button class="form-list-removebtn" onclick="(function(event){event.srcElement.previousElementSibling.remove(); event.srcElement.remove()})(event)" type="button">${self.options.entfernenLabel}</button>
-    `;
+    let newEle = self.getElementTemplate('', lfdNr);
 
     event.srcElement.previousElementSibling.insertAdjacentHTML('beforeend', newEle);
 }
@@ -369,6 +507,7 @@ class InputFieldList extends InputField {
         super();
         this.defaultOptions = {
             ...this.defaultOptions,
+            standard: [],
             vorlage: [],
             hinzufügenLabel: '+',
             entfernenLabel: '-'
@@ -376,22 +515,35 @@ class InputFieldList extends InputField {
     }
 
     applyTemplate(){
-        this.innerHTML = `
+        this.rootElement.insertAdjacentHTML('beforeend', `
             <div class="form-element">
                 ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
                 <div class="form-list" id="${this.options.name}" ${this.options.deaktiviert ? 'disabled' : ''}>
-
+                    ${(this.options.initialModel.length > 0) ? this.options.initialModel.map((listItem, lfdNr) => {
+                        return this.getElementTemplate(listItem, lfdNr)
+                    }).join('\n') : ''}
                 </div>
                 <button id="${this.options.name}-button" type="button" class="form-list-addbtn" onclick="addListItem(event)">${this.options.hinzufügenLabel}</button>
                 <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
             </div>
+        `);
+    }
 
+    getElementTemplate(listItem, lfdNr){
+        return `
+            ${this.options.vorlage.map(formElement => `
+                <${formElement.feldtyp} 
+                    ${Object.keys(formElement).map(key => `${key}='${this.saveValue(key, formElement[key], lfdNr)}'`).join(' ')}
+                    initialModel='${this.saveValue('initialModel', listItem)}'
+                ></${formElement.feldtyp}>
+            `).join('\n')}
+            <button class="form-list-removebtn" tabIndex="-1" onclick="(function(event){event.srcElement.previousElementSibling.remove(); event.srcElement.remove()})(event)" type="button">${this.options.entfernenLabel}</button>
         `;
     }
 
     saveValue(key, value, index){
         if(key === 'name'){
-            console.log(JSON.stringify(`${value}-${index}`))
+            // console.log(JSON.stringify(`${value}-${index}`))
             return JSON.stringify(`${value}-${index}`);
         } else {
             return JSON.stringify(value);
@@ -407,6 +559,16 @@ class InputFieldList extends InputField {
             return undefined
         else
             return model;
+    }
+
+    checkValidity(){
+        let valid = true;
+
+        this.querySelectorAll(`#${this.options.name} > :not(button)`).forEach(listEle => {
+            valid = valid && listEle.checkValidity();
+        })
+
+        return valid;
     }
 }
 
@@ -426,6 +588,8 @@ function genericQuery(input, query, db){
         .then(data => data.recordset);
 }
 
+
+
 class InputFieldNachschlagen extends InputFieldText {
     constructor(){
         super();
@@ -436,31 +600,36 @@ class InputFieldNachschlagen extends InputFieldText {
             maxZeilen: 1
         }   
     }
+
+    databaseLookup(input, event){
+        if(event.target.validity.valid && event.target.value !== ''){
+            genericQuery(input.value, this.options.query)
+                .then(data => data.map(entry => Object.keys(entry).map(key => `${key}: ${entry[key]}`).join('<br>')))
+                .then(data => {
+                    if(data[0]) {
+                        this.querySelector('.input-display').innerHTML = data[0];
+                        this.valid = true;
+                        this.setValidityStatus(true, '');
+                    } else {
+                        this.valid = false;
+                        this.setValidityStatus(false, 'Datenbank hat kein passendes Ergebniss zurück geliefert.', true)
+                    }
+                })
+        } else {
+            this.querySelector('.input-display').innerText = ''
+            this.valid = false;
+        }
+    }
     
     connectedCallback(){
         super.connectedCallback();
-        console.log('test')
         let input = this.querySelector('input');
 
-        input.addEventListener('input', (event) => {
-            if(event.target.validity.valid && event.target.value !== ''){
-                genericQuery(input.value, this.options.query)
-                    .then(data => data.map(entry => Object.keys(entry).map(key => `${key}: ${entry[key]}`).join('<br>')))
-                    .then(data => {
-                        if(data[0]) {
-                            this.querySelector('.test-display').innerHTML = data[0];
-                            this.valid = true;
-                        } else {
-                            this.valid = false;
-                        }
-                    })
-            } else {
-                this.querySelector('.test-display').innerText = ''
-                this.valid = false;
-            }
-        })
+        input.addEventListener('input', this.databaseLookup.bind(this, input))
+        console.log(this.options.initialModel)
+        if(this.options.initialModel) this.databaseLookup(input, {target: input});
         input.insertAdjacentHTML('afterend', `
-            <br><span class="test-display"></span>
+            <br><span class="input-display"></span>
         `)
     }
 }
