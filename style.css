@@ -20,7 +20,12 @@ div.form-group {
 }
 
 span.pflichtfeld {
-  float: right;
+  /* float: right; */
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
+  margin: 5px;
+  vertical-align: bottom;
 }
 
 .form-list > *[name] {
@@ -135,12 +140,12 @@ form-creator button {
   box-shadow: inset 2px 2px 10px 2px #ff0b0bd8;
 }
 
-.invalid {
+.invalid, .warning {
   position: relative;
   text-decoration: none;
 }
 
-.invalid:after {
+.warning:after, .invalid:after {
   content: attr(data-tooltip);
   position: absolute;
   bottom: 130%;
@@ -158,6 +163,11 @@ form-creator button {
   transition : all 0.4s ease;
 }
 
+.warning:not(.invalid):after {
+  right: -700px;
+  left: unset;
+}
+
 .invalid:before {
   content: "";
   position: absolute;
@@ -173,27 +183,27 @@ form-creator button {
   left: 30%;
   bottom: 90%;
 }
-.invalid:hover:after {
+.invalid:hover:after, .warning:hover:after {
   bottom: 100%;
 }
-.invalid:hover:before {
+.invalid:hover:before, .warning:hover:before {
   bottom: 70%;
 }
-.invalid:hover:after, .invalid:before {
+.invalid:hover:after, .invalid:before, .warning:hover:after, .warning:before {
   opacity: 1;
 }
 
 
-.invalid.warning  > div.form-element {
+.warning  > div.form-element {
   border: 1px solid #ffda0bd8;
   box-shadow: inset 2px 2px 10px 2px #ffda0bd8;
 }
 
-.invalid.warning:after {
+.warning:after {
   background: #ffda0b;
   color: black;
 }
 
-.invalid.warning:before {
+.warning:before {
   border-top: 20px solid #ffda0b2d;
 }

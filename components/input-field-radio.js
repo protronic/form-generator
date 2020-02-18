@@ -1,49 +1,46 @@
-function radioButtonChange(event, value){
+const { InputField } = require('./input-field.js');
 
-    let self = event.srcElement.parentElement.parentElement;
-    console.log(self)
-    console.log(value)
-
-    self.currentValue = value;
-}
-
-class InputFieldRadio extends InputField {
+module.exports.InputFieldRadio = class extends InputField {
     constructor(){
         super();
         this.defaultOptions = {
             ...this.defaultOptions,
+            abwahlButtonLabel: 'Auswahl aufheben',
             items: []
         }
-        this.currentValue = ''
+    }
+    
+    radioButtonClearHandler(event){
+        let self = event.target.parentElement.parentElement;
+        self.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false)
     }
 
     applyTemplate(){
-        this.innerHTML = `
-        <div class="form-element">
-            <label for="${this.options.name}">${this.options.label}</label>
-            <form name="${this.options.name}-radio" id="${this.options.name}" class="form-radio-group"><br>
-                ${this.options.items.map(item => {
-                    return `
-                            <input type="radio" id="${this.options.name}-${item}" name="${this.options.name}" value="${item}" ${this.options.standard === item ? 'checked' : ''} onchange="radioButtonChange(event, '${item}')">
-                            <label for="${this.options.name}-${item}">${item}</label>
-                        `;
-                }).join('<br>')}
-                <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
-            </form>
-        </div>
-        `;
+        this.rootElement.insertAdjacentHTML('beforeend', `
+            <div class="form-element">
+                <button type="button" class="clear-radio-btn" tabIndex="-1" >${this.options.abwahlButtonLabel}</button>
+                ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
+                <form name="${this.options.name}-radio" id="${this.options.name}" class="form-radio-group"><br>
+                    ${this.options.items.map(item => {
+                        return `
+                                <input type="radio" id="${this.options.name}-${item}" name="${this.options.name}" value="${item}" ${this.options.initialModel === item ? 'checked' : ''}>
+                                <label for="${this.options.name}-${item}">${item}</label>
+                            `;
+                    }).join('<br>')}
+                    <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
+                </form>
+            </div>
+        `);
+        this.querySelector('button.clear-radio-btn').addEventListener('click', this.radioButtonClearHandler);
     }
 
     getModel(){
-        let model = this.currentValue;
-        this.querySelectorAll('input').forEach(inputElement => {
-            if(inputElement.hasAttribute('checked')){
+        let model = undefined;
+        this.querySelectorAll('input[type="radio"]').forEach(inputElement => {
+            if(inputElement.checked){
                 model = inputElement.value;
             }
         })
-        console.log(this.options.name, model);
         return model;
     }
 }
-
-customElements.define('input-field-radio', InputFieldRadio);

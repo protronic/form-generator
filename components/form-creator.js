@@ -1,3 +1,40 @@
+const { InputFieldText, InputFieldEnumListText, EnumListableMixin, InputFieldEmail, InputFieldTel, InputFieldDate } = require('./input-field-generic.js');
+const { InputFieldTextarea } = require('./input-field-textarea.js');
+const { InputFieldBoolean } = require('./input-field-boolean.js');
+const { InputFieldDropdown } = require('./input-field-dropdown.js');
+const { InputFieldRadio } = require('./input-field-radio.js');
+const { InputFieldLookup } = require('./input-field-lookup.js');
+const { InputFieldAbhaengig, DependenceMixin } = require('./dependent-fields.js');
+const { InputFieldList } = require('./input-field-list.js');
+const { InputFieldObject } = require('./input-field-object.js');
+
+const InputFieldDependentEnumTextarea = class extends EnumListableMixin(DependenceMixin(InputFieldTextarea)){
+    constructor(){
+        super();
+    }
+}
+
+const tagClassMap = {
+  'input-field-text': InputFieldText,
+  'input-field-enumlisttext': InputFieldEnumListText,
+  'input-field-dependentenumtextarea': InputFieldDependentEnumTextarea,
+  'input-field-email': InputFieldEmail,
+  'input-field-tel': InputFieldTel,
+  'input-field-date': InputFieldDate,
+  'input-field-textarea': InputFieldTextarea,
+  'input-field-boolean': InputFieldBoolean,
+  'input-field-dropdown': InputFieldDropdown,
+  'input-field-radio': InputFieldRadio,
+  'input-field-lookup': InputFieldLookup,
+  'input-field-abhaengig': InputFieldAbhaengig,
+  'input-field-list': InputFieldList,
+  'input-field-object': InputFieldObject, 
+}
+
+Object.keys(tagClassMap).forEach(keyTag => {
+  customElements.define(keyTag, tagClassMap[keyTag]);
+});
+
 function prepareModel(model, formular){
     let user = '';
     let changedTime = (new Date()).getTime();
@@ -129,7 +166,7 @@ class FormCreator extends InputFieldObject{
 
         let lastSaves = parseInt(localStorage.getItem('last-x'));
 
-        if(lastSaves === null || lastSaves >= 10){
+        if(Number.isNaN(lastSaves) || lastSaves >= 10){
             localStorage.setItem('last-x', 0);
             localStorage.setItem('last-0', serializedModel);
             console.log('saved as:', 'last-0');

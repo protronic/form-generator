@@ -59,7 +59,7 @@
         {
             "name": "artikelnummer",
             "label": "Artikelnummer:",
-            "feldtyp": "input-field-nachschlagen",
+            "feldtyp": "input-field-lookup",
             "platzhalter": "zb: 1006000061", 
             "muster": "[0-9]{10}|[0-9]{7}",
             "query": "SELECT Artikelnummer, Matchcode FROM [prot-sage11].OLReweAbf.dbo.KHKArtikel WHERE Artikelnummer LIKE '?' OR Dimensionstext LIKE '?'"

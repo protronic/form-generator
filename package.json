@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "browserify components/form-creator.js --standalone FormCreator > bundle.js",
     "serve": "http-server -c-1 ."
   },
   "repository": {
@@ -18,6 +19,7 @@
   },
   "homepage": "https://github.com/RobertSeidler/form-alpine#readme",
   "devDependencies": {
+    "browserify": "^16.5.0",
     "http-server": "^0.12.1"
   }
 }

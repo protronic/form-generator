@@ -3,63 +3,63 @@
     "felder": [
         {
             "name": "kundennummer",
-            "feldtyp": "input-field-text",
+            "feldtyp": "text",
             "label": "Kundennummer:",
             "platzhalter": "zb: 10000", 
             "muster": "[0-9]{5}"
         },
         {
             "name": "kontakt",
-            "feldtyp": "input-field-object",
+            "feldtyp": "object",
             "label": "Ansprechpartner:",
             "subform": [
                 {
                     "name": "anrede",
                     "label": "Anrede:",
-                    "feldtyp": "input-field-radio",
+                    "feldtyp": "radio",
                     "items": ["Herr", "Frau"]
                 },
                 {
                     "name": "name",
                     "label": "Vollständiger Name:",
-                    "feldtyp": "input-field-text"
+                    "feldtyp": "text"
                 },
                 {
                     "name": "telefon",
                     "label": "Telefon:",
-                    "feldtyp": "input-field-tel"
+                    "feldtyp": "tel"
                 },
                 {
                     "name": "fax",
                     "label": "Fax:",
-                    "feldtyp": "input-field-tel"
+                    "feldtyp": "tel"
                 },
                 {
                     "name": "email",
                     "label": "E-Mail:",
-                    "feldtyp": "input-field-email"
+                    "feldtyp": "email"
                 },
                 {
                     "name": "anschrift",
                     "label": "Anschrift:",
-                    "feldtyp": "input-field-text"
+                    "feldtyp": "text"
                 },
                 {
                     "name": "sonstiges",
                     "label": "Sonstiges:",
-                    "feldtyp": "input-field-textarea"
+                    "feldtyp": "textarea"
                 }
             ]
         },
         {
             "name": "eingangsdatum", 
             "label": "Eingangsdatum:", 
-            "feldtyp": "input-field-date"
+            "feldtyp": "date"
         },
         {
             "name": "artikelnummer",
             "label": "Artikelnummer:",
-            "feldtyp": "input-field-nachschlagen",
+            "feldtyp": "lookup",
             "platzhalter": "zb: 1006000061", 
             "muster": "[0-9]{10}|[0-9]{7}",
             "query": "SELECT Artikelnummer, Matchcode FROM [prot-sage11].OLReweAbf.dbo.KHKArtikel WHERE Artikelnummer LIKE '?' OR Dimensionstext LIKE '?'"
@@ -67,75 +67,75 @@
         {
             "name": "seriennummer",
             "label": "Seriennummer:",
-            "feldtyp": "input-field-text"
+            "feldtyp": "text"
         },
         {
             "name": "platinennnummern",
             "label": "Platinennummern:",
-            "feldtyp": "input-field-list",
+            "feldtyp": "list",
             "vorlage": [
                 {
                     "name": "platinennummer",
-                    "feldtyp": "input-field-text"
+                    "feldtyp": "text"
                 }
             ]
         },
         {
             "name": "qsnummer",
             "label": "QS-Nummer:",
-            "feldtyp": "input-field-text"
+            "feldtyp": "text"
         },
         {
             "name": "auftragsnummer",
             "label": "Auftragsnummer:",
-            "feldtyp": "input-field-text"
+            "feldtyp": "text"
         },
         {
             "name": "fehlerbeschreibung-kunde",
             "label": "Fehlerbeschreibung des Kunden:",
-            "feldtyp": "input-field-textarea",
+            "feldtyp": "textarea",
             "platzhalter": ""
         },
         {
             "name": "keinfehler",
             "label": "Kein Fehler?",
-            "feldtyp": "input-field-boolean"
+            "feldtyp": "boolean"
         },
         {
             "name": "produktionsfehlerliste",
-            "feldtyp": "input-field-list",
+            "feldtyp": "list",
             "label": "Produktionsfehler",
             "vorlage": [
                 {
                     "name": "produktionsfehler",
-                    "feldtyp": "input-field-object",
+                    "feldtyp": "object",
                     "label": " ",
                     "subform": [
                         {
-                            "name": "designator", 
+                            "name": "pf-designator", 
                             "label": "Designator:", 
-                            "feldtyp": "input-field-text",
+                            "feldtyp": "text",
                             "platzhalter": "TODO: add async liste laden"
                         },
                         {
-                            "name": "fehlerkategorie",
+                            "name": "pf-fehlerkategorie",
                             "label": "Fehlerkategorie",
-                            "feldtyp": "input-field-dropdown",
+                            "feldtyp": "dropdown",
                             "standard": "auf dem Kopf",
                             "items": ["fehlt", "verdreht", "auf dem Kopf", "Ltfehler", "Bestckfehler"]
                         },
                         {
-                            "name": "behebung",
+                            "name": "pf-behebung",
                             "label": "Behebung",
-                            "feldtyp": "input-field-dropdown",
+                            "feldtyp": "dropdown",
                             "items": ["Nacharbeiten", "Ersetzen"]
                         },
                         {
-                            "name": "ersetzte-artikelnummern",
+                            "name": "pf-ersetzte-artikelnummern",
                             "label": "Artikelnummern ersetzt:",
-                            "feldtyp": "input-field-abhaengig",
+                            "feldtyp": "dependentenumtextarea",
                             "pflichtfeld": true,
-                            "abhaengigFeld": "behebung",
+                            "abhaengigFeld": "pf-behebung",
                             "wertSichtbar": "Ersetzen"
                         }
                     ]
@@ -144,43 +144,43 @@
         },
         {
             "name": "mechanischefehlerliste",
-            "feldtyp": "input-field-list",
+            "feldtyp": "list",
             "label": "Mechanische Fehler",
             "vorlage": [
                 {
                     "name": "mechanischefehler",
-                    "feldtyp": "input-field-object",
+                    "feldtyp": "object",
                     "label": " ",
                     "subform": [
                         {
-                            "name": "komponente", 
+                            "name": "mf-komponente", 
                             "label": "Komponente:", 
-                            "feldtyp": "input-field-text"
+                            "feldtyp": "text"
                         },
                         {
-                            "name": "fehlerkategorie",
+                            "name": "mf-fehlerkategorie",
                             "label": "Fehlerkategorie",
-                            "feldtyp": "input-field-dropdown",
+                            "feldtyp": "dropdown",
                             "items": ["verschmutzt", "abgerissen", "gebrochen", "Wasserschaden", "zerschnitten/zerkratzt", "unvollständig", "verbogen"]
                         },
                         {
-                            "name": "ursache",
+                            "name": "mf-ursache",
                             "label": "Mögliche Ursache",
-                            "feldtyp": "input-field-dropdown",
+                            "feldtyp": "dropdown",
                             "items": ["Transportschaden", "Montageschaden", "Altersbedingt", "sonstige"]
                         },
                         {
-                            "name": "behebung",
+                            "name": "mf-behebung",
                             "label": "Behebung",
-                            "feldtyp": "input-field-dropdown",
+                            "feldtyp": "dropdown",
                             "items": ["Nacharbeiten", "Ersetzen"]
                         },
                         {
-                            "name": "ersetzte-artikelnummern",
+                            "name": "mf-ersetzte-artikelnummern",
                             "label": "Artikelnummern ersetzt:",
-                            "feldtyp": "input-field-abhaengig",
+                            "feldtyp": "dependentenumtextarea",
                             "pflichtfeld": true,
-                            "abhaengigFeld": "behebung",
+                            "abhaengigFeld": "mf-behebung",
                             "wertSichtbar": "Ersetzen"
                         }
                     ]
@@ -189,43 +189,43 @@
         },
         {
             "name": "elektronischefehlerliste",
-            "feldtyp": "input-field-list",
+            "feldtyp": "list",
             "label": "Elektronische Fehler",
             "vorlage": [
                 {
                     "name": "elektronischefehler",
-                    "feldtyp": "input-field-object",
+                    "feldtyp": "object",
                     "label": " ",
                     "subform": [
                         {
-                            "name": "komponente", 
+                            "name": "ef-komponente", 
                             "label": "Komponente:", 
-                            "feldtyp": "input-field-text"
+                            "feldtyp": "text"
                         },
                         {
-                            "name": "fehlerkategorie",
+                            "name": "ef-fehlerkategorie",
                             "label": "Fehlerkategorie",
-                            "feldtyp": "input-field-dropdown",
+                            "feldtyp": "dropdown",
                             "items": ["verbrannt", "defekt"]
                         },
                         {
-                            "name": "ursache",
+                            "name": "ef-ursache",
                             "label": "Mögliche Ursache",
-                            "feldtyp": "input-field-dropdown",
+                            "feldtyp": "dropdown",
                             "items": ["Überspannung", "Kurzschluss", "Verpohlung", "Bauteilfehler", "sonstige"]
                         },
                         {
-                            "name": "behebung",
+                            "name": "ef-behebung",
                             "label": "Behebung",
-                            "feldtyp": "input-field-dropdown",
+                            "feldtyp": "dropdown",
                             "items": ["Nacharbeiten", "Ersetzen"]
                         },
                         {
-                            "name": "ersetzte-artikelnummern",
+                            "name": "ef-ersetzte-artikelnummern2",
                             "label": "Artikelnummern ersetzt:",
-                            "feldtyp": "input-field-abhaengig",
+                            "feldtyp": "dependentenumtextarea",
                             "pflichtfeld": true,
-                            "abhaengigFeld": "behebung",
+                            "abhaengigFeld": "ef-behebung",
                             "wertSichtbar": "Ersetzen"
                         }
                     ]
@@ -235,7 +235,7 @@
         {
             "name": "status",
             "label": "Aktueller Status",
-            "feldtyp": "input-field-radio",
+            "feldtyp": "radio",
             "standard": "in Klärung",
             "pflichtfeld": true,
             "items": ["verschrottet", "in Klärung", "geprüft IO", "Instand gesetzt IO"]
@@ -243,36 +243,36 @@
         {
             "name": "garantie",
             "label": "Garantie:",
-            "feldtyp": "input-field-radio",
+            "feldtyp": "radio",
             "pflichtfeld": true,
             "items": ["ja", "nein", "Kulanz"]
         },
         {
             "name": "gutschrift",
             "label": "Gutschrift erteilt?",
-            "feldtyp": "input-field-boolean",
+            "feldtyp": "boolean",
             "standard": false
         },
         {
             "name": "qsabgeschlossen",
             "label": "QS abgeschlossen?",
-            "feldtyp": "input-field-boolean",
+            "feldtyp": "boolean",
             "deaktiviert": true
         },
         {
             "name": "ausgangslieferschein",
             "label": "Ausgangslieferschein:",
-            "feldtyp": "input-field-text"
+            "feldtyp": "text"
         },
         {
             "name": "ausgangsrechnung",
             "label": "Ausgangsrechnung:",
-            "feldtyp": "input-field-text"
+            "feldtyp": "text"
         },
         {
             "name": "memo",
             "label": "Memo",
-            "feldtyp": "input-field-textarea"
+            "feldtyp": "textarea"
         }
     ]
 }

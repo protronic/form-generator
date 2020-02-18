@@ -1,32 +1,36 @@
 const { InputField } = require('./input-field.js');
 
-module.exports.InputFieldDropdown = class extends InputField {
+module.exports.InputFieldTextarea = class extends InputField{
   constructor(){
       super();
       this.defaultOptions = {
           ...this.defaultOptions,
-          items: []
-      }
+          platzhalter: '',
+          cols: 50,
+          rows: 5,
+          wrap: 'soft'
+      };
   }
 
   applyTemplate(){
       this.rootElement.insertAdjacentHTML('beforeend', `
           <div class="form-element">
               ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
-              <select 
+              <textarea 
                   id="${this.options.name}" 
+                  placeholder="${this.options.platzhalter}"  
                   ${this.options.deaktiviert ? 'disabled' : ''}
-              >
-                  
-                  ${this.options.items.map(item => `<option value="${item}" ${this.options.initialModel === item ? 'selected' : ''}>${item}</option>`).join('/n')}
-              </select>
+                  cols="${this.options.cols}"
+                  rows="${this.options.rows}"
+                  wrap="${this.options.wrap}"
+              >${(this.options.initialModel) ? this.options.initialModel : ''}</textarea>
               <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
           </div>
       `);
   }
 
   getModel(){
-      let model = this.querySelector('select').value;
+      let model = this.querySelector(`#${this.options.name}`).value;
       return model;
   }
 }
