@@ -1,38 +1,10 @@
-const { InputFieldText, InputFieldEnumListText, EnumListableMixin, InputFieldEmail, InputFieldTel, InputFieldDate } = require('./input-field-generic.js');
-const { InputFieldTextarea } = require('./input-field-textarea.js');
-const { InputFieldBoolean } = require('./input-field-boolean.js');
-const { InputFieldDropdown } = require('./input-field-dropdown.js');
-const { InputFieldRadio } = require('./input-field-radio.js');
-const { InputFieldLookup } = require('./input-field-lookup.js');
-const { InputFieldAbhaengig, DependenceMixin } = require('./dependent-fields.js');
-const { InputFieldList } = require('./input-field-list.js');
 const { InputFieldObject } = require('./input-field-object.js');
+const { fieldTypeMap } = require('./formular-components.js');
 
-const InputFieldDependentEnumTextarea = class extends EnumListableMixin(DependenceMixin(InputFieldTextarea)){
-    constructor(){
-        super();
-    }
-}
+require('../style.css');
 
-const tagClassMap = {
-  'input-field-text': InputFieldText,
-  'input-field-enumlisttext': InputFieldEnumListText,
-  'input-field-dependentenumtextarea': InputFieldDependentEnumTextarea,
-  'input-field-email': InputFieldEmail,
-  'input-field-tel': InputFieldTel,
-  'input-field-date': InputFieldDate,
-  'input-field-textarea': InputFieldTextarea,
-  'input-field-boolean': InputFieldBoolean,
-  'input-field-dropdown': InputFieldDropdown,
-  'input-field-radio': InputFieldRadio,
-  'input-field-lookup': InputFieldLookup,
-  'input-field-abhaengig': InputFieldAbhaengig,
-  'input-field-list': InputFieldList,
-  'input-field-object': InputFieldObject, 
-}
-
-Object.keys(tagClassMap).forEach(keyTag => {
-  customElements.define(keyTag, tagClassMap[keyTag]);
+Object.keys(fieldTypeMap).forEach(keyTag => {
+  customElements.define(fieldTypeMap[keyTag].tag, fieldTypeMap[keyTag].conName);
 });
 
 function prepareModel(model, formular){
@@ -53,9 +25,8 @@ function prepareModel(model, formular){
     return JSON.stringify(JSON.stringify(model)).slice(1, -1);
 }
 
-function uploadModel(model, formular){
+function uploadNewModel(model, formular){
     let serialModel = prepareModel(model, formular);
-    console.log(`{"q": "INSERT INTO model (log) VALUES ('${serialModel}');SELECT TOP 1 _id FROM model WHERE log = '${serialModel}' ORDER BY _id DESC;"}`)
     return fetch('http://prot-subuntu:8081/formly', {
         method: 'POST',
         body: `{"q": "INSERT INTO model (log) VALUES ('${serialModel}');SELECT TOP 1 _id FROM model WHERE log = '${serialModel}' ORDER BY _id DESC;"}`,
@@ -67,9 +38,33 @@ function uploadModel(model, formular){
         .then(dataRows => dataRows.recordset[0]._id)
 }
 
+function uploadExistingModel(model, formular){
+    let serialModel = prepareModel(model, formular);
+    return fetch('http://prot-subuntu:8081/formly', {
+        method: 'POST',
+        body: `{"q": "UPDATE model SET log = '${serialModel}' WHERE _id = ${model['#modelID']}"}`,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }).then(response => response.json()).then(response => console.log(response))
+}
+
+function loadModelFromDB(modelId){
+    return fetch('http://prot-subuntu:8081/formly', {
+        method: 'POST',
+        body: `{"q": "SELECT log FROM model WHERE _id = ${modelId}"}`,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => response.json())
+        .then(dataRows => dataRows.recordset[0].log)
+}
+
 class FormCreator extends InputFieldObject{
     constructor(){
         super();
+        this.model = {};
     }
 
     connectedCallback(){
@@ -79,26 +74,45 @@ class FormCreator extends InputFieldObject{
         this.rootElement.classList.add('form-root');
         this.append(this.rootElement);
 
-
         fetch(schemaLink)
             .then(response => response.json())
             .then(schema => {
+                console.log(this.schema)
                 this.schema = schema;
-                this.options.name = this.options.label = schema.formular;
+                this.options.name = schema.formular;
+                this.options.label = `${schema.formular}`;
                 this.options.subform = schema.felder;
 
                 try{
-                    this.options.initialModel = this.loadFromLocal();
+                    // this.options.initialModel = this.loadFromLocal();
+                    // this.options.initialModel = loadModelFromDB()
+                    let url = new URL(location.href);
+                    let modelId = url.searchParams.get('mid');
+
+                    if(modelId){
+                        loadModelFromDB(modelId).then(model => {
+                            this.model = this.convertValue('initialModel', model);
+                            console.log(this.convertValue('initialModel', model))
+                            this.model['#modelID'] = modelId;
+                            this.options.name = schema.formular;
+                            this.options.label = `${this.options.label} ${modelId}`;
+                            this.options.initialModel = this.convertValue('initialModel', model);
+                            this.rootElement.options = this.options;
+                            this.applyTemplate();
+                        })    
+                    } else {
+                        this.options.initialModel = this.loadFromLocal();
+                        this.rootElement.options = this.options;
+                        this.applyTemplate()
+                    }
                 } catch(err) {
                     console.log(this.options.initialModel);
                     console.error(err);
                 }
 
-                this.rootElement.options = this.options;
-                this.applyTemplate()
-
-                this.testModelCreation();
+                // this.testModelCreation();
                 this.uploadModelButton();
+                this.newFormularButton();
                 this.renderGeneralInfo(schema);
             })
     }
@@ -116,17 +130,29 @@ class FormCreator extends InputFieldObject{
         btn.setAttribute('type', 'button');
         btn.addEventListener('click', (event) => {
             if(this.checkValidity()){
-                let model = this.getModel();
-                console.log(model);
-                this.saveFormLocal(undefined, model);
-
+                this.model = {...this.model, ...this.getModel()};
+                console.log(this.model);
+                this.saveFormLocal(this.model['#modelID'], this.model);
             } else {
                 console.error('Einige Formular Elemente sind nicht korrekt ausgefüllt.');
             }
-            
         });
         btn.innerText = 'Erzeuge Model';
         this.append(btn)
+    }
+
+    newFormularButton(){
+        let uri = new URL(location.href);
+        uri.searchParams.set('lsid', 'null');
+        uri.searchParams.delete('mid');
+        
+        let btn = document.createElement('button');
+        btn.setAttribute('type', 'button');
+        btn.addEventListener('click', (event) => {
+            location.href = uri.href;
+        });
+        btn.innerText = 'Neu Anlegen';
+        this.append(btn);
     }
 
     uploadModelButton(){
@@ -134,13 +160,26 @@ class FormCreator extends InputFieldObject{
         btn.setAttribute('type', 'button');
         btn.addEventListener('click', (event) => {
             if(this.checkValidity()){
-                let model = this.getModel();
-                this.saveFormLocal(undefined, model);
-                uploadModel(model, this.schema.formular)
-                    .then(modelId => alert(`${modelId}`));
+                this.model = {...this.model, ...this.getModel()};
+                this.saveFormLocal(this.model['#modelID'], this.model);
+                if(this.model['#modelID']){
+                    console.log(this.model)
+                    uploadExistingModel(this.model, this.schema.formular)
+                        .then(() => alert(`Änderungen an ${this.model['#modelID']} wurden gespeichert.`))
+                } else {
+                    uploadNewModel(this.model, this.schema.formular)
+                        .then(modelId => 
+                            (this.model['#modelID'] = modelId,
+                            this.querySelector('label[for="Reparaturbericht"]').innerText = `${this.options.label} ${modelId}`, 
+                            alert(`Daten wurden erfolgreich in der Datenbank unter folgender ID abgelegt.\n${modelId}`))
+                        );
+                }
+                
+            } else {
+                console.log('invalid')
             }
         });
-        btn.innerText = 'Upload Model';
+        btn.innerText = 'Speichern';
         this.append(btn);
     }
 

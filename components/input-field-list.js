@@ -7,7 +7,7 @@ module.exports.InputFieldList = class extends InputField {
           ...this.defaultOptions,
           standard: [],
           vorlage: [],
-          hinzufügenLabel: '+',
+          hinzufuegenLabel: '+',
           entfernenLabel: '-'
       };
   }
@@ -29,7 +29,7 @@ module.exports.InputFieldList = class extends InputField {
                       return this.getElementTemplate(listItem, lfdNr)
                   }).join('\n') : ''}
               </div>
-              <button id="${this.options.name}-button" type="button" class="form-list-addbtn">${this.options.hinzufügenLabel}</button>
+              <button id="${this.options.name}-button" type="button" class="form-list-addbtn">${this.options.hinzufuegenLabel}</button>
               <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
           </div>
       `);

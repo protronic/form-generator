@@ -244,7 +244,6 @@
             "name": "garantie",
             "label": "Garantie:",
             "feldtyp": "radio",
-            "pflichtfeld": true,
             "items": ["ja", "nein", "Kulanz"]
         },
         {

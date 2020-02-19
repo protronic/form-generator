@@ -1,3 +1,23 @@
+// const { fieldTypeMap } = require('./formular-components.js')
+
+const fieldTypeMap = {
+    'text': 'input-field-text',
+    'enumtext': 'input-field-enumlisttext',
+    'dependentenumtextarea': 'input-field-dependentenumtextarea',
+    'email': 'input-field-email',
+    'tel': 'input-field-tel',
+    'date': 'input-field-date',
+    'number': 'input-field-number',
+    'textarea': 'input-field-textarea',
+    'boolean': 'input-field-boolean',
+    'dropdown': 'input-field-dropdown',
+    'radio': 'input-field-radio',
+    'lookup': 'input-field-lookup',
+    'dependenttext': 'input-field-abhaengig',
+    'list': 'input-field-list',
+    'object': 'input-field-object', 
+};
+
 module.exports.InputField = class extends HTMLElement {
     schema = {};
     template = '';
@@ -94,22 +114,6 @@ module.exports.InputField = class extends HTMLElement {
     }
 
     mapFieldType(fieldType){
-        const fieldTypeMap = {
-            'text': 'input-field-text',
-            'enumtext': 'input-field-enumlisttext',
-            'dependentenumtextarea': 'input-field-dependentenumtextarea',
-            'email': 'input-field-email',
-            'tel': 'input-field-tel',
-            'date': 'input-field-date',
-            'textarea': 'input-field-textarea',
-            'boolean': 'input-field-boolean',
-            'dropdown': 'input-field-dropdown',
-            'radio': 'input-field-radio',
-            'lookup': 'input-field-lookup',
-            'dependenttext': 'input-field-abhaengig',
-            'list': 'input-field-list',
-            'object': 'input-field-object', 
-        };
         return fieldTypeMap[fieldType];
     }
 }

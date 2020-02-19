@@ -55,6 +55,41 @@ const InputFieldText = module.exports.InputFieldText = class extends GenericInpu
   }
 }
 
+module.exports.InputFieldEmail = class extends GenericInputField{
+  constructor(){
+      super('email');
+  }
+}
+
+module.exports.InputFieldTel = class extends GenericInputField{
+  constructor(){
+      super('tel');
+  }
+}
+
+module.exports.InputFieldDate = class extends GenericInputField{
+  constructor(){
+    super('date');
+    this.defaultOptions = {
+      ...this.defaultOptions,
+      standard: (new Date()).toLocaleDateString('en-CA'),
+      min: undefined,
+      max: undefined
+    };
+  }
+}
+
+module.exports.InputFieldNumber = class extends GenericInputField{
+  constructor(){
+    super('number');
+    this.defaultOptions = {
+      ...this.defaultOptions,
+      min: 0,
+      max: undefined,
+    }
+  }
+}
+
 const EnumListableMixin = module.exports.EnumListableMixin = superclass => class extends superclass {
   constructor(){
     super();
@@ -81,86 +116,3 @@ module.exports.InputFieldEnumListText = class extends EnumListableMixin(InputFie
     super();
   }
 }
-
-// module.exports.InputFieldEnumList = class extends GenericInputField{
-//   constructor(){
-//       super('text');
-//       this.defaultOptions = {
-//         ...this.defaultOptions,
-//         standard: [],
-//       }
-//   }
-
-//   applyTemplate(){
-//     this.options.initialModel = this.options.initialModel.join(',');
-//     super.applyTemplate();
-//   }
-
-//   getModel(){
-//     let model = this.querySelector(`#${this.options.name}`).value.split(',').map(listEle => listEle.trim());
-//     return model;
-//   }
-// }
-
-module.exports.InputFieldEmail = class extends GenericInputField{
-  constructor(){
-      super('email');
-  }
-}
-
-module.exports.InputFieldTel = class extends GenericInputField{
-  constructor(){
-      super('tel');
-  }
-}
-
-module.exports.InputFieldDate = class extends GenericInputField{
-  constructor(){
-    super('date');
-    this.defaultOptions = {
-      ...this.defaultOptions,
-      standard: (new Date()).toLocaleDateString('en-CA'),
-      min: undefined,
-      max: undefined
-    };
-  }
-}
-
-
-
-
-
-
-
-
-// class InputFieldDate extends InputField{
-//   constructor(){
-//       super();
-//       this.defaultOptions = {
-//           ...this.defaultOptions,
-//           standard: (new Date()).toLocaleDateString('en-CA'),
-//           min: undefined,
-//           max: undefined
-//       };
-//   }
-
-//   applyTemplate(){
-//       this.rootElement.insertAdjacentHTML('beforeend', `
-//           <div class="form-element">
-//               ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
-//               <input 
-//                   id="${this.options.name}" 
-//                   ${(this.options.initialModel != undefined) ? `value="${this.options.initialModel}"` : ''} 
-//                   ${this.options.deaktiviert ? 'disabled' : ''}
-//                   type="date" 
-//               >
-//               <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
-//           </div>
-//       `);
-//   }
-
-//   getModel(){
-//       let model = this.querySelector('input').value;  
-//       return model;
-//   }
-// }

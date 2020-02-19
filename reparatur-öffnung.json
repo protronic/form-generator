@@ -3,14 +3,14 @@
     "felder": [
         {
             "name": "kundennummer",
-            "feldtyp": "input-field-text",
+            "feldtyp": "text",
             "label": "Kundennummer:",
             "platzhalter": "zb: 10000", 
             "muster": "[0-9]{5}"
         },
         {
             "name": "kontakt",
-            "feldtyp": "input-field-object",
+            "feldtyp": "object",
             "label": "Ansprechpartner:",
             "subform": [
                 {
@@ -54,12 +54,12 @@
         {
             "name": "eingangsdatum", 
             "label": "Eingangsdatum:", 
-            "feldtyp": "input-field-date"
+            "feldtyp": "date"
         },
         {
             "name": "artikelnummer",
             "label": "Artikelnummer:",
-            "feldtyp": "input-field-lookup",
+            "feldtyp": "lookup",
             "platzhalter": "zb: 1006000061", 
             "muster": "[0-9]{10}|[0-9]{7}",
             "query": "SELECT Artikelnummer, Matchcode FROM [prot-sage11].OLReweAbf.dbo.KHKArtikel WHERE Artikelnummer LIKE '?' OR Dimensionstext LIKE '?'"
@@ -67,33 +67,33 @@
         {
             "name": "seriennummer",
             "label": "Seriennummer:",
-            "feldtyp": "input-field-text"
+            "feldtyp": "text"
         },
         {
             "name": "platinennnummern",
             "label": "Platinennummern:",
-            "feldtyp": "input-field-list",
+            "feldtyp": "list",
             "vorlage": [
                 {
                     "name": "platinennummer",
-                    "feldtyp": "input-field-text"
+                    "feldtyp": "text"
                 }
             ]
         },
         {
             "name": "qsnummer",
             "label": "QS-Nummer:",
-            "feldtyp": "input-field-text"
+            "feldtyp": "text"
         },
         {
             "name": "auftragsnummer",
             "label": "Auftragsnummer:",
-            "feldtyp": "input-field-text"
+            "feldtyp": "text"
         },
         {
             "name": "fehlerbeschreibung-kunde",
             "label": "Fehlerbeschreibung des Kunden:",
-            "feldtyp": "input-field-textarea",
+            "feldtyp": "textarea",
             "platzhalter": ""
         }
     ]
