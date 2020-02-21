@@ -1,4 +1,5 @@
 const { InputFieldText } = require("./input-field-generic.js");
+const { debounce } = require('lodash');
 
 const genericLookUpQuery = function(input, query, db) {
   let uri = "http://prot-subuntu:8081/master";
@@ -28,9 +29,9 @@ const LookupMixin = module.exports.LookupMixin = superclass => class extends sup
     this.setAsyncValidity(true, "", false);
   }
 
-  databaseLookup(inputValue, event) {
+  databaseLookup(inputValueFn, event) {
     if (event.target.validity ? event.target.validity.valid : event.target.valid && event.target.value !== "") {
-      genericLookUpQuery(inputValue, this.options.query)
+      genericLookUpQuery(inputValueFn.bind(this)(), this.options.query)
         .then(data =>
           data.map(entry =>
             Object.keys(entry)
@@ -78,10 +79,20 @@ const LookupMixin = module.exports.LookupMixin = superclass => class extends sup
       // } catch(err) {
       //   console.log('Probably no input element found');
       //   console.error(err);
+      try{
+        let debouncedDBLookup = debounce(this.databaseLookup, 1000, {trailing: true, leading: false, maxWait: 5000});
+        let input = this.querySelector('input');
+        input.addEventListener('input', debouncedDBLookup.bind(this, this.getModel));  
+      } catch(err){
+        console.log('probably no Input field. Fallback tp focusout.');
+        console.error(err);
 
-      this.addEventListener('focusout', this.databaseLookup.bind(this, this.getModel()));
+        this.addEventListener('focusout', this.databaseLookup.bind(this, this.getModel));
+      }
+      
+      
       if(this.options.initialModel)
-          this.databaseLookup(this.getModel(), { target: this});
+          this.databaseLookup(this.getModel, { target: this});
       this.querySelector('.form-element').insertAdjacentHTML('beforeend', `
           <br><span class="output-display"></span>
       `);
@@ -109,7 +120,15 @@ const LookupMixin = module.exports.LookupMixin = superclass => class extends sup
     }
   }
 
+  setValidityStatus(valid, message, warning) {
+    if(!valid) this.querySelector(".output-display").innerText = "";
+    return super.setValidityStatus(valid, message, warning)
+  }
+
   setAsyncValidity(valid, message, warning) {
+    if(!valid){
+      this.querySelector(".output-display").innerText = "";
+    }
     this.asyncValid = valid;
     this.asyncWarning = warning;
     this.asyncValMessage = message;

@@ -3,10 +3,11 @@
     "felder": [
         {
             "name": "kundennummer",
-            "feldtyp": "text",
+            "feldtyp": "lookup",
             "label": "Kundennummer:",
             "platzhalter": "zb: 10000", 
-            "muster": "[0-9]{5}"
+            "muster": "[0-9]{5}",
+            "query": "SELECT Name1 AS Firma FROM [prot-sage11].OLReweAbf.dbo.WIKI_Kundenauskunft WHERE kto LIKE '?'"
         },
         {
             "name": "kontakt",
@@ -27,11 +28,6 @@
                 {
                     "name": "telefon",
                     "label": "Telefon:",
-                    "feldtyp": "tel"
-                },
-                {
-                    "name": "fax",
-                    "label": "Fax:",
                     "feldtyp": "tel"
                 },
                 {
@@ -86,6 +82,12 @@
             "feldtyp": "text"
         },
         {
+            "name": "qsabgeschlossen",
+            "label": "QS abgeschlossen?",
+            "feldtyp": "boolean",
+            "deaktiviert": true
+        },
+        {
             "name": "auftragsnummer",
             "label": "Auftragsnummer:",
             "feldtyp": "text"
@@ -95,11 +97,6 @@
             "label": "Fehlerbeschreibung des Kunden:",
             "feldtyp": "textarea",
             "platzhalter": ""
-        },
-        {
-            "name": "keinfehler",
-            "label": "Kein Fehler?",
-            "feldtyp": "boolean"
         },
         {
             "name": "produktionsfehlerliste",
@@ -114,15 +111,14 @@
                         {
                             "name": "pf-designator", 
                             "label": "Designator:", 
-                            "feldtyp": "text",
-                            "platzhalter": "TODO: add async liste laden"
+                            "feldtyp": "text"
                         },
                         {
                             "name": "pf-fehlerkategorie",
                             "label": "Fehlerkategorie",
                             "feldtyp": "dropdown",
                             "standard": "auf dem Kopf",
-                            "items": ["fehlt", "verdreht", "auf dem Kopf", "Ltfehler", "Bestckfehler"]
+                            "items": ["fehlt", "verdreht", "auf dem Kopf", "Lötfehler", "Bestückfehler"]
                         },
                         {
                             "name": "pf-behebung",
@@ -238,7 +234,7 @@
             "feldtyp": "radio",
             "standard": "in Klärung",
             "pflichtfeld": true,
-            "items": ["verschrottet", "in Klärung", "geprüft IO", "Instand gesetzt IO"]
+            "items": ["verschrottet", "in Klärung", "kein Fehler, geprüft IO", "geprüft IO", "Instand gesetzt IO"]
         },
         {
             "name": "garantie",
@@ -251,12 +247,6 @@
             "label": "Gutschrift erteilt?",
             "feldtyp": "boolean",
             "standard": false
-        },
-        {
-            "name": "qsabgeschlossen",
-            "label": "QS abgeschlossen?",
-            "feldtyp": "boolean",
-            "deaktiviert": true
         },
         {
             "name": "ausgangslieferschein",

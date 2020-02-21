@@ -1,0 +1,73 @@
+
+input-field-list > .form-element {
+  /*! box-shadow: 2px 2px 20px 2px darkgray; */
+  border-radius: 10px;
+  border: 2px solid gray;
+}
+
+input-field-object > .form-element {
+  border: 1px solid darkgray;
+  border-radius: 10px;
+  box-shadow: 2px 2px 10px 2px darkgray;
+}
+label {
+  font-size: smaller;
+}
+form {
+  box-shadow: 2px 2px 10px 2px gray;
+  border-radius: 10px;
+}
+input[type="text"],input[type="tel"], input[type="email"], input[type="date"], textarea {
+  /*! height: 2em; */
+  width: 60%;
+  border: none;
+  border: 1px solid gray;
+  box-shadow: inset -2px -2px 5px 2px gray;
+  vertical-align: middle;
+}
+input[type="text"],input[type="tel"], input[type="email"], input[type="date"]{
+  height: 2em;
+  padding: 3px;
+}
+textarea {
+  padding: 5px;
+}
+button {
+  border: none;
+}
+input[type="dropdown"] {
+  border-radius: 10px;
+}
+select {
+  border-radius: 5px;
+  border: none;
+  box-shadow: inset -2px -2px 2px 1px gray;
+  height: 2em;
+  background-color: rgba(0, 0, 0, 0.03);
+}
+button {
+  background-color: cornflowerblue;
+  margin: 2px;
+  height: 2em;
+}
+button.form-object-collapse {
+  background-color: antiquewhite;
+  height: 1.5em;
+  margin: 1px;
+}
+button {
+  box-shadow: 1px 2px 5px 1px gray;
+}
+.output-display {
+  padding: 3px
+  background-color: rgba(0, 0, 0, 0.03);
+}
+[pflichtfeld="true"] > label, [pflichtfeld="true"] > .form-element > label:first-of-type {
+  font-style: italic;
+  text-decoration-line: underline;
+}
+input-field-radio > .form-element {
+  border: 2px solid gray;
+  display: block;
+  border-radius: 10px;
+}

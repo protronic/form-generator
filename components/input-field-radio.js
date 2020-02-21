@@ -19,7 +19,7 @@ module.exports.InputFieldRadio = class extends InputField {
         this.rootElement.insertAdjacentHTML('beforeend', `
             <div class="form-element">
                 <button type="button" class="clear-radio-btn" tabIndex="-1" >${this.options.abwahlButtonLabel}</button>
-                ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
+                ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label>` : ''}
                 <form name="${this.options.name}-radio" id="${this.options.name}" class="form-radio-group"><br>
                     ${this.options.items.map(item => {
                         return `
