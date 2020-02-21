@@ -15,11 +15,13 @@ module.exports.InputFieldObject = class extends InputField{
     let self = collapseBtn.parentElement.parentElement;
     let collapseEle = self.querySelector(`#${self.options.name}`)
     if(!self.collapsed){
-        collapseEle.classList.add("hidden");
+        // collapseEle.classList.add("hidden");
+        collapseEle.style.maxHeight = '0px';
         collapseBtn.innerText = 'ausklappen';
         self.collapsed = !self.collapsed;
     } else {
-        collapseEle.classList.remove("hidden");
+        // collapseEle.classList.remove("hidden");
+        collapseEle.style.maxHeight = '1000px';
         collapseBtn.innerText = 'einklappen';
         self.collapsed = !self.collapsed;
     }

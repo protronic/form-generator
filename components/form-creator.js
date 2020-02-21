@@ -1,7 +1,7 @@
 const { InputFieldObject } = require('./input-field-object.js');
 const { fieldTypeMap } = require('./formular-components.js');
 
-require('../style.css');
+// require('../altstyle.css');
 
 Object.keys(fieldTypeMap).forEach(keyTag => {
   customElements.define(fieldTypeMap[keyTag].tag, fieldTypeMap[keyTag].conName);

@@ -131,7 +131,7 @@ module.exports.test = class extends InputFieldText {
 const { InputFieldObject } = require('./input-field-object.js');
 const { fieldTypeMap } = require('./formular-components.js');
 
-require('../style.css');
+// require('../altstyle.css');
 
 Object.keys(fieldTypeMap).forEach(keyTag => {
   customElements.define(fieldTypeMap[keyTag].tag, fieldTypeMap[keyTag].conName);
@@ -353,7 +353,7 @@ class FormCreator extends InputFieldObject{
 }
 
 customElements.define('form-creator', FormCreator);
-},{"../style.css":15,"./formular-components.js":3,"./input-field-object.js":9}],3:[function(require,module,exports){
+},{"./formular-components.js":3,"./input-field-object.js":9}],3:[function(require,module,exports){
 const { InputFieldText, InputFieldEnumListText, EnumListableMixin, InputFieldEmail, InputFieldTel, InputFieldDate, InputFieldNumber } = require('./input-field-generic.js');
 const { InputFieldTextarea } = require('./input-field-textarea.js');
 const { InputFieldBoolean } = require('./input-field-boolean.js');
@@ -864,7 +864,7 @@ module.exports.InputFieldLookup = class extends LookupMixin(InputFieldText) {
     super();
   }
 }
-},{"./input-field-generic.js":6,"lodash":14}],9:[function(require,module,exports){
+},{"./input-field-generic.js":6,"lodash":13}],9:[function(require,module,exports){
 const { InputField } = require('./input-field.js');
 
 module.exports.InputFieldObject = class extends InputField{
@@ -882,11 +882,13 @@ module.exports.InputFieldObject = class extends InputField{
     let self = collapseBtn.parentElement.parentElement;
     let collapseEle = self.querySelector(`#${self.options.name}`)
     if(!self.collapsed){
-        collapseEle.classList.add("hidden");
+        // collapseEle.classList.add("hidden");
+        collapseEle.style.maxHeight = '0px';
         collapseBtn.innerText = 'ausklappen';
         self.collapsed = !self.collapsed;
     } else {
-        collapseEle.classList.remove("hidden");
+        // collapseEle.classList.remove("hidden");
+        collapseEle.style.maxHeight = '1000px';
         collapseBtn.innerText = 'einklappen';
         self.collapsed = !self.collapsed;
     }
@@ -958,7 +960,7 @@ module.exports.InputFieldRadio = class extends InputField {
         this.rootElement.insertAdjacentHTML('beforeend', `
             <div class="form-element">
                 <button type="button" class="clear-radio-btn" tabIndex="-1" >${this.options.abwahlButtonLabel}</button>
-                ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
+                ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label>` : ''}
                 <form name="${this.options.name}-radio" id="${this.options.name}" class="form-radio-group"><br>
                     ${this.options.items.map(item => {
                         return `
@@ -1142,83 +1144,6 @@ module.exports.InputField = class extends HTMLElement {
     }
 }
 },{}],13:[function(require,module,exports){
-'use strict';
-// For more information about browser field, check out the browser field at https://github.com/substack/browserify-handbook#browser-field.
-
-var styleElementsInsertedAtTop = [];
-
-var insertStyleElement = function(styleElement, options) {
-    var head = document.head || document.getElementsByTagName('head')[0];
-    var lastStyleElementInsertedAtTop = styleElementsInsertedAtTop[styleElementsInsertedAtTop.length - 1];
-
-    options = options || {};
-    options.insertAt = options.insertAt || 'bottom';
-
-    if (options.insertAt === 'top') {
-        if (!lastStyleElementInsertedAtTop) {
-            head.insertBefore(styleElement, head.firstChild);
-        } else if (lastStyleElementInsertedAtTop.nextSibling) {
-            head.insertBefore(styleElement, lastStyleElementInsertedAtTop.nextSibling);
-        } else {
-            head.appendChild(styleElement);
-        }
-        styleElementsInsertedAtTop.push(styleElement);
-    } else if (options.insertAt === 'bottom') {
-        head.appendChild(styleElement);
-    } else {
-        throw new Error('Invalid value for parameter \'insertAt\'. Must be \'top\' or \'bottom\'.');
-    }
-};
-
-module.exports = {
-    // Create a <link> tag with optional data attributes
-    createLink: function(href, attributes) {
-        var head = document.head || document.getElementsByTagName('head')[0];
-        var link = document.createElement('link');
-
-        link.href = href;
-        link.rel = 'stylesheet';
-
-        for (var key in attributes) {
-            if ( ! attributes.hasOwnProperty(key)) {
-                continue;
-            }
-            var value = attributes[key];
-            link.setAttribute('data-' + key, value);
-        }
-
-        head.appendChild(link);
-    },
-    // Create a <style> tag with optional data attributes
-    createStyle: function(cssText, attributes, extraOptions) {
-        extraOptions = extraOptions || {};
-
-        var style = document.createElement('style');
-        style.type = 'text/css';
-
-        for (var key in attributes) {
-            if ( ! attributes.hasOwnProperty(key)) {
-                continue;
-            }
-            var value = attributes[key];
-            style.setAttribute('data-' + key, value);
-        }
-
-        if (style.sheet) { // for jsdom and IE9+
-            style.innerHTML = cssText;
-            style.sheet.cssText = cssText;
-            insertStyleElement(style, { insertAt: extraOptions.insertAt });
-        } else if (style.styleSheet) { // for IE8 and below
-            insertStyleElement(style, { insertAt: extraOptions.insertAt });
-            style.styleSheet.cssText = cssText;
-        } else { // for Chrome, Firefox, and Safari
-            style.appendChild(document.createTextNode(cssText));
-            insertStyleElement(style, { insertAt: extraOptions.insertAt });
-        }
-    }
-};
-
-},{}],14:[function(require,module,exports){
 (function (global){
 /**
  * @license
@@ -18334,7 +18259,5 @@ module.exports = {
 }.call(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],15:[function(require,module,exports){
-var css = "/* form, .formular-title {\r\n  width: 800px;\r\n} */\nform-creator {\n  width: 800px;\n  display: block;\n}\n.formular-title > * {\n  text-align: center;\n}\ndiv.form-element {\n  margin: 5px;\n}\ndiv.form-group {\n  border: 1px solid lightgray;\n}\nspan.pflichtfeld {\n  /* float: right; */\n  position: absolute;\n  bottom: 0px;\n  right: 0px;\n  margin: 5px;\n  vertical-align: bottom;\n}\n.form-list > *[name] {\n  display: inline-block;\n  width: 100%;\n}\n.form-list {\n  display: grid;\n  grid-template-columns: 95% 5%;\n  border-radius: 5px;\n  box-shadow: 2px 2px 20px 1px lightgray;\n}\n.form-list > button.form-list-removebtn {\n  margin-top: auto;\n  margin-bottom: auto;\n  width: 100%;\n  height: 95%;\n  background-color: rgba(200, 0, 0, 0.5);\n  padding: 2px;\n}\n.form-list-addbtn {\n  clear: both;\n  position: relative;\n  width: 99%;\n  display: block;\n  background-color: rgba(0, 200, 0, 0.5);\n  box-sizing: content-box;\n  padding: 2px;\n}\n.form-element {\n  position: relative;\n  border: 1px solid lightgray;\n  padding: 5px;\n  margin-top: 10px;\n  margin-bottom: 10px;\n  border-radius: 10px;\n  box-shadow: inset 2px 2px 5px 1px lightgray;\n}\n.form-element > label {\n  font-weight: bold;\n  vertical-align: top;\n}\n/* .form-list label {\r\n  font-weight: normal;\r\n} */\n.form-group {\n  border-radius: 10px;\n  box-shadow: 2px 2px 20px 1px lightgray;\n}\n/* .form-group label {\r\n  font-weight: normal;\r\n} */\n/* .form-group * label {\r\n  font-weight: lighter;\r\n} */\n.input-display {\n  color: gray;\n}\n.form-object-collapse {\n  /* float: right; */\n  position: absolute;\n  right: 0px;\n  top: 0px;\n  font-size: small;\n  margin-top: 0px;\n  background-color: white;\n  z-index: 1;\n}\n.clear-radio-btn {\n  /* float: right; */\n  position: absolute;\n  right: 0px;\n  top: 0px;\n  font-size: small;\n  background-color: lightpink;\n}\nform-creator .hidden {\n  /* visibility: collapse; */\n  display: none;\n  height: 0;\n}\nform-creator input,\ntextarea {\n  border-radius: 5px;\n}\nform-creator label {\n  margin-right: 10px;\n}\nform-creator button {\n  border-radius: 10px;\n}\nspan.output-display {\n  display: block;\n  margin-top: 10px;\n  margin-bottom: 10px;\n  color: rgb(102, 102, 102);\n}\n/* Invalid Styling */\n.invalid > div.form-element {\n  border: 1px solid #ff0b0bd8;\n  box-shadow: inset 2px 2px 10px 2px #ff0b0bd8;\n}\n.invalid,\n.warning {\n  position: relative;\n  text-decoration: none;\n}\n.warning:after,\n.invalid:after {\n  content: attr(data-tooltip);\n  position: absolute;\n  bottom: 130%;\n  left: 20%;\n  background: #d60f0f;\n  padding: 5px 15px;\n  color: white;\n  -webkit-border-radius: 10px;\n  -moz-border-radius: 10px;\n  border-radius: 10px;\n  white-space: nowrap;\n  opacity: 0;\n  -webkit-transition: all 0.4s ease;\n  -moz-transition: all 0.4s ease;\n  transition: all 0.4s ease;\n}\n.warning:not(.invalid):after {\n  right: -700px;\n  left: unset;\n}\n.invalid:before {\n  content: \"\";\n  position: absolute;\n  width: 0;\n  height: 0;\n  border-top: 20px solid #d60f0f2d;\n  border-left: 20px solid transparent;\n  border-right: 20px solid transparent;\n  -webkit-transition: all 0.4s ease;\n  -moz-transition: all 0.4s ease;\n  transition: all 0.4s ease;\n  opacity: 0;\n  left: 30%;\n  bottom: 90%;\n}\n.invalid:hover:after,\n.warning:hover:after {\n  bottom: 100%;\n}\n.invalid:hover:before,\n.warning:hover:before {\n  bottom: 70%;\n}\n.invalid:hover:after,\n.invalid:before,\n.warning:hover:after,\n.warning:before {\n  opacity: 1;\n}\n.warning  > div.form-element {\n  border: 1px solid #ffda0bd8;\n  box-shadow: inset 2px 2px 10px 2px #ffda0bd8;\n}\n.warning:after {\n  background: #ffda0b;\n  color: black;\n}\n.warning:before {\n  border-top: 20px solid #ffda0b2d;\n}\n"; (require("browserify-css").createStyle(css, { "href": "style.css" }, { "insertAt": "bottom" })); module.exports = css;
-},{"browserify-css":13}]},{},[2])(2)
+},{}]},{},[2])(2)
 });
