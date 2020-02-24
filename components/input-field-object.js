@@ -64,7 +64,8 @@ module.exports.InputFieldObject = class extends InputField{
   checkValidity(){
       let valid = true;
       for(let objProps of this.querySelector(`#${this.options.name}`).children) {
-          let partialValidity = objProps.checkValidity();
+          //TODO CHANGE BACK if not implementing events like this. let partialValidity = objProps.checkValidity(); 
+          let partialValidity = objProps.valid; 
           valid = valid && partialValidity;
       }
       return valid;

@@ -39,7 +39,7 @@ module.exports.InputField = class extends HTMLElement {
     constructor(){
         super();
 
-        this.addEventListener('focusout', this.checkValidity)
+        this.addEventListener('form-input', this.formInputHandler)
     }
 
     connectedCallback(){
@@ -82,6 +82,10 @@ module.exports.InputField = class extends HTMLElement {
         return JSON.stringify(value);
     }
 
+    /**
+     * 
+     * @param {boolean} doneValidityCheck - pass false, when validity check continues after this call.
+     */
     checkValidity(){
         if (this.options.pflichtfeld && this.getModel() == undefined){
             this.setValidityStatus(false, 'Dies ist ein Pflichtfeld, und muss ausgefüllt werden.');
@@ -93,9 +97,15 @@ module.exports.InputField = class extends HTMLElement {
     }
 
     setValidityStatus(valid, message, warning){
+        if(valid) this.dispatchCustomEvent('form-valid', {target: this});
+        if(!valid) this.dispatchCustomEvent('form-invalid', {target: this});
         this.valid = valid;
         this.validityMessage = message;
         this.setAttribute('data-tooltip', message);
+
+        let messageField = this.querySelector('.validity-message');
+
+        if((!valid || warning) && messageField) messageField.innerText = message;
 
         if(valid){
             this.classList.remove('invalid');
@@ -116,5 +126,18 @@ module.exports.InputField = class extends HTMLElement {
 
     mapFieldType(fieldType){
         return fieldTypeMap[fieldType];
+    }
+
+    dispatchCustomEvent(eventName, event){
+        // if(eventName === 'form-input') this.checkValidity(true);
+        return this.dispatchEvent(new Event(eventName, {
+            bubbles: true,
+            target: this,
+            value: this.getModel(),
+        }));        
+    }
+
+    formInputHandler(event){
+        return event.target.checkValidity();
     }
 }

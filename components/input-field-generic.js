@@ -24,19 +24,22 @@ class GenericInputField extends InputField{
                   type="${this.options.inputType}"
                   title="${this.options.beschreibung}"
               >
+              <span class="validity-message"></span>
               <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
           </div>
       `);
+      this.querySelector(`#${this.options.name}`).addEventListener('input', this.dispatchCustomEvent.bind(this, 'form-input'));
   }
 
   getModel(){
-      let model = this.querySelector(`#${this.options.name}`).value;
+      let formControl = this.querySelector(`#${this.options.name}`);
+      let model = formControl ? formControl.value : undefined;
       return model;
   }
 
   checkValidity(){
-      let valid = super.checkValidity();
-      let input = this.querySelector('input');
+      let valid = super.checkValidity(false);
+      let input = this.querySelector(`input#${this.options.name}`);
       let inputValidity = input.validity.valid;
 
       if(!inputValidity){

@@ -195,6 +195,9 @@ class FormCreator extends InputFieldObject{
     constructor(){
         super();
         this.model = {};
+
+        //TODO REMOVE after Test
+        this.addEventListener('form-valid', (event => console.log(event))); 
     }
 
     connectedCallback(){
@@ -502,33 +505,50 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
           formWert: ''
       }
       this.orig_list_items = [];
+
+      this.addEventListener('form-input', (event) => {
+        [...event.target.querySelectorAll('li')].forEach(listItem => listItem.classList.remove('selected'))
+      })
   }
 
   applyTemplate(){
-      this.rootElement.insertAdjacentHTML('beforeend', `
-          <div class="form-element">
-              <input 
-                  class="filter-input"
-                  type="text"
-                  placeholder="Filter"
-              >
-              <ul class="choose-list">
+    super.applyTemplate();
+    this.querySelector('.form-element').insertAdjacentHTML('afterbegin', `
+      <input 
+          class="filter-input helper"
+          type="text"
+          placeholder="Filter"
+      >
+      <ul class="choose-list">
 
-              </ul>
-              ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
-              <input id="${this.options.name}" type="text"> 
-              <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
-          </div>
-      `);
+      </ul>
+    `);
+      // this.rootElement.insertAdjacentHTML('beforeend', );
 
-      genericLookUpQuery('', this.options.listenQuery).then(data => {
+    genericLookUpQuery('', this.options.listenQuery)
+      .catch(err => {
+        console.log('Database could not be reached?');
+        console.error(err);
+        this.dbfailed = true;
+        return [];
+      })
+      .then(data => {
+        if(data.length > 0) this.dbfailed = false;
         this.orig_list_items = data.map(entry => `<li onclick="((event) => ([...event.target.parentElement.children].forEach(child => child.classList.remove('selected')), event.target.classList.add('selected'), document.querySelector('#${this.options.name}').value = event.target.value))(event)" value="${entry[this.options.formWert]}">${Object.keys(entry).map(key => entry[key]).join(', ')}</li>`);
         let choose_list = this.querySelector('.choose-list');
         choose_list.innerHTML = this.orig_list_items.join('\n');
         this.querySelector('.filter-input').addEventListener('input', (event) => 
           (choose_list.innerHTML = this.orig_list_items.filter(value => value.toLowerCase().includes(event.target.value)).join('\n'))
         );
-      })
+      });
+  }
+
+  checkValidity(){
+    let valid = super.checkValidity();
+    let matchingListItem = this.querySelector(`li[value="${this.getModel()}"]`);
+    if(matchingListItem) matchingListItem.classList.add('selected');
+    if(this.dbfailed && valid) this.setValidityStatus(true, 'Datenbank nicht erreichbar.', true);
+    return valid && ( this.dbfailed || matchingListItem );
   }
 }
 },{"./input-field-generic.js":7,"./input-field-lookup.js":9}],6:[function(require,module,exports){
@@ -592,19 +612,22 @@ class GenericInputField extends InputField{
                   type="${this.options.inputType}"
                   title="${this.options.beschreibung}"
               >
+              <span class="validity-message"></span>
               <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
           </div>
       `);
+      this.querySelector(`#${this.options.name}`).addEventListener('input', this.dispatchCustomEvent.bind(this, 'form-input'));
   }
 
   getModel(){
-      let model = this.querySelector(`#${this.options.name}`).value;
+      let formControl = this.querySelector(`#${this.options.name}`);
+      let model = formControl ? formControl.value : undefined;
       return model;
   }
 
   checkValidity(){
-      let valid = super.checkValidity();
-      let input = this.querySelector('input');
+      let valid = super.checkValidity(false);
+      let input = this.querySelector(`input#${this.options.name}`);
       let inputValidity = input.validity.valid;
 
       if(!inputValidity){
@@ -979,7 +1002,8 @@ module.exports.InputFieldObject = class extends InputField{
   checkValidity(){
       let valid = true;
       for(let objProps of this.querySelector(`#${this.options.name}`).children) {
-          let partialValidity = objProps.checkValidity();
+          //TODO CHANGE BACK if not implementing events like this. let partialValidity = objProps.checkValidity(); 
+          let partialValidity = objProps.valid; 
           valid = valid && partialValidity;
       }
       return valid;
@@ -1113,7 +1137,7 @@ module.exports.InputField = class extends HTMLElement {
     constructor(){
         super();
 
-        this.addEventListener('focusout', this.checkValidity)
+        this.addEventListener('form-input', this.formInputHandler)
     }
 
     connectedCallback(){
@@ -1156,6 +1180,10 @@ module.exports.InputField = class extends HTMLElement {
         return JSON.stringify(value);
     }
 
+    /**
+     * 
+     * @param {boolean} doneValidityCheck - pass false, when validity check continues after this call.
+     */
     checkValidity(){
         if (this.options.pflichtfeld && this.getModel() == undefined){
             this.setValidityStatus(false, 'Dies ist ein Pflichtfeld, und muss ausgefüllt werden.');
@@ -1167,9 +1195,15 @@ module.exports.InputField = class extends HTMLElement {
     }
 
     setValidityStatus(valid, message, warning){
+        if(valid) this.dispatchCustomEvent('form-valid', {target: this});
+        if(!valid) this.dispatchCustomEvent('form-invalid', {target: this});
         this.valid = valid;
         this.validityMessage = message;
         this.setAttribute('data-tooltip', message);
+
+        let messageField = this.querySelector('.validity-message');
+
+        if((!valid || warning) && messageField) messageField.innerText = message;
 
         if(valid){
             this.classList.remove('invalid');
@@ -1190,6 +1224,19 @@ module.exports.InputField = class extends HTMLElement {
 
     mapFieldType(fieldType){
         return fieldTypeMap[fieldType];
+    }
+
+    dispatchCustomEvent(eventName, event){
+        // if(eventName === 'form-input') this.checkValidity(true);
+        return this.dispatchEvent(new Event(eventName, {
+            bubbles: true,
+            target: this,
+            value: this.getModel(),
+        }));        
+    }
+
+    formInputHandler(event){
+        return event.target.checkValidity();
     }
 }
 },{}],14:[function(require,module,exports){
