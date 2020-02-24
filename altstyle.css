@@ -164,10 +164,38 @@ button.form-object-collapse {
 .output-display {
   padding: 3px;
   background-color: rgba(0, 0, 0, 0.03);
+  color: gray;
   display: block;
   margin-top: 10px;
   margin-bottom: 10px;
   width: 60%;
+}
+
+.choose-list {
+  display: block;
+  min-height: 200px;
+  max-height: 200px;
+  width: 60%;
+  border: 2px solid lightgray;
+  overflow-y: scroll;
+  padding: 0px;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  margin-top: 1px;
+}
+
+.choose-list > li {
+  list-style: none;
+  margin: 2px;
+  font-size: smaller;
+}
+
+.choose-list > li:hover {
+  background-color: lightblue;
+}
+
+.choose-list > li.selected {
+  background-color: steelblue;
 }
 
 [pflichtfeld="true"] > label, [pflichtfeld="true"] > .form-element > label:first-of-type {
@@ -229,4 +257,13 @@ input-field-radio > .form-element {
 
 .warning:before {
   border-top: 20px solid #ffda0b2d;
+}
+
+input.filter-input {
+  height: 2em;
+  font-size: smaller;
+  box-shadow: none;
+  border: 1px solid lightgray;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
 }

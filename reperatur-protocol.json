@@ -3,11 +3,12 @@
     "felder": [
         {
             "name": "kundennummer",
-            "feldtyp": "lookup",
+            "feldtyp": "choose",
             "label": "Kundennummer:",
             "platzhalter": "zb: 10000", 
             "muster": "[0-9]{5}",
-            "query": "SELECT Name1 AS Firma FROM [prot-sage11].OLReweAbf.dbo.WIKI_Kundenauskunft WHERE kto LIKE '?'"
+            "listenQuery": "SELECT kto, Name1, LieferOrt FROM [prot-sage11].OLReweAbf.dbo.WIKI_Kundenauskunft WHERE kto IS NOT NULL AND kto < 70000",
+            "formWert": "kto"
         },
         {
             "name": "kontakt",

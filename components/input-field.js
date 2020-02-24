@@ -16,6 +16,7 @@ const fieldTypeMap = {
     'dependenttext': 'input-field-abhaengig',
     'list': 'input-field-list',
     'object': 'input-field-object', 
+    'choose': 'input-field-choose-list'
 };
 
 module.exports.InputField = class extends HTMLElement {

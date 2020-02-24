@@ -1,7 +1,7 @@
 const { InputFieldText } = require("./input-field-generic.js");
 const { debounce } = require('lodash');
 
-const genericLookUpQuery = function(input, query, db) {
+const genericLookUpQuery = module.exports.genericLookUpQuery = function(input, query, db) {
   let uri = "http://prot-subuntu:8081/master";
 
   return fetch(uri, {

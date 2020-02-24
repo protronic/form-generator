@@ -127,7 +127,7 @@ module.exports.test = class extends InputFieldText {
   }
 }
 
-},{"./input-field-generic.js":6}],2:[function(require,module,exports){
+},{"./input-field-generic.js":7}],2:[function(require,module,exports){
 const { InputFieldObject } = require('./input-field-object.js');
 const { fieldTypeMap } = require('./formular-components.js');
 
@@ -353,7 +353,7 @@ class FormCreator extends InputFieldObject{
 }
 
 customElements.define('form-creator', FormCreator);
-},{"./formular-components.js":3,"./input-field-object.js":9}],3:[function(require,module,exports){
+},{"./formular-components.js":3,"./input-field-object.js":10}],3:[function(require,module,exports){
 const { InputFieldText, InputFieldEnumListText, EnumListableMixin, InputFieldEmail, InputFieldTel, InputFieldDate, InputFieldNumber } = require('./input-field-generic.js');
 const { InputFieldTextarea } = require('./input-field-textarea.js');
 const { InputFieldBoolean } = require('./input-field-boolean.js');
@@ -363,6 +363,7 @@ const { InputFieldLookup } = require('./input-field-lookup.js');
 const { InputFieldAbhaengig, DependenceMixin } = require('./dependent-fields.js');
 const { InputFieldList } = require('./input-field-list.js');
 const { InputFieldObject } = require('./input-field-object.js');
+const { InputFieldChooseList } = require('./input-field-choose-list.js');
 
 const InputFieldDependentEnumTextarea = class extends EnumListableMixin(DependenceMixin(InputFieldTextarea)){
     constructor(){
@@ -431,6 +432,10 @@ const fieldTypeMap = module.exports.fieldTypeMap = {
         tag: 'input-field-object',
         conName: InputFieldObject,
     },
+    'choose': {
+        tag: 'input-field-choose-list',
+        conName: InputFieldChooseList,
+    }
 };
 
 // const tagClassMap = {
@@ -450,7 +455,7 @@ const fieldTypeMap = module.exports.fieldTypeMap = {
 //     'input-field-object': InputFieldObject,
 //   }
   
-},{"./dependent-fields.js":1,"./input-field-boolean.js":4,"./input-field-dropdown.js":5,"./input-field-generic.js":6,"./input-field-list.js":7,"./input-field-lookup.js":8,"./input-field-object.js":9,"./input-field-radio.js":10,"./input-field-textarea.js":11}],4:[function(require,module,exports){
+},{"./dependent-fields.js":1,"./input-field-boolean.js":4,"./input-field-choose-list.js":5,"./input-field-dropdown.js":6,"./input-field-generic.js":7,"./input-field-list.js":8,"./input-field-lookup.js":9,"./input-field-object.js":10,"./input-field-radio.js":11,"./input-field-textarea.js":12}],4:[function(require,module,exports){
 const { InputField } = require('./input-field.js');
 
 module.exports.InputFieldBoolean = class extends InputField{
@@ -483,7 +488,50 @@ module.exports.InputFieldBoolean = class extends InputField{
   }
 }
 
-},{"./input-field.js":12}],5:[function(require,module,exports){
+},{"./input-field.js":13}],5:[function(require,module,exports){
+const { InputFieldText } = require('./input-field-generic.js');
+const { genericLookUpQuery } = require('./input-field-lookup.js');
+
+
+module.exports.InputFieldChooseList = class extends InputFieldText {
+  constructor(){
+      super();
+      this.defaultOptions = {
+          ...this.defaultOptions,
+          listenQuery: '',
+          formWert: ''
+      }
+      this.orig_list_items = [];
+  }
+
+  applyTemplate(){
+      this.rootElement.insertAdjacentHTML('beforeend', `
+          <div class="form-element">
+              <input 
+                  class="filter-input"
+                  type="text"
+                  placeholder="Filter"
+              >
+              <ul class="choose-list">
+
+              </ul>
+              ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
+              <input id="${this.options.name}" type="text"> 
+              <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
+          </div>
+      `);
+
+      genericLookUpQuery('', this.options.listenQuery).then(data => {
+        this.orig_list_items = data.map(entry => `<li onclick="((event) => ([...event.target.parentElement.children].forEach(child => child.classList.remove('selected')), event.target.classList.add('selected'), document.querySelector('#${this.options.name}').value = event.target.value))(event)" value="${entry[this.options.formWert]}">${Object.keys(entry).map(key => entry[key]).join(', ')}</li>`);
+        let choose_list = this.querySelector('.choose-list');
+        choose_list.innerHTML = this.orig_list_items.join('\n');
+        this.querySelector('.filter-input').addEventListener('input', (event) => 
+          (choose_list.innerHTML = this.orig_list_items.filter(value => value.toLowerCase().includes(event.target.value)).join('\n'))
+        );
+      })
+  }
+}
+},{"./input-field-generic.js":7,"./input-field-lookup.js":9}],6:[function(require,module,exports){
 const { InputField } = require('./input-field.js');
 
 module.exports.InputFieldDropdown = class extends InputField {
@@ -517,7 +565,7 @@ module.exports.InputFieldDropdown = class extends InputField {
   }
 }
 
-},{"./input-field.js":12}],6:[function(require,module,exports){
+},{"./input-field.js":13}],7:[function(require,module,exports){
 const { InputField } = require('./input-field.js');
 
 class GenericInputField extends InputField{
@@ -637,7 +685,7 @@ module.exports.InputFieldEnumListText = class extends EnumListableMixin(InputFie
   }
 }
 
-},{"./input-field.js":12}],7:[function(require,module,exports){
+},{"./input-field.js":13}],8:[function(require,module,exports){
 const { InputField } = require('./input-field.js');
 
 module.exports.InputFieldList = class extends InputField {
@@ -720,11 +768,11 @@ module.exports.InputFieldList = class extends InputField {
 }
 
 // customElements.define('input-field-list', InputFieldList);
-},{"./input-field.js":12}],8:[function(require,module,exports){
+},{"./input-field.js":13}],9:[function(require,module,exports){
 const { InputFieldText } = require("./input-field-generic.js");
 const { debounce } = require('lodash');
 
-const genericLookUpQuery = function(input, query, db) {
+const genericLookUpQuery = module.exports.genericLookUpQuery = function(input, query, db) {
   let uri = "http://prot-subuntu:8081/master";
 
   return fetch(uri, {
@@ -864,7 +912,7 @@ module.exports.InputFieldLookup = class extends LookupMixin(InputFieldText) {
     super();
   }
 }
-},{"./input-field-generic.js":6,"lodash":13}],9:[function(require,module,exports){
+},{"./input-field-generic.js":7,"lodash":14}],10:[function(require,module,exports){
 const { InputField } = require('./input-field.js');
 
 module.exports.InputFieldObject = class extends InputField{
@@ -938,7 +986,7 @@ module.exports.InputFieldObject = class extends InputField{
   }
 }
 
-},{"./input-field.js":12}],10:[function(require,module,exports){
+},{"./input-field.js":13}],11:[function(require,module,exports){
 const { InputField } = require('./input-field.js');
 
 module.exports.InputFieldRadio = class extends InputField {
@@ -986,7 +1034,7 @@ module.exports.InputFieldRadio = class extends InputField {
     }
 }
 
-},{"./input-field.js":12}],11:[function(require,module,exports){
+},{"./input-field.js":13}],12:[function(require,module,exports){
 const { InputField } = require('./input-field.js');
 
 module.exports.InputFieldTextarea = class extends InputField{
@@ -1023,7 +1071,7 @@ module.exports.InputFieldTextarea = class extends InputField{
       return model;
   }
 }
-},{"./input-field.js":12}],12:[function(require,module,exports){
+},{"./input-field.js":13}],13:[function(require,module,exports){
 // const { fieldTypeMap } = require('./formular-components.js')
 
 const fieldTypeMap = {
@@ -1042,6 +1090,7 @@ const fieldTypeMap = {
     'dependenttext': 'input-field-abhaengig',
     'list': 'input-field-list',
     'object': 'input-field-object', 
+    'choose': 'input-field-choose-list'
 };
 
 module.exports.InputField = class extends HTMLElement {
@@ -1143,7 +1192,7 @@ module.exports.InputField = class extends HTMLElement {
         return fieldTypeMap[fieldType];
     }
 }
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 (function (global){
 /**
  * @license
