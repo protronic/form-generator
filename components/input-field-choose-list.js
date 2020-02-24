@@ -32,7 +32,7 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
     `);
       // this.rootElement.insertAdjacentHTML('beforeend', );
 
-    genericLookUpQuery('', this.options.listenQuery)
+    genericLookUpQuery(this.options.queryUrl, '', this.options.listenQuery)
       .catch(err => {
         console.log('Database could not be reached?');
         console.error(err);

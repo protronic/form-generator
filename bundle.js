@@ -501,6 +501,7 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
       super();
       this.defaultOptions = {
           ...this.defaultOptions,
+          queryUrl: '',
           listenQuery: '',
           formWert: ''
       }
@@ -525,7 +526,7 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
     `);
       // this.rootElement.insertAdjacentHTML('beforeend', );
 
-    genericLookUpQuery('', this.options.listenQuery)
+    genericLookUpQuery(this.options.queryUrl, '', this.options.listenQuery)
       .catch(err => {
         console.log('Database could not be reached?');
         console.error(err);
@@ -795,8 +796,8 @@ module.exports.InputFieldList = class extends InputField {
 const { InputFieldText } = require("./input-field-generic.js");
 const { debounce } = require('lodash');
 
-const genericLookUpQuery = module.exports.genericLookUpQuery = function(input, query, db) {
-  let uri = "http://prot-subuntu:8081/master";
+const genericLookUpQuery = module.exports.genericLookUpQuery = function(uri, input, query, db) {
+  // let uri = "http://prot-subuntu:8081/master";
 
   return fetch(uri, {
     method: "POST",
@@ -817,6 +818,7 @@ const LookupMixin = module.exports.LookupMixin = superclass => class extends sup
     this.defaultOptions = {
       ...this.defaultOptions,
       ausgabeLabel: "",
+      queryUrl: '',
       query: undefined,
       maxZeilen: 1
     };
@@ -825,7 +827,7 @@ const LookupMixin = module.exports.LookupMixin = superclass => class extends sup
 
   databaseLookup(inputValueFn, event) {
     if (event.target.validity ? event.target.validity.valid : event.target.valid && event.target.value !== "") {
-      genericLookUpQuery(inputValueFn.bind(this)(), this.options.query)
+      genericLookUpQuery(this.options.queryUrl, inputValueFn.bind(this)(), this.options.query)
         .then(data =>
           data.map(entry =>
             Object.keys(entry)
