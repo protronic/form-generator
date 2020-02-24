@@ -40,7 +40,8 @@ const DependenceMixin = module.exports.DependenceMixin = superclass => class ext
 
   showField(){
       this.visibility = true;
-      this.classList.remove('hidden');
+    this.classList.remove('hidden');
+    this.checkValidity();
   }
 
   getModel(){
@@ -101,12 +102,10 @@ module.exports.test = class extends InputFieldText {
   }
 
   hideField(){
-      this.visibility = false;
       this.classList.add('hidden');
   }
 
   showField(){
-      this.visibility = true;
       this.classList.remove('hidden');
   }
 
@@ -507,9 +506,9 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
       }
       this.orig_list_items = [];
 
-      this.addEventListener('form-input', (event) => {
-        [...event.target.querySelectorAll('li')].forEach(listItem => listItem.classList.remove('selected'))
-      })
+      // this.addEventListener('form-input', (event) => {
+        
+      // })
   }
 
   applyTemplate(){
@@ -527,20 +526,19 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
       // this.rootElement.insertAdjacentHTML('beforeend', );
 
     genericLookUpQuery(this.options.queryUrl, '', this.options.listenQuery)
-      .catch(err => {
-        console.log('Database could not be reached?');
-        console.error(err);
-        this.dbfailed = true;
-        return [];
-      })
       .then(data => {
-        if(data.length > 0) this.dbfailed = false;
-        this.orig_list_items = data.map(entry => `<li onclick="((event) => ([...event.target.parentElement.children].forEach(child => child.classList.remove('selected')), event.target.classList.add('selected'), document.querySelector('#${this.options.name}').value = event.target.value))(event)" value="${entry[this.options.formWert]}">${Object.keys(entry).map(key => entry[key]).join(', ')}</li>`);
+        this.dbfailed = false;
+        this.orig_list_items = data.map(entry => `<li onclick="((event) => (document.querySelector('#${this.options.name}').value = event.target.value, event.target.parentElement.parentElement.parentElement.dispatchCustomEvent('form-input', event)))(event)" value="${entry[this.options.formWert]}">${Object.keys(entry).map(key => entry[key]).join(', ')}</li>`);
         let choose_list = this.querySelector('.choose-list');
         choose_list.innerHTML = this.orig_list_items.join('\n');
         this.querySelector('.filter-input').addEventListener('input', (event) => 
           (choose_list.innerHTML = this.orig_list_items.filter(value => value.toLowerCase().includes(event.target.value)).join('\n'))
         );
+      })
+      .catch(err => {
+        console.log('Database could not be reached?');
+        console.error(err);
+        this.dbfailed = true;
       });
   }
 
@@ -550,6 +548,13 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
     if(matchingListItem) matchingListItem.classList.add('selected');
     if(this.dbfailed && valid) this.setValidityStatus(true, 'Datenbank nicht erreichbar.', true);
     return valid && ( this.dbfailed || matchingListItem );
+  }
+
+
+  //? CAREFULL formInputHandler does not overwrite superclass method formInputHandler, that is already added as an eventlistener;
+  formInputHandler(event){
+    [...event.target.querySelectorAll('li')].forEach(listItem => listItem.classList.remove('selected'));
+    // return super.formInputHandler(event);
   }
 }
 },{"./input-field-generic.js":7,"./input-field-lookup.js":9}],6:[function(require,module,exports){
@@ -806,8 +811,8 @@ const genericLookUpQuery = module.exports.genericLookUpQuery = function(uri, inp
       "Content-Type": "application/json"
     }
   })
-    .then(response => response.json())
-    .then(data => data.recordset);
+    .then(response => (response.json()))
+    .then(data => (console.log(data), data.recordset));
 };
 
 // customElements.define('input-field-lookup', InputFieldLookup);
@@ -1023,11 +1028,13 @@ module.exports.InputFieldRadio = class extends InputField {
             abwahlButtonLabel: 'Auswahl aufheben',
             items: []
         }
+        this.classList.add('radio-form');
     }
     
     radioButtonClearHandler(event){
         let self = event.target.parentElement.parentElement;
-        self.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false)
+        self.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+        self.dispatchCustomEvent('form-input', event)
     }
 
     applyTemplate(){
@@ -1042,11 +1049,13 @@ module.exports.InputFieldRadio = class extends InputField {
                                 <label for="${this.options.name}-${item}">${item}</label>
                             `;
                     }).join('<br>')}
+                    <span class="validity-message"></span>
                     <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
                 </form>
             </div>
         `);
         this.querySelector('button.clear-radio-btn').addEventListener('click', this.radioButtonClearHandler);
+        this.querySelectorAll('input').forEach(input => input.addEventListener('input', this.dispatchCustomEvent.bind(this, 'form-input')))
     }
 
     getModel(){
@@ -1057,6 +1066,17 @@ module.exports.InputFieldRadio = class extends InputField {
             }
         })
         return model;
+    }
+
+    checkValidity(){
+        if(!this.getModel() && this.options.pflichtfeld) {
+            this.setValidityStatus(false, 'Dies ist ein Pflichtfeld.', false);
+            return false;
+        }
+        else {
+            this.setValidityStatus(true, '', false);
+            return true
+        };
     }
 }
 
@@ -1087,18 +1107,21 @@ module.exports.InputFieldTextarea = class extends InputField{
                   rows="${this.options.rows}"
                   wrap="${this.options.wrap}"
               >${(this.options.initialModel) ? this.options.initialModel : ''}</textarea>
+              <span class="validity-message"></span>
               <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
           </div>
       `);
+      this.querySelector('textarea').addEventListener('input', this.dispatchCustomEvent.bind(this, 'form-input'))
   }
 
   getModel(){
       let model = this.querySelector(`#${this.options.name}`).value;
-      return model;
+      return model != '' ? model : undefined;
   }
 }
 },{"./input-field.js":13}],13:[function(require,module,exports){
 // const { fieldTypeMap } = require('./formular-components.js')
+const { debounce } = require('lodash');
 
 const fieldTypeMap = {
     'text': 'input-field-text',
@@ -1139,7 +1162,7 @@ module.exports.InputField = class extends HTMLElement {
     constructor(){
         super();
 
-        this.addEventListener('form-input', this.formInputHandler)
+        this.addEventListener('form-input', debounce(this.formInputHandler, 1000, {leading: false, trailing: true}));
     }
 
     connectedCallback(){
@@ -1197,8 +1220,8 @@ module.exports.InputField = class extends HTMLElement {
     }
 
     setValidityStatus(valid, message, warning){
-        if(valid) this.dispatchCustomEvent('form-valid', {target: this});
-        if(!valid) this.dispatchCustomEvent('form-invalid', {target: this});
+        // if(valid) this.dispatchCustomEvent('form-valid', {target: this});
+        // if(!valid) this.dispatchCustomEvent('form-invalid', {target: this});
         this.valid = valid;
         this.validityMessage = message;
         this.setAttribute('data-tooltip', message);
@@ -1238,10 +1261,15 @@ module.exports.InputField = class extends HTMLElement {
     }
 
     formInputHandler(event){
-        return event.target.checkValidity();
+        let valid = event.target.checkValidity();
+        if(valid) {
+            this.dispatchCustomEvent('form-valid', {target: this})
+
+        }
+        else this.dispatchCustomEvent('form-invalid', {target: this});
     }
 }
-},{}],14:[function(require,module,exports){
+},{"lodash":14}],14:[function(require,module,exports){
 (function (global){
 /**
  * @license

@@ -24,13 +24,15 @@ module.exports.InputFieldTextarea = class extends InputField{
                   rows="${this.options.rows}"
                   wrap="${this.options.wrap}"
               >${(this.options.initialModel) ? this.options.initialModel : ''}</textarea>
+              <span class="validity-message"></span>
               <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
           </div>
       `);
+      this.querySelector('textarea').addEventListener('input', this.dispatchCustomEvent.bind(this, 'form-input'))
   }
 
   getModel(){
       let model = this.querySelector(`#${this.options.name}`).value;
-      return model;
+      return model != '' ? model : undefined;
   }
 }

@@ -11,8 +11,8 @@ const genericLookUpQuery = module.exports.genericLookUpQuery = function(uri, inp
       "Content-Type": "application/json"
     }
   })
-    .then(response => response.json())
-    .then(data => data.recordset);
+    .then(response => (response.json()))
+    .then(data => (console.log(data), data.recordset));
 };
 
 // customElements.define('input-field-lookup', InputFieldLookup);

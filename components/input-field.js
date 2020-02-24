@@ -1,4 +1,5 @@
 // const { fieldTypeMap } = require('./formular-components.js')
+const { debounce } = require('lodash');
 
 const fieldTypeMap = {
     'text': 'input-field-text',
@@ -39,7 +40,7 @@ module.exports.InputField = class extends HTMLElement {
     constructor(){
         super();
 
-        this.addEventListener('form-input', this.formInputHandler)
+        this.addEventListener('form-input', debounce(this.formInputHandler, 1000, {leading: false, trailing: true}));
     }
 
     connectedCallback(){
@@ -97,8 +98,8 @@ module.exports.InputField = class extends HTMLElement {
     }
 
     setValidityStatus(valid, message, warning){
-        if(valid) this.dispatchCustomEvent('form-valid', {target: this});
-        if(!valid) this.dispatchCustomEvent('form-invalid', {target: this});
+        // if(valid) this.dispatchCustomEvent('form-valid', {target: this});
+        // if(!valid) this.dispatchCustomEvent('form-invalid', {target: this});
         this.valid = valid;
         this.validityMessage = message;
         this.setAttribute('data-tooltip', message);
@@ -138,6 +139,11 @@ module.exports.InputField = class extends HTMLElement {
     }
 
     formInputHandler(event){
-        return event.target.checkValidity();
+        let valid = event.target.checkValidity();
+        if(valid) {
+            this.dispatchCustomEvent('form-valid', {target: this})
+
+        }
+        else this.dispatchCustomEvent('form-invalid', {target: this});
     }
 }

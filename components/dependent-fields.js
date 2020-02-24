@@ -33,13 +33,14 @@ const DependenceMixin = module.exports.DependenceMixin = superclass => class ext
   }
 
   hideField(){
-      this.visibility = false;
-      this.classList.add('hidden');
+    this.visibility = false;
+    this.classList.add('hidden');
   }
 
   showField(){
-      this.visibility = true;
-      this.classList.remove('hidden');
+    this.visibility = true;
+    this.classList.remove('hidden');
+    this.checkValidity();
   }
 
   getModel(){
@@ -100,12 +101,10 @@ module.exports.test = class extends InputFieldText {
   }
 
   hideField(){
-      this.visibility = false;
       this.classList.add('hidden');
   }
 
   showField(){
-      this.visibility = true;
       this.classList.remove('hidden');
   }
 

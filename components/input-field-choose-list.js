@@ -13,9 +13,9 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
       }
       this.orig_list_items = [];
 
-      this.addEventListener('form-input', (event) => {
-        [...event.target.querySelectorAll('li')].forEach(listItem => listItem.classList.remove('selected'))
-      })
+      // this.addEventListener('form-input', (event) => {
+        
+      // })
   }
 
   applyTemplate(){
@@ -33,20 +33,19 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
       // this.rootElement.insertAdjacentHTML('beforeend', );
 
     genericLookUpQuery(this.options.queryUrl, '', this.options.listenQuery)
-      .catch(err => {
-        console.log('Database could not be reached?');
-        console.error(err);
-        this.dbfailed = true;
-        return [];
-      })
       .then(data => {
-        if(data.length > 0) this.dbfailed = false;
-        this.orig_list_items = data.map(entry => `<li onclick="((event) => ([...event.target.parentElement.children].forEach(child => child.classList.remove('selected')), event.target.classList.add('selected'), document.querySelector('#${this.options.name}').value = event.target.value))(event)" value="${entry[this.options.formWert]}">${Object.keys(entry).map(key => entry[key]).join(', ')}</li>`);
+        this.dbfailed = false;
+        this.orig_list_items = data.map(entry => `<li onclick="((event) => (document.querySelector('#${this.options.name}').value = event.target.value, event.target.parentElement.parentElement.parentElement.dispatchCustomEvent('form-input', event)))(event)" value="${entry[this.options.formWert]}">${Object.keys(entry).map(key => entry[key]).join(', ')}</li>`);
         let choose_list = this.querySelector('.choose-list');
         choose_list.innerHTML = this.orig_list_items.join('\n');
         this.querySelector('.filter-input').addEventListener('input', (event) => 
           (choose_list.innerHTML = this.orig_list_items.filter(value => value.toLowerCase().includes(event.target.value)).join('\n'))
         );
+      })
+      .catch(err => {
+        console.log('Database could not be reached?');
+        console.error(err);
+        this.dbfailed = true;
       });
   }
 
@@ -56,5 +55,12 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
     if(matchingListItem) matchingListItem.classList.add('selected');
     if(this.dbfailed && valid) this.setValidityStatus(true, 'Datenbank nicht erreichbar.', true);
     return valid && ( this.dbfailed || matchingListItem );
+  }
+
+
+  //? CAREFULL formInputHandler does not overwrite superclass method formInputHandler, that is already added as an eventlistener;
+  formInputHandler(event){
+    [...event.target.querySelectorAll('li')].forEach(listItem => listItem.classList.remove('selected'));
+    // return super.formInputHandler(event);
   }
 }
