@@ -13,15 +13,15 @@ module.exports.InputFieldObject = class extends InputField{
   collapseObjectGroupHandler(event){
     let collapseBtn = event.srcElement;
     let self = collapseBtn.parentElement.parentElement;
-    let collapseEle = self.querySelector(`#${self.options.name}`)
+    let collapseEle = self.querySelector(`#${self.options.name}`);
     if(!self.collapsed){
-        // collapseEle.classList.add("hidden");
-        collapseEle.style.maxHeight = '0px';
+        collapseEle.classList.add("hidden");
+        // collapseEle.style.maxHeight = '0px';
         collapseBtn.innerText = 'ausklappen';
         self.collapsed = !self.collapsed;
     } else {
-        // collapseEle.classList.remove("hidden");
-        collapseEle.style.maxHeight = '1000px';
+        collapseEle.classList.remove("hidden");
+        // collapseEle.style.maxHeight = '10000px';
         collapseBtn.innerText = 'einklappen';
         self.collapsed = !self.collapsed;
     }
