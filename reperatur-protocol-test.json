@@ -7,7 +7,7 @@
             "label": "Kundennummer:",
             "platzhalter": "zb: 10000", 
             "muster": "[0-9]{5}",
-            "queryUrl": "http://prot-subuntu:8081/master",
+            "queryUrl": "http://127.0.0.1:3000/kunden",
             "listenQuery": "SELECT kto, Name1, LieferOrt FROM [prot-sage11].OLReweAbf.dbo.WIKI_Kundenauskunft WHERE kto IS NOT NULL AND kto < 70000",
             "formWert": "KundenNr"
         },
@@ -60,7 +60,7 @@
             "feldtyp": "lookup",
             "platzhalter": "zb: 1006000061", 
             "muster": "[0-9]{10}|[0-9]{7}",
-            "queryUrl": "http://prot-subuntu:8081/master",
+            "queryUrl": "http://127.0.0.1/artikel",
             "query": "SELECT Artikelnummer, Matchcode FROM [prot-sage11].OLReweAbf.dbo.KHKArtikel WHERE Artikelnummer LIKE '?' OR Dimensionstext LIKE '?'"
         },
         {
