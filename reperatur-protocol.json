@@ -9,7 +9,7 @@
             "muster": "[0-9]{5}",
             "queryUrl": "http://prot-subuntu:8081/master",
             "listenQuery": "SELECT kto, Name1, LieferOrt FROM [prot-sage11].OLReweAbf.dbo.WIKI_Kundenauskunft WHERE kto IS NOT NULL AND kto < 70000",
-            "formWert": "KundenNr"
+            "formWert": "kto"
         },
         {
             "name": "kontakt",
