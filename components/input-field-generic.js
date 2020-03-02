@@ -34,7 +34,7 @@ class GenericInputField extends InputField{
   getModel(){
       let formControl = this.querySelector(`#${this.options.name}`);
       let model = formControl ? formControl.value : undefined;
-      return model;
+      return model != '' ? model : undefined;
   }
 
   checkValidity(){
