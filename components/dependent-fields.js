@@ -27,7 +27,7 @@ const DependenceMixin = module.exports.DependenceMixin = superclass => class ext
   }
 
   linkDependency(){
-      let dependent = document.querySelector(`*[name='${this.saveValue('abhaengigFeld', this.options.abhaengigFeld)}']`);
+      let dependent = this.parentElement.querySelector(`*[name='${this.saveValue('abhaengigFeld', this.options.abhaengigFeld)}']`);
       dependent.addEventListener('focusout', this.checkDependence.bind(this, dependent));
       setInterval(this.checkDependence.bind(this, dependent), this.options.interval);
   }

@@ -28,7 +28,7 @@ const DependenceMixin = module.exports.DependenceMixin = superclass => class ext
   }
 
   linkDependency(){
-      let dependent = document.querySelector(`*[name='${this.saveValue('abhaengigFeld', this.options.abhaengigFeld)}']`);
+      let dependent = this.parentElement.querySelector(`*[name='${this.saveValue('abhaengigFeld', this.options.abhaengigFeld)}']`);
       dependent.addEventListener('focusout', this.checkDependence.bind(this, dependent));
       setInterval(this.checkDependence.bind(this, dependent), this.options.interval);
   }
@@ -528,7 +528,7 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
     genericLookUpQuery(this.options.queryUrl, '', this.options.listenQuery)
       .then(data => {
         this.dbfailed = false;
-        this.orig_list_items = data.map(entry => `<li onclick="((event) => { let compo = this.parentElement.parentElement.parentElement; console.log(compo); compo.querySelector('#${this.options.name}').value = event.target.value; compo.formInputHandler({target: compo}); compo.dispatchCustomEvent('form-input', event)})(event)" value="${entry[this.options.formWert]}">${Object.keys(entry).map(key => entry[key]).join(', ')}</li>`);
+        this.orig_list_items = data.map((entry, index) => `<li class="${index % 2 === 0 ? 'zebra1' : 'zebra2'}" onclick="((event) => { let compo = this.parentElement.parentElement.parentElement; console.log(compo); compo.querySelector('#${this.options.name}').value = event.target.value; compo.formInputHandler({target: compo}); compo.dispatchCustomEvent('form-input', event)})(event)" value="${entry[this.options.formWert]}">${Object.keys(entry).map(key => entry[key]).join(', ')}</li>`);
         let choose_list = this.querySelector('.choose-list');
         choose_list.innerHTML = this.orig_list_items.join('\n');
         this.querySelector('.filter-input').addEventListener('input', (event) => 
@@ -766,7 +766,7 @@ module.exports.InputFieldList = class extends InputField {
                   initialModel='${this.saveValue('initialModel', listItem)}'
               ></${this.mapFieldType(formElement.feldtyp)}>
           `).join('\n')}
-          <button class="form-list-removebtn" tabIndex="-1" onclick="(function(event){event.srcElement.previousElementSibling.remove(); event.srcElement.remove()})(event)" type="button">${this.options.entfernenLabel}</button>
+          <button class="form-list-removebtn" tabIndex="-1" onclick="this.previousElementSibling.classList.add('delete-waiting'); if(confirm('sicher, dass der gewählte Eintrag gelöscht werden soll?')) (function(event){event.srcElement.previousElementSibling.remove(); event.srcElement.remove()})(event); else this.previousElementSibling.classList.remove('delete-waiting')" type="button">${this.options.entfernenLabel}</button>
       `;
   }
 

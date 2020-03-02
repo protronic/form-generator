@@ -44,7 +44,7 @@ module.exports.InputFieldList = class extends InputField {
                   initialModel='${this.saveValue('initialModel', listItem)}'
               ></${this.mapFieldType(formElement.feldtyp)}>
           `).join('\n')}
-          <button class="form-list-removebtn" tabIndex="-1" onclick="(function(event){event.srcElement.previousElementSibling.remove(); event.srcElement.remove()})(event)" type="button">${this.options.entfernenLabel}</button>
+          <button class="form-list-removebtn" tabIndex="-1" onclick="this.previousElementSibling.classList.add('delete-waiting'); if(confirm('sicher, dass der gewählte Eintrag gelöscht werden soll?')) (function(event){event.srcElement.previousElementSibling.remove(); event.srcElement.remove()})(event); else this.previousElementSibling.classList.remove('delete-waiting')" type="button">${this.options.entfernenLabel}</button>
       `;
   }
 

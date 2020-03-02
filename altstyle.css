@@ -189,8 +189,21 @@ button.form-object-collapse {
 
 .choose-list > li {
   list-style: none;
-  margin: 2px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  margin-left: 1px;
+  margin-right: 0px;
+  padding: 2px;
   font-size: smaller;
+  color: rgb(77, 77, 77); 
+  box-sizing: border-box;
+  font-family: lucida Console, monospace;
+  /* border-radius: 10px; */
+  /* border: 1px dotted rgb(173, 173, 173);   */
+}
+
+.choose-list > li:first-child {
+  margin-top: 0px;
 }
 
 .choose-list > li:hover {
@@ -228,6 +241,25 @@ input-field-radio > .form-element {
 .invalid > div.form-element textarea:not(.helper){
   border: 1px solid #ff0b0bd8;
   box-shadow: inset 2px 2px 10px 1px #ff0b0bd8;
+}
+
+*.delete-waiting > .form-element {
+  background-color: #ff0b0bd8;
+  opacity: 0.2;
+  z-index: 1000;
+}
+
+*.delete-waiting > .form-element input, 
+*.delete-waiting > .form-element select {
+  background-color: white;
+}
+
+li.zebra1 {
+  background-color: rgb(223, 240, 255);
+}
+
+li.zebra2 {
+  background-color: white;
 }
 
 .invalid, .warning {

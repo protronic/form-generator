@@ -35,7 +35,7 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
     genericLookUpQuery(this.options.queryUrl, '', this.options.listenQuery)
       .then(data => {
         this.dbfailed = false;
-        this.orig_list_items = data.map(entry => `<li onclick="((event) => { let compo = this.parentElement.parentElement.parentElement; console.log(compo); compo.querySelector('#${this.options.name}').value = event.target.value; compo.formInputHandler({target: compo}); compo.dispatchCustomEvent('form-input', event)})(event)" value="${entry[this.options.formWert]}">${Object.keys(entry).map(key => entry[key]).join(', ')}</li>`);
+        this.orig_list_items = data.map((entry, index) => `<li class="${index % 2 === 0 ? 'zebra1' : 'zebra2'}" onclick="((event) => { let compo = this.parentElement.parentElement.parentElement; console.log(compo); compo.querySelector('#${this.options.name}').value = event.target.value; compo.formInputHandler({target: compo}); compo.dispatchCustomEvent('form-input', event)})(event)" value="${entry[this.options.formWert]}">${Object.keys(entry).map(key => entry[key]).join(', ')}</li>`);
         let choose_list = this.querySelector('.choose-list');
         choose_list.innerHTML = this.orig_list_items.join('\n');
         this.querySelector('.filter-input').addEventListener('input', (event) => 
