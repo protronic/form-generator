@@ -85,14 +85,14 @@
             "name": "pruefnummer",
             "label": "Prüfnummer:",
             "feldtyp": "text",
-            "platzhalter": "Bsp.: 1-129-3'19",
+            "platzhalter": "Bsp.: 1-129-3&#39;19",
             "muster": ".*"
         },
         {
             "name": "pruefnummerextern",
             "label": "Prüfnummer v. extern:",
             "feldtyp": "text",
-            "platzhalter": "Bsp.: 10059NLP | 100-03'19"
+            "platzhalter": "Bsp.: 10059NLP | 100-03&#39;19"
         },
         {
             "name": "macnummer",

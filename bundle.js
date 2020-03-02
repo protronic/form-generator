@@ -550,6 +550,8 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
         console.error(err);
         this.dbfailed = true;
       });
+
+    if(this.getModel()) this.formInputHandler({target: this});
   }
 
   checkValidity(){
