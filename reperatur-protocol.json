@@ -69,15 +69,41 @@
             "feldtyp": "text"
         },
         {
-            "name": "platinennnummern",
+            "name": "platinennnummernlist",
             "label": "Platinennummern:",
-            "feldtyp": "list",
+            "feldtyp": "enumtextarea",
+            "beschreibung": "Kommagetrennte Liste aller relevanter Platinennummern",
+            "platzhalter": "Bsp.: 10000, 10001, 10002, ...",
             "vorlage": [
                 {
                     "name": "platinennummer",
                     "feldtyp": "text"
                 }
             ]
+        },
+        {
+            "name": "pruefnummer",
+            "label": "Prüfnummer:",
+            "feldtyp": "text",
+            "platzhalter": "Bsp.: 1-129-3'19",
+            "muster": ".*"
+        },
+        {
+            "name": "pruefnummerextern",
+            "label": "Prüfnummer v. extern:",
+            "feldtyp": "text",
+            "platzhalter": "Bsp.: 10059NLP | 100-03'19"
+        },
+        {
+            "name": "macnummer",
+            "label": "MAC-Nummer:",
+            "feldtyp": "text",
+            "platzhalter": "Bsp.: 00:EE:56:9C:09"
+        },
+        {
+            "name": "busnummer",
+            "label": "BUS-Nummer:",
+            "feldtyp": "text"
         },
         {
             "name": "qsnummer",
@@ -105,6 +131,7 @@
             "name": "produktionsfehlerliste",
             "feldtyp": "list",
             "label": "Produktionsfehler",
+            "hintergrundFarbe": "#fe0e0f40",
             "vorlage": [
                 {
                     "name": "produktionsfehler",
@@ -145,6 +172,7 @@
             "name": "mechanischefehlerliste",
             "feldtyp": "list",
             "label": "Mechanische Fehler",
+            "hintergrundFarbe": "#61018e40",
             "vorlage": [
                 {
                     "name": "mechanischefehler",
@@ -190,6 +218,7 @@
             "name": "elektronischefehlerliste",
             "feldtyp": "list",
             "label": "Elektronische Fehler",
+            "hintergrundFarbe": "#eeee0f40",
             "vorlage": [
                 {
                     "name": "elektronischefehler",
@@ -205,7 +234,7 @@
                             "name": "ef-fehlerkategorie",
                             "label": "Fehlerkategorie",
                             "feldtyp": "dropdown",
-                            "items": ["verbrannt", "defekt"]
+                            "items": ["verbrannt", "geplatzt", "ausgelaufen", "defekt"]
                         },
                         {
                             "name": "ef-ursache",
@@ -226,6 +255,44 @@
                             "pflichtfeld": true,
                             "abhaengigFeld": "ef-behebung",
                             "wertSichtbar": "Ersetzen"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "bedienfehlerliste",
+            "feldtyp": "list",
+            "label": "Bedienfehler",
+            "hintergrundFarbe": "#05ffb040",
+            "vorlage": [
+                {
+                    "name": "bedienfehler",
+                    "feldtyp": "object",
+                    "label": " ",
+                    "subform": [
+                        {
+                            "name": "bf-komponente",
+                            "label": "Komponente:",
+                            "feldtyp": "text"
+                        },
+                        {
+                            "name": "bf-fehlerkategorie",
+                            "label": "Fehlerkategorie:",
+                            "feldtyp": "dropdown",
+                            "items": ["Anschlussfehler", "Einstellungsfehler"]
+                        },
+                        {
+                            "name": "bf-ursache",
+                            "label": "Mögliche Ursache:",
+                            "feldtyp": "dropdown",
+                            "items": ["Schaltplan", "Dokumentation", "Personal"]
+                        },
+                        {
+                            "name": "bf-behebung",
+                            "label": "Behebung:",
+                            "feldtyp": "textarea",
+                            "platzhalter": "Werkseinstellungen zurückgesetzt | Telefonat | Ortsbesuch ..."
                         }
                     ]
                 }

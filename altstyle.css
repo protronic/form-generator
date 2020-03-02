@@ -57,7 +57,7 @@ span.pflichtfeld {
 
 .form-list {
   display: grid;
-  grid-template-columns: 95% 5%;
+  grid-template-columns: 98% 2%;
   border-radius: 5px;
 }
 
@@ -67,11 +67,12 @@ input-field-list > .form-element {
 }
 
 .form-list > button.form-list-removebtn {
-  margin-top: auto;
-  margin-bottom: auto;
+  margin-top: 5px;
+  margin-bottom: 5px;
   width: 100%;
-  height: 95%;
-  background-color: rgba(200, 0, 0, 0.5);
+  height: auto;
+  background-color: rgba(200, 0, 0, 1);
+  /* color: white; */
   padding: 2px;
 }
 
@@ -80,7 +81,7 @@ input-field-list > .form-element {
   position: relative;
   width: 99%;
   display: block;
-  background-color: rgba(0, 200, 0, 0.5);
+  background-color: rgba(0, 200, 0, 1);
   box-sizing: content-box;
   padding: 2px;
 }
@@ -149,12 +150,12 @@ input[type="dropdown"] {
   border-radius: 10px;
 }
 
-select {
+.form-element select {
   border-radius: 5px;
   border: none;
   box-shadow: inset -2px -2px 2px 1px gray;
   height: 2em;
-  background-color: rgba(0, 0, 0, 0.03);
+  background-color: rgb(255, 255, 255);
 }
 
 button.form-object-collapse {
@@ -244,7 +245,7 @@ input-field-radio > .form-element {
 }
 
 *.delete-waiting > .form-element {
-  background-color: #ff0b0bd8;
+  background-color: #ff0b0b;
   opacity: 0.2;
   z-index: 1000;
 }

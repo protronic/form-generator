@@ -373,6 +373,12 @@ const InputFieldDependentEnumTextarea = class extends EnumListableMixin(Dependen
     }
 }
 
+const InputFieldEnumTextArea = class extends EnumListableMixin(InputFieldTextarea){
+    constructor(){
+        super();
+    }
+}
+
 const fieldTypeMap = module.exports.fieldTypeMap = {
     'text': {
         tag: 'input-field-text',
@@ -381,6 +387,10 @@ const fieldTypeMap = module.exports.fieldTypeMap = {
     'enumtext': {
         tag: 'input-field-enumlisttext',
         conName: InputFieldEnumListText,
+    },
+    'enumtextarea': {
+        tag: 'input-field-enumlisttextarea',
+        conName: InputFieldEnumTextArea,
     },
     'dependentenumtextarea': {
         tag: 'input-field-dependentenumtextarea',
@@ -719,6 +729,8 @@ module.exports.InputFieldEnumListText = class extends EnumListableMixin(InputFie
   }
 }
 
+
+
 },{"./input-field.js":13}],8:[function(require,module,exports){
 const { InputField } = require('./input-field.js');
 
@@ -963,17 +975,22 @@ module.exports.InputFieldObject = class extends InputField{
   collapseObjectGroupHandler(event){
     let collapseBtn = event.srcElement;
     let self = collapseBtn.parentElement.parentElement;
+    let model = self.getModel();
+    let collapseTitle = `${self.options.label} ${model ? Object.values(model)[0] : ''}`;
+    let label = self.querySelector(`label[for="${self.options.name}"]`)
     let collapseEle = self.querySelector(`#${self.options.name}`);
     if(!self.collapsed){
         collapseEle.classList.add("hidden");
         // collapseEle.style.maxHeight = '0px';
         collapseBtn.innerText = 'ausklappen';
         self.collapsed = !self.collapsed;
+        label.innerText = collapseTitle;
     } else {
         collapseEle.classList.remove("hidden");
         // collapseEle.style.maxHeight = '10000px';
         collapseBtn.innerText = 'einklappen';
         self.collapsed = !self.collapsed;
+        label.innerText = self.options.label || '';
     }
   }
 
@@ -981,7 +998,7 @@ module.exports.InputFieldObject = class extends InputField{
       this.rootElement.insertAdjacentHTML('beforeend', `
           <div class="form-element">
               <button class="form-object-collapse" type="button" tabIndex="-1">einklappen</button>
-              ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
+              <label for="${this.options.name}">${this.options.label || ''}</label><br>
               <div id="${this.options.name}" class="form-group">
                   ${Object.keys(this.options.subform).map(key => {
                       let sub = this.options.subform[key];
@@ -1131,6 +1148,7 @@ const { debounce } = require('lodash');
 const fieldTypeMap = {
     'text': 'input-field-text',
     'enumtext': 'input-field-enumlisttext',
+    'enumtextarea': 'input-field-enumlisttextarea',
     'dependentenumtextarea': 'input-field-dependentenumtextarea',
     'email': 'input-field-email',
     'tel': 'input-field-tel',
@@ -1158,6 +1176,7 @@ module.exports.InputField = class extends HTMLElement {
         standard: '',
         deaktiviert: false,
         pflichtfeld: false,
+        hintergrundFarbe: 'none',
     };
     rootElement = this;
     options = {};
@@ -1187,6 +1206,7 @@ module.exports.InputField = class extends HTMLElement {
         }
 
         this.applyTemplate();
+        this.querySelector('.form-element').style.backgroundColor = this.options.hintergrundFarbe;
     }
 
     applyTemplate(){

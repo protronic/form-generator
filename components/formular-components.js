@@ -15,6 +15,12 @@ const InputFieldDependentEnumTextarea = class extends EnumListableMixin(Dependen
     }
 }
 
+const InputFieldEnumTextArea = class extends EnumListableMixin(InputFieldTextarea){
+    constructor(){
+        super();
+    }
+}
+
 const fieldTypeMap = module.exports.fieldTypeMap = {
     'text': {
         tag: 'input-field-text',
@@ -23,6 +29,10 @@ const fieldTypeMap = module.exports.fieldTypeMap = {
     'enumtext': {
         tag: 'input-field-enumlisttext',
         conName: InputFieldEnumListText,
+    },
+    'enumtextarea': {
+        tag: 'input-field-enumlisttextarea',
+        conName: InputFieldEnumTextArea,
     },
     'dependentenumtextarea': {
         tag: 'input-field-dependentenumtextarea',

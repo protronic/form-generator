@@ -4,6 +4,7 @@ const { debounce } = require('lodash');
 const fieldTypeMap = {
     'text': 'input-field-text',
     'enumtext': 'input-field-enumlisttext',
+    'enumtextarea': 'input-field-enumlisttextarea',
     'dependentenumtextarea': 'input-field-dependentenumtextarea',
     'email': 'input-field-email',
     'tel': 'input-field-tel',
@@ -31,6 +32,7 @@ module.exports.InputField = class extends HTMLElement {
         standard: '',
         deaktiviert: false,
         pflichtfeld: false,
+        hintergrundFarbe: 'none',
     };
     rootElement = this;
     options = {};
@@ -60,6 +62,7 @@ module.exports.InputField = class extends HTMLElement {
         }
 
         this.applyTemplate();
+        this.querySelector('.form-element').style.backgroundColor = this.options.hintergrundFarbe;
     }
 
     applyTemplate(){

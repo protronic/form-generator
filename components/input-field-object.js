@@ -13,17 +13,22 @@ module.exports.InputFieldObject = class extends InputField{
   collapseObjectGroupHandler(event){
     let collapseBtn = event.srcElement;
     let self = collapseBtn.parentElement.parentElement;
+    let model = self.getModel();
+    let collapseTitle = `${self.options.label} ${model ? Object.values(model)[0] : ''}`;
+    let label = self.querySelector(`label[for="${self.options.name}"]`)
     let collapseEle = self.querySelector(`#${self.options.name}`);
     if(!self.collapsed){
         collapseEle.classList.add("hidden");
         // collapseEle.style.maxHeight = '0px';
         collapseBtn.innerText = 'ausklappen';
         self.collapsed = !self.collapsed;
+        label.innerText = collapseTitle;
     } else {
         collapseEle.classList.remove("hidden");
         // collapseEle.style.maxHeight = '10000px';
         collapseBtn.innerText = 'einklappen';
         self.collapsed = !self.collapsed;
+        label.innerText = self.options.label || '';
     }
   }
 
@@ -31,7 +36,7 @@ module.exports.InputFieldObject = class extends InputField{
       this.rootElement.insertAdjacentHTML('beforeend', `
           <div class="form-element">
               <button class="form-object-collapse" type="button" tabIndex="-1">einklappen</button>
-              ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
+              <label for="${this.options.name}">${this.options.label || ''}</label><br>
               <div id="${this.options.name}" class="form-group">
                   ${Object.keys(this.options.subform).map(key => {
                       let sub = this.options.subform[key];
