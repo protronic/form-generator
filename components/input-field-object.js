@@ -5,6 +5,7 @@ module.exports.InputFieldObject = class extends InputField{
       super();
       this.defaultOptions = {
           ...this.defaultOptions,
+          representant: '',
           subform: {}
       };
       this.collapsed = false;
@@ -13,8 +14,14 @@ module.exports.InputFieldObject = class extends InputField{
   collapseObjectGroupHandler(event){
     let collapseBtn = event.srcElement;
     let self = collapseBtn.parentElement.parentElement;
-    let model = self.getModel();
-    let collapseTitle = `${self.options.label} ${model ? Object.values(model)[0] : ''}`;
+    let model = undefined;
+    let collapseTitle = ''
+    try{
+        model = self.getModel();
+        collapseTitle = `${self.options.label} ${model ? (self.options.representant ? (model[self.options.representant] ? model[self.options.representant] : '') : Object.values(model)[0]) : ''}`;
+    } catch(err){
+        console.log('SourceTree')
+    }
     let label = self.querySelector(`label[for="${self.options.name}"]`)
     let collapseEle = self.querySelector(`#${self.options.name}`);
     if(!self.collapsed){

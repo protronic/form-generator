@@ -11,6 +11,7 @@ const DependenceMixin = module.exports.DependenceMixin = superclass => class ext
           interval: 500,
           //wertUnsichtbar: '',  erstmal default hidden, bei bedarf, kann logik erweitert werden.
       }
+      this.visibility = true;
       this.hideField();   
   }
 
@@ -29,19 +30,23 @@ const DependenceMixin = module.exports.DependenceMixin = superclass => class ext
 
   linkDependency(){
       let dependent = this.parentElement.querySelector(`*[name='${this.saveValue('abhaengigFeld', this.options.abhaengigFeld)}']`);
-      dependent.addEventListener('focusout', this.checkDependence.bind(this, dependent));
+      dependent.addEventListener('form-valid', this.checkDependence.bind(this, dependent));
       setInterval(this.checkDependence.bind(this, dependent), this.options.interval);
   }
 
   hideField(){
-    this.visibility = false;
-    this.classList.add('hidden');
+    if(this.visibility){
+        this.visibility = false;
+        this.classList.add('hidden');
+    }
   }
 
   showField(){
-    this.visibility = true;
-    this.classList.remove('hidden');
-    this.checkValidity();
+    if(!this.visibility){
+        this.visibility = true;
+        this.classList.remove('hidden');
+        this.checkValidity();    
+    }
   }
 
   getModel(){
@@ -69,62 +74,62 @@ module.exports.InputFieldAbhaengig = class extends DependenceMixin(InputFieldTex
 
 
 /** evtl könnte es auch von InputFieldNachschlagen erben ... */
-module.exports.test = class extends InputFieldText {
-  constructor(){
-      super();
-      this.defaultOptions = {
-          ...this.defaultOptions,
-          abhaengigFeld: '',
-          wertSichtbar: '',
-          interval: 500,
-          //wertUnsichtbar: '',  erstmal default hidden, bei bedarf, kann logik erweitert werden.
-      }
-      this.hideField();   
-  }
+// module.exports.test = class extends InputFieldText {
+//   constructor(){
+//       super();
+//       this.defaultOptions = {
+//           ...this.defaultOptions,
+//           abhaengigFeld: '',
+//           wertSichtbar: '',
+//           interval: 500,
+//           //wertUnsichtbar: '',  erstmal default hidden, bei bedarf, kann logik erweitert werden.
+//       }
+//       this.hideField();   
+//   }
 
-  applyTemplate(){
-      super.applyTemplate();
-      this.linkDependency();
-  }
+//   applyTemplate(){
+//       super.applyTemplate();
+//       setTimeout(() => (this.linkDependency()), 0);
+//   }
 
-  checkDependence(dependent, event){
-      if(dependent.getModel() === this.options.wertSichtbar){
-          this.showField();
-      } else {
-          this.hideField();
-      }
-  };
+//   checkDependence(dependent, event){
+//       if(dependent.getModel() === this.options.wertSichtbar){
+//           this.showField();
+//       } else {
+//           this.hideField();
+//       }
+//   };
 
-  linkDependency(){
-      let dependent = this.parentElement.querySelector(`*[name='${this.saveValue('abhaengigFeld', this.options.abhaengigFeld)}']`);
-      dependent.addEventListener('focusout', this.checkDependence.bind(this, dependent));
-      setInterval(this.checkDependence.bind(this, dependent), this.options.interval);
-  }
+//   linkDependency(){
+//       let dependent = this.parentElement.querySelector(`*[name='${this.saveValue('abhaengigFeld', this.options.abhaengigFeld)}']`);
+//       dependent.addEventListener('focusout', this.checkDependence.bind(this, dependent));
+//       setInterval(this.checkDependence.bind(this, dependent), this.options.interval);
+//   }
 
-  hideField(){
-      this.classList.add('hidden');
-  }
+//   hideField(){
+//       this.classList.add('hidden');
+//   }
 
-  showField(){
-      this.classList.remove('hidden');
-  }
+//   showField(){
+//       this.classList.remove('hidden');
+//   }
 
-  getModel(){
-      if(this.visibility){
-          return super.getModel();
-      } else {
-          return undefined;
-      }
-  }
+//   getModel(){
+//       if(this.visibility){
+//           return super.getModel();
+//       } else {
+//           return undefined;
+//       }
+//   }
 
-  checkValidity(){
-      if(this.visibility){
-          return super.checkValidity();
-      } else {
-          return true;
-      }
-  }
-}
+//   checkValidity(){
+//       if(this.visibility){
+//           return super.checkValidity();
+//       } else {
+//           return true;
+//       }
+//   }
+// }
 
 },{"./input-field-generic.js":7}],2:[function(require,module,exports){
 const { InputFieldObject } = require('./input-field-object.js');
@@ -379,6 +384,12 @@ const InputFieldEnumTextArea = class extends EnumListableMixin(InputFieldTextare
     }
 }
 
+const InputFieldDependentChooseList = class extends DependenceMixin(InputFieldChooseList){
+    constructor(){
+        super();
+    }
+}
+
 const fieldTypeMap = module.exports.fieldTypeMap = {
     'text': {
         tag: 'input-field-text',
@@ -447,6 +458,10 @@ const fieldTypeMap = module.exports.fieldTypeMap = {
     'choose': {
         tag: 'input-field-choose-list',
         conName: InputFieldChooseList,
+    },
+    'dependentchoose': {
+        tag: 'input-field-dependent-choose-list',
+        conName: InputFieldDependentChooseList,
     }
 };
 
@@ -488,10 +503,12 @@ module.exports.InputFieldBoolean = class extends InputField{
                   ${this.options.initialModel ? 'checked' : 'unchecked'}
                   ${this.options.deaktiviert ? 'disabled' : ''}
                   type="checkbox"
+                  title="${this.options.beschreibung}"
               >
               <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
           </div>
       `);
+      this.querySelector('input').addEventListener('input', (event) => (console.log('checked', event), this.dispatchCustomEvent.bind(this, 'form-input')(event)))
   }
 
   getModel(){
@@ -533,17 +550,21 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
 
       </ul>
     `);
+      
+      this.querySelector('.form-element').insertAdjacentHTML('afterend', `<div class="separator"></div>`);
       // this.rootElement.insertAdjacentHTML('beforeend', );
 
     genericLookUpQuery(this.options.queryUrl, '', this.options.listenQuery)
       .then(data => {
-        this.dbfailed = false;
-        this.orig_list_items = data.map((entry, index) => `<li class="${index % 2 === 0 ? 'zebra1' : 'zebra2'}" onclick="((event) => { let compo = this.parentElement.parentElement.parentElement; console.log(compo); compo.querySelector('#${this.options.name}').value = event.target.value; compo.formInputHandler({target: compo}); compo.dispatchCustomEvent('form-input', event)})(event)" value="${entry[this.options.formWert]}">${Object.keys(entry).map(key => entry[key]).join(', ')}</li>`);
-        let choose_list = this.querySelector('.choose-list');
-        choose_list.innerHTML = this.orig_list_items.join('\n');
-        this.querySelector('.filter-input').addEventListener('input', (event) => 
-          (choose_list.innerHTML = this.orig_list_items.filter(value => value.toLowerCase().includes(event.target.value)).join('\n'))
-        );
+        this.createChooseList(data);
+        this.querySelector(`input#${this.options.name}`).addEventListener('input', (event) => {
+          let formContainer = event.target.parentElement;
+          if(event.target.value === ''){
+            formContainer.querySelector('.selected-item').classList.remove('selected-item');
+            formContainer.querySelector('.selected').classList.remove('selected');
+            formContainer.parentElement.createChooseList(data);
+          }
+        });
       })
       .catch(err => {
         console.log('Database could not be reached?');
@@ -552,6 +573,16 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
       });
 
     if(this.getModel()) this.formInputHandler({target: this});
+  }
+
+  createChooseList(data){
+    this.dbfailed = false;
+    this.orig_list_items = data.map((entry, index) => `<li class="${index % 2 === 0 ? 'zebra1' : 'zebra2'}" onclick="((event) => { let compo = this.parentElement.parentElement.parentElement; console.log(compo); compo.querySelector('#${this.options.name}').value = event.target.value; compo.querySelector('ul').classList.add('selected-item'); compo.formInputHandler({target: compo}); compo.dispatchCustomEvent('form-input', event)})(event)" value="${entry[this.options.formWert]}">${Object.keys(entry).map(key => entry[key]).join(', ')}</li>`);
+    let choose_list = this.querySelector('.choose-list');
+    choose_list.innerHTML = this.orig_list_items.join('\n');
+    this.querySelector('.filter-input').addEventListener('input', (event) => 
+      (choose_list.innerHTML = this.orig_list_items.filter(value => value.toLowerCase().includes(event.target.value)).join('\n'))
+    );
   }
 
   checkValidity(){
@@ -566,7 +597,6 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
     if(this.dbfailed && valid) this.setValidityStatus(true, 'Datenbank nicht erreichbar.', true);
     return valid && ( this.dbfailed || matchingListItem );
   }
-
 
   // //? CAREFULL formInputHandler does not overwrite superclass method formInputHandler, that is already added as an eventlistener;
   // formInputHandlerLi(event){
@@ -969,6 +999,7 @@ module.exports.InputFieldObject = class extends InputField{
       super();
       this.defaultOptions = {
           ...this.defaultOptions,
+          representant: '',
           subform: {}
       };
       this.collapsed = false;
@@ -977,8 +1008,14 @@ module.exports.InputFieldObject = class extends InputField{
   collapseObjectGroupHandler(event){
     let collapseBtn = event.srcElement;
     let self = collapseBtn.parentElement.parentElement;
-    let model = self.getModel();
-    let collapseTitle = `${self.options.label} ${model ? Object.values(model)[0] : ''}`;
+    let model = undefined;
+    let collapseTitle = ''
+    try{
+        model = self.getModel();
+        collapseTitle = `${self.options.label} ${model ? (self.options.representant ? (model[self.options.representant] ? model[self.options.representant] : '') : Object.values(model)[0]) : ''}`;
+    } catch(err){
+        console.log('SourceTree')
+    }
     let label = self.querySelector(`label[for="${self.options.name}"]`)
     let collapseEle = self.querySelector(`#${self.options.name}`);
     if(!self.collapsed){
@@ -1130,6 +1167,7 @@ module.exports.InputFieldTextarea = class extends InputField{
                   cols="${this.options.cols}"
                   rows="${this.options.rows}"
                   wrap="${this.options.wrap}"
+                  title="${this.options.beschreibung}"
               >${(this.options.initialModel) ? this.options.initialModel : ''}</textarea>
               <span class="validity-message"></span>
               <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
@@ -1164,7 +1202,8 @@ const fieldTypeMap = {
     'dependenttext': 'input-field-abhaengig',
     'list': 'input-field-list',
     'object': 'input-field-object', 
-    'choose': 'input-field-choose-list'
+    'choose': 'input-field-choose-list',
+    'dependentchoose': 'input-field-dependent-choose-list',
 };
 
 module.exports.InputField = class extends HTMLElement {
@@ -1204,7 +1243,7 @@ module.exports.InputField = class extends HTMLElement {
         }
 
         if(this.options.beschreibung === ''){
-            this.options.beschreibung = this.options.label;
+            this.options.beschreibung = this.options.name;
         }
 
         this.applyTemplate();
@@ -1228,7 +1267,7 @@ module.exports.InputField = class extends HTMLElement {
     }
 
     saveValue(key, value){
-        if(key === 'query') value = value.split("'").join("&#39;");
+        if(key === 'query' || key === 'listenQuery') value = value.split("'").join("&#39;");
         return JSON.stringify(value);
     }
 
@@ -1288,6 +1327,7 @@ module.exports.InputField = class extends HTMLElement {
     }
 
     formInputHandler(event){
+        console.log(event)
         let valid = event.target.checkValidity();
         if(valid) {
             this.dispatchCustomEvent('form-valid', {target: this})

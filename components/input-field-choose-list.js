@@ -30,17 +30,21 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
 
       </ul>
     `);
+      
+      this.querySelector('.form-element').insertAdjacentHTML('afterend', `<div class="separator"></div>`);
       // this.rootElement.insertAdjacentHTML('beforeend', );
 
     genericLookUpQuery(this.options.queryUrl, '', this.options.listenQuery)
       .then(data => {
-        this.dbfailed = false;
-        this.orig_list_items = data.map((entry, index) => `<li class="${index % 2 === 0 ? 'zebra1' : 'zebra2'}" onclick="((event) => { let compo = this.parentElement.parentElement.parentElement; console.log(compo); compo.querySelector('#${this.options.name}').value = event.target.value; compo.formInputHandler({target: compo}); compo.dispatchCustomEvent('form-input', event)})(event)" value="${entry[this.options.formWert]}">${Object.keys(entry).map(key => entry[key]).join(', ')}</li>`);
-        let choose_list = this.querySelector('.choose-list');
-        choose_list.innerHTML = this.orig_list_items.join('\n');
-        this.querySelector('.filter-input').addEventListener('input', (event) => 
-          (choose_list.innerHTML = this.orig_list_items.filter(value => value.toLowerCase().includes(event.target.value)).join('\n'))
-        );
+        this.createChooseList(data);
+        this.querySelector(`input#${this.options.name}`).addEventListener('input', (event) => {
+          let formContainer = event.target.parentElement;
+          if(event.target.value === ''){
+            formContainer.querySelector('.selected-item').classList.remove('selected-item');
+            formContainer.querySelector('.selected').classList.remove('selected');
+            formContainer.parentElement.createChooseList(data);
+          }
+        });
       })
       .catch(err => {
         console.log('Database could not be reached?');
@@ -49,6 +53,16 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
       });
 
     if(this.getModel()) this.formInputHandler({target: this});
+  }
+
+  createChooseList(data){
+    this.dbfailed = false;
+    this.orig_list_items = data.map((entry, index) => `<li class="${index % 2 === 0 ? 'zebra1' : 'zebra2'}" onclick="((event) => { let compo = this.parentElement.parentElement.parentElement; console.log(compo); compo.querySelector('#${this.options.name}').value = event.target.value; compo.querySelector('ul').classList.add('selected-item'); compo.formInputHandler({target: compo}); compo.dispatchCustomEvent('form-input', event)})(event)" value="${entry[this.options.formWert]}">${Object.keys(entry).map(key => entry[key]).join(', ')}</li>`);
+    let choose_list = this.querySelector('.choose-list');
+    choose_list.innerHTML = this.orig_list_items.join('\n');
+    this.querySelector('.filter-input').addEventListener('input', (event) => 
+      (choose_list.innerHTML = this.orig_list_items.filter(value => value.toLowerCase().includes(event.target.value)).join('\n'))
+    );
   }
 
   checkValidity(){
@@ -63,7 +77,6 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
     if(this.dbfailed && valid) this.setValidityStatus(true, 'Datenbank nicht erreichbar.', true);
     return valid && ( this.dbfailed || matchingListItem );
   }
-
 
   // //? CAREFULL formInputHandler does not overwrite superclass method formInputHandler, that is already added as an eventlistener;
   // formInputHandlerLi(event){

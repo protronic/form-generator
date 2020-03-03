@@ -18,10 +18,12 @@ module.exports.InputFieldBoolean = class extends InputField{
                   ${this.options.initialModel ? 'checked' : 'unchecked'}
                   ${this.options.deaktiviert ? 'disabled' : ''}
                   type="checkbox"
+                  title="${this.options.beschreibung}"
               >
               <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
           </div>
       `);
+      this.querySelector('input').addEventListener('input', (event) => (console.log('checked', event), this.dispatchCustomEvent.bind(this, 'form-input')(event)))
   }
 
   getModel(){

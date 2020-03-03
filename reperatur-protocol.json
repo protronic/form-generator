@@ -15,6 +15,7 @@
             "name": "kontakt",
             "feldtyp": "object",
             "label": "Ansprechpartner:",
+            "representant": "name",
             "subform": [
                 {
                     "name": "anrede",
@@ -46,6 +47,42 @@
                     "name": "sonstiges",
                     "label": "Sonstiges:",
                     "feldtyp": "textarea"
+                }
+            ]
+        },
+        {
+            "name": "abw-liefern",
+            "label": "Lieferadresse",
+            "feldtyp": "object",
+            "subform": [
+                {
+                    "name": "hat-abweichende-lieferadresse",
+                    "label": "Lieferadresse weicht ab?",
+                    "beschreibung": "Ankreuzen, wenn die Lieferadresse nicht der im Sage beim Kunden hinterlegten Adresse entspricht.",
+                    "feldtyp": "boolean",
+                    "standard": false
+                },
+                {
+                    "name": "abweichende-lieferadresse",
+                    "feldtyp": "dependentchoose",
+                    "label": "Abw. Lieferadresse:",
+                    "beschreibung": "AdressID aus Sage; Oder 99999 (letzter Listeneintrag) um selbst eine Lieferadresse anzugeben.",
+                    "platzhalter": "zB.: 100", 
+                    "muster": "[0-9]{1,5}",
+                    "pflichtfeld": true,
+                    "abhaengigFeld": "hat-abweichende-lieferadresse",
+                    "wertSichtbar": true,
+                    "queryUrl": "http://prot-subuntu:8081/master",
+                    "listenQuery": "SELECT Adresse, Matchcode, CONCAT(&#39;<br>&#39;, LieferLand, &#39;, &#39;, LieferPLZ, &#39; &#39;, LieferOrt, &#39;<br>&#39;, LieferStrasse) AS Anschrift FROM [prot-sage11].OLReweAbf.dbo.KHKAdressen UNION SELECT 99999, &#39;Adresse angeben&#39;, &#39;&#39;",
+                    "formWert": "Adresse"
+                },
+                {
+                    "name": "abweichende-lieferadresse-eingabe",
+                    "label": "Abw. Lieferadresse Eingabe:",
+                    "feldtyp": "dependentenumtextarea",
+                    "pflichtfeld": true,
+                    "abhaengigFeld": "abweichende-lieferadresse",
+                    "wertSichtbar": "99999"
                 }
             ]
         },
@@ -321,11 +358,15 @@
         {
             "name": "ausgangslieferschein",
             "label": "Ausgangslieferschein:",
+            "platzhalter": "zB.: 2019-21000",
+            "muster": "[0-9]{4}-[0-9]{5}",
             "feldtyp": "text"
         },
         {
             "name": "ausgangsrechnung",
             "label": "Ausgangsrechnung:",
+            "platzhalter": "zB.: 2019-11000",
+            "muster": "[0-9]{4}-[0-9]{5}",
             "feldtyp": "text"
         },
         {

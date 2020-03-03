@@ -23,6 +23,7 @@ module.exports.InputFieldTextarea = class extends InputField{
                   cols="${this.options.cols}"
                   rows="${this.options.rows}"
                   wrap="${this.options.wrap}"
+                  title="${this.options.beschreibung}"
               >${(this.options.initialModel) ? this.options.initialModel : ''}</textarea>
               <span class="validity-message"></span>
               <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>

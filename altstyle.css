@@ -186,6 +186,7 @@ button.form-object-collapse {
   -moz-box-sizing: border-box;
   margin-top: 1px;
   border-radius: 0px 0px 10px 10px;
+  margin-bottom: 8px;
 }
 
 .choose-list > li {
@@ -213,12 +214,30 @@ button.form-object-collapse {
 }
 
 .choose-list > li.selected {
-  background-color: steelblue;
+  background-color: #2020e360;
 }
 
 [pflichtfeld="true"] > label, [pflichtfeld="true"] > .form-element > label:first-of-type {
   font-style: italic;
   text-decoration-line: underline;
+}
+
+.separator {
+  width: 100%;
+  height: 0px;
+  box-sizing: border-box;
+  border: 4px solid#90909040;
+  margin-bottom: 20px;
+  border-radius: 20px;
+}
+
+ul.selected-item {
+  min-height: max-content;
+  max-height: max-content;
+}
+
+ul.selected-item > li:not(.selected) {
+  display: none;
 }
 
 input-field-radio > .form-element {

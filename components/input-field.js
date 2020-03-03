@@ -18,7 +18,8 @@ const fieldTypeMap = {
     'dependenttext': 'input-field-abhaengig',
     'list': 'input-field-list',
     'object': 'input-field-object', 
-    'choose': 'input-field-choose-list'
+    'choose': 'input-field-choose-list',
+    'dependentchoose': 'input-field-dependent-choose-list',
 };
 
 module.exports.InputField = class extends HTMLElement {
@@ -58,7 +59,7 @@ module.exports.InputField = class extends HTMLElement {
         }
 
         if(this.options.beschreibung === ''){
-            this.options.beschreibung = this.options.label;
+            this.options.beschreibung = this.options.name;
         }
 
         this.applyTemplate();
@@ -82,7 +83,7 @@ module.exports.InputField = class extends HTMLElement {
     }
 
     saveValue(key, value){
-        if(key === 'query') value = value.split("'").join("&#39;");
+        if(key === 'query' || key === 'listenQuery') value = value.split("'").join("&#39;");
         return JSON.stringify(value);
     }
 
@@ -142,6 +143,7 @@ module.exports.InputField = class extends HTMLElement {
     }
 
     formInputHandler(event){
+        console.log(event)
         let valid = event.target.checkValidity();
         if(valid) {
             this.dispatchCustomEvent('form-valid', {target: this})
