@@ -195,6 +195,23 @@ function loadModelFromDB(modelId){
         .then(dataRows => dataRows.recordset[0].log)
 }
 
+function loadSchemaFromDB(schemaId){
+    return fetch('http://prot-subuntu:8081/formly', {
+        method: 'POST',
+        body: `{"q": "SELECT log FROM schemas WHERE _id= ${schemaId}"}`,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    }) 
+    .then(response => response.json())
+    .then(dataRows => dataRows.recordset[0].log)
+}
+
+function getSchemaId(){
+    let url = new URL(location.href);
+    return url.searchParams.get('schema');
+}
+
 class FormCreator extends InputFieldObject{
     constructor(){
         super();
@@ -204,54 +221,55 @@ class FormCreator extends InputFieldObject{
         this.addEventListener('form-valid', (event => console.log(event))); 
     }
 
-    connectedCallback(){
-        let schemaLink = this.getAttribute('schemalink');
-        
+    connectedCallback(){        
         this.rootElement = document.createElement('form');
         this.rootElement.classList.add('form-root');
         this.append(this.rootElement);
 
-        fetch(schemaLink)
-            .then(response => response.json())
+        loadSchemaFromDB(getSchemaId())
             .then(schema => {
-                console.log(this.schema)
-                this.schema = schema;
-                this.options.name = schema.formular;
-                this.options.label = `${schema.formular}`;
-                this.options.subform = schema.felder;
-
-                try{
-                    // this.options.initialModel = this.loadFromLocal();
-                    // this.options.initialModel = loadModelFromDB()
-                    let url = new URL(location.href);
-                    let modelId = url.searchParams.get('mid');
-
-                    if(modelId){
-                        loadModelFromDB(modelId).then(model => {
-                            this.model = this.convertValue('initialModel', model);
-                            console.log(this.convertValue('initialModel', model))
-                            this.model['#modelID'] = modelId;
-                            this.options.name = schema.formular;
-                            this.options.label = `${this.options.label} ${modelId}`;
-                            this.options.initialModel = this.convertValue('initialModel', model);
-                            this.rootElement.options = this.options;
-                            this.applyTemplate();
-                        })    
-                    } else {
-                        this.options.initialModel = this.loadFromLocal();
-                        this.rootElement.options = this.options;
-                        this.applyTemplate()
-                    }
-                } catch(err) {
-                    console.log(this.options.initialModel);
-                    console.error(err);
-                }
-
-                // this.testModelCreation();
-                this.uploadModelButton();
-                this.newFormularButton();
-                this.renderGeneralInfo(schema);
+                this.applySchema(schema);
             })
+    }
+
+    applySchema(schema){
+        console.log(this.schema)
+        this.schema = schema;
+        this.options.name = schema.formular;
+        this.options.label = `${schema.formular}`;
+        this.options.subform = schema.felder;
+
+        try{
+            // this.options.initialModel = this.loadFromLocal();
+            // this.options.initialModel = loadModelFromDB()
+            let url = new URL(location.href);
+            let modelId = url.searchParams.get('mid');
+
+            if(modelId){
+                loadModelFromDB(modelId).then(model => {
+                    this.model = this.convertValue('initialModel', model);
+                    console.log(this.convertValue('initialModel', model))
+                    this.model['#modelID'] = modelId;
+                    this.options.name = schema.formular;
+                    this.options.label = `${this.options.label} ${modelId}`;
+                    this.options.initialModel = this.convertValue('initialModel', model);
+                    this.rootElement.options = this.options;
+                    this.applyTemplate();
+                })    
+            } else {
+                this.options.initialModel = this.loadFromLocal();
+                this.rootElement.options = this.options;
+                this.applyTemplate()
+            }
+        } catch(err) {
+            console.log(this.options.initialModel);
+            console.error(err);
+        }
+
+        // this.testModelCreation();
+        this.uploadModelButton();
+        this.newFormularButton();
+        this.renderGeneralInfo(schema);
     }
 
     renderGeneralInfo(schema){
