@@ -143,7 +143,7 @@ module.exports.InputField = class extends HTMLElement {
     }
 
     formInputHandler(event){
-        console.log(event)
+        // console.log(event)
         let valid = event.target.checkValidity();
         if(valid) {
             this.dispatchCustomEvent('form-valid', {target: this})

@@ -3,6 +3,10 @@ const { fieldTypeMap } = require('./formular-components.js');
 
 // require('../altstyle.css');
 
+var baseUrl = 'http://10.19.28.94:8000'
+var schemaPath = '/schema'
+var modelPath = '/model'
+
 Object.keys(fieldTypeMap).forEach(keyTag => {
   customElements.define(fieldTypeMap[keyTag].tag, fieldTypeMap[keyTag].conName);
 });
@@ -15,62 +19,99 @@ function prepareModel(model, formular){
         user = wikiContext.UserName;
     } catch(err) {
         console.log('wikiContext not in scope.');
-        console.error(err);
+        // console.error(err);
     }
 
     model['#parentForm'] = formular;
     model['#changed_user'] = user;
     model['#changed_time'] = changedTime;
 
-    return JSON.stringify(JSON.stringify(model)).slice(1, -1);
+    // return JSON.stringify(JSON.stringify(model)).slice(1, -1);
+    return JSON.stringify(model);
 }
+
+// function uploadNewModel(model, formular){
+//     let serialModel = prepareModel(model, formular);
+//     return fetch('http://prot-subuntu:8081/formly', {
+//         method: 'POST',
+//         body: `{"q": "INSERT INTO model (log) VALUES ('${serialModel}');SELECT TOP 1 _id FROM model WHERE log = '${serialModel}' ORDER BY _id DESC;"}`,
+//         headers: {
+//             'Content-Type': 'application/json'
+//         }
+//     })
+//         .then(response => response.json())
+//         .then(dataRows => dataRows.recordset[0]._id)
+// }
 
 function uploadNewModel(model, formular){
     let serialModel = prepareModel(model, formular);
-    return fetch('http://prot-subuntu:8081/formly', {
+    return fetch(`${baseUrl}${modelPath}`, {
         method: 'POST',
-        body: `{"q": "INSERT INTO model (log) VALUES ('${serialModel}');SELECT TOP 1 _id FROM model WHERE log = '${serialModel}' ORDER BY _id DESC;"}`,
+        body: `${serialModel}`,
         headers: {
             'Content-Type': 'application/json'
         }
     })
         .then(response => response.json())
-        .then(dataRows => dataRows.recordset[0]._id)
+        .then(data => data['#modelID'])
 }
+
+// function uploadExistingModel(model, formular){
+//     let serialModel = prepareModel(model, formular);
+//     return fetch('http://prot-subuntu:8081/formly', {
+//         method: 'POST',
+//         body: `{"q": "UPDATE model SET log = '${serialModel}' WHERE _id = ${model['#modelID']}"}`,
+//         headers: {
+//             'Content-Type': 'application/json'
+//         }
+//     }).then(response => response.json()).then(response => console.log(response))
+// }
 
 function uploadExistingModel(model, formular){
     let serialModel = prepareModel(model, formular);
-    return fetch('http://prot-subuntu:8081/formly', {
+    return fetch(`${baseUrl}${modelPath}/${model['#modelID']}`, {
         method: 'POST',
-        body: `{"q": "UPDATE model SET log = '${serialModel}' WHERE _id = ${model['#modelID']}"}`,
+        body: serialModel,
         headers: {
             'Content-Type': 'application/json'
         }
     }).then(response => response.json()).then(response => console.log(response))
 }
 
+// function loadModelFromDB(modelId){
+//     return fetch('http://prot-subuntu:8081/formly', {
+//         method: 'POST',
+//         body: `{"q": "SELECT log FROM model WHERE _id = ${modelId}"}`,
+//         headers: {
+//             'Content-Type': 'application/json'
+//         }
+//     })
+//         .then(response => response.json())
+//         .then(dataRows => dataRows.recordset[0].log)
+// }
+
 function loadModelFromDB(modelId){
-    return fetch('http://prot-subuntu:8081/formly', {
-        method: 'POST',
-        body: `{"q": "SELECT log FROM model WHERE _id = ${modelId}"}`,
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
+    return fetch(`${baseUrl}${modelPath}/${modelId}`)
         .then(response => response.json())
-        .then(dataRows => dataRows.recordset[0].log)
+        // .then(dataRows => dataRows.recordset[0].log)
 }
 
+// function loadSchemaFromDB(schemaId){
+//     return fetch('http://prot-subuntu:8081/formly', {
+//         method: 'POST',
+//         body: `{"q": "SELECT log FROM schemas WHERE _id= ${schemaId}"}`,
+//         headers: {
+//             'Content-Type': 'application/json'
+//         }
+//     }) 
+//     .then(response => response.json())
+//     .then(dataRows => JSON.parse(dataRows.recordset[0].log))
+// }
+
 function loadSchemaFromDB(schemaId){
-    return fetch('http://prot-subuntu:8081/formly', {
-        method: 'POST',
-        body: `{"q": "SELECT log FROM schemas WHERE _id= ${schemaId}"}`,
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }) 
+    return fetch(`${baseUrl}${schemaPath}/${schemaId}`) 
     .then(response => response.json())
-    .then(dataRows => JSON.parse(dataRows.recordset[0].log))
+    // .then(dataRows => dataRows)
 }
 
 function getSchemaId(){
@@ -96,6 +137,7 @@ class FormCreator extends InputFieldObject{
 
         loadSchemaFromDB(getSchemaId())
             .then(schema => {
+                console.log(schema)
                 this.applySchema(schema);
             })
     }
@@ -198,7 +240,7 @@ class FormCreator extends InputFieldObject{
                     uploadNewModel(this.model, this.schema.formular)
                         .then(modelId => 
                             (this.model['#modelID'] = modelId,
-                            this.querySelector('label[for="Reparaturbericht"]').innerText = `${this.options.label} ${modelId}`, 
+                            this.querySelector(`label[for="${this.schema.formular}"]`).innerText = `${this.options.label} ${modelId}`, 
                             alert(`Daten wurden erfolgreich in der Datenbank unter folgender ID abgelegt.\n${modelId}`))
                         );
                 }

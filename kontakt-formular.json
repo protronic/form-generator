@@ -1,0 +1,59 @@
+{
+  "formular": "kontaktformular",
+  "felder": [
+    {
+      "name": "vorname",
+      "label": "Vorname:",
+      "feldtyp": "text"
+    },
+    {
+      "name": "nachname",
+      "label": "Nachname:",
+      "feldtyp": "text"
+    },
+    {
+      "name": "email",
+      "label": "E-Mail:",
+      "feldtyp": "email",
+      "platzhalter": "beispiel@host.tld"
+    },
+    {
+      "name": "anschrift",
+      "label": "Anschrift:",
+      "feldtyp": "object",
+      "subform": [
+        {
+          "name": "strasse",
+          "label": "Strasse:",
+          "feldtyp": "text"
+        },
+        {
+          "name": "hausnr",
+          "label": "Hausnummer:",
+          "feldtyp": "text"
+        },
+        {
+          "name": "postleitzahl",
+          "label": "Postleitzahl:",
+          "feldtyp": "text"
+        },
+        {
+          "name": "stadt",
+          "label": "Stadt:",
+          "feldtyp": "text"
+        }
+      ]
+    },
+    {
+      "name": "telefon",
+      "label": "Telefonnummer:",
+      "feldtyp": "tel"
+    },
+    {
+      "name": "gruppe",
+      "label": "Gruppe:",
+      "feldtyp": "dropdown",
+      "items": ["Gruppe 1", "Gruppe 2", "Gruppe 3", "Gruppe 4", "Gruppe 5", "Gruppe 6"]
+    }
+  ]
+}

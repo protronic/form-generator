@@ -4,9 +4,18 @@
         <meta charset="utf-8"/>
         <link rel="stylesheet" type="text/css" href="altstyle.css">
         <!-- <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script> -->
-        <script src="bundle_es5.js"></script>
+        <script src="bundle.js"></script>
     </head>
     <body>
         <form-creator></form-creator>
+        <!-- <script>
+            // fetch('http://10.19.28.94:8000/model/0').then(r => r.json()).then(r => console.log(r))
+            // fetch('http://10.19.28.94:8000/model', {
+            //     method: 'POST',
+            //     body: JSON.stringify({vorname: 'Robert', nachname: 'Seidler'}),
+            //     headers: {'Content-Type': 'application/json'}
+            // }).then(r => r.json()).then(r => console.log(r))
+            fetch('http://10.19.28.94:8000/schema/0').then(r => r.json()).then(r => document.body.innerHTML = JSON.stringify(r))
+        </script> -->
     </body>
 </html>
