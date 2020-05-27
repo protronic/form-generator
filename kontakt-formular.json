@@ -28,24 +28,24 @@
           "feldtyp": "text"
         },
         {
-          "name": "hausnr",
+          "name": "hausnummer",
           "label": "Hausnummer:",
           "feldtyp": "text"
         },
         {
-          "name": "postleitzahl",
+          "name": "plz",
           "label": "Postleitzahl:",
           "feldtyp": "text"
         },
         {
-          "name": "stadt",
+          "name": "ort",
           "label": "Stadt:",
           "feldtyp": "text"
         }
       ]
     },
     {
-      "name": "telefon",
+      "name": "telefonnummer",
       "label": "Telefonnummer:",
       "feldtyp": "tel"
     },

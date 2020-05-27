@@ -261,8 +261,7 @@ class FormCreator extends InputFieldObject{
         super();
         this.model = {};
 
-        //TODO REMOVE after Test
-        this.addEventListener('form-valid', (event => console.log(event))); 
+        // this.addEventListener('form-valid', (event => console.log(event))); 
     }
 
     connectedCallback(){        
