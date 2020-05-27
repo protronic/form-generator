@@ -231,21 +231,25 @@ class FormCreator extends InputFieldObject{
         btn.setAttribute('type', 'button');
         btn.addEventListener('click', (event) => {
             if(this.checkValidity()){
-                this.model = {...this.model, ...this.getModel()};
-                this.saveFormLocal(this.model['#modelID'], this.model);
-                if(this.model['#modelID']){
-                    console.log(this.model)
-                    uploadExistingModel(this.model, this.schema.formular)
-                        .then(() => alert(`Änderungen an ${this.model['#modelID']} wurden gespeichert.`))
+                let modelResult = this.getModel();
+                if(modelResult === undefined ){
+                    console.log('empty model');
                 } else {
-                    uploadNewModel(this.model, this.schema.formular)
-                        .then(modelId => 
-                            (this.model['#modelID'] = modelId,
-                            this.querySelector(`label[for="${this.schema.formular}"]`).innerText = `${this.options.label} ${modelId}`, 
-                            alert(`Daten wurden erfolgreich in der Datenbank unter folgender ID abgelegt.\n${modelId}`))
-                        );
-                }
-                
+                    this.model = {...this.model, ...modelResult};
+                    this.saveFormLocal(this.model['#modelID'], this.model);
+                    if(this.model['#modelID']){
+                        console.log(this.model)
+                        uploadExistingModel(this.model, this.schema.formular)
+                            .then(() => alert(`Änderungen an ${this.model['#modelID']} wurden gespeichert.`))
+                    } else {
+                        uploadNewModel(this.model, this.schema.formular)
+                            .then(modelId => 
+                                (this.model['#modelID'] = modelId,
+                                this.querySelector(`label[for="${this.schema.formular}"]`).innerText = `${this.options.label} ${modelId}`, 
+                                alert(`Daten wurden erfolgreich in der Datenbank unter folgender ID abgelegt.\n${modelId}`))
+                            );
+                    }    
+                }                
             } else {
                 console.log('invalid')
             }
