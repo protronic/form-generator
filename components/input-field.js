@@ -23,26 +23,26 @@ const fieldTypeMap = {
 };
 
 module.exports.InputField = class extends HTMLElement {
-    schema = {};
-    template = '';
-    defaultOptions = {
-        initialModel: '',
-        name: '',
-        label: '',
-        beschreibung: '',
-        standard: '',
-        deaktiviert: false,
-        pflichtfeld: false,
-        hintergrundFarbe: 'none',
-    };
-    rootElement = this;
-    options = {};
-    model = {};
-    valid = true;
-    validityMessage = undefined;
+    
     constructor(){
         super();
-
+        this.schema = {};
+        this.template = '';
+        this.defaultOptions = {
+            initialModel: '',
+            name: '',
+            label: '',
+            beschreibung: '',
+            standard: '',
+            deaktiviert: false,
+            pflichtfeld: false,
+            hintergrundFarbe: 'none',
+        };
+        this.rootElement = this;
+        this.options = {};
+        this.model = {};
+        this.valid = true;
+        this.validityMessage = undefined;
         this.addEventListener('form-input', debounce(this.formInputHandler, 1000, {leading: false, trailing: true}));
     }
 

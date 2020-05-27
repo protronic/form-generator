@@ -69,7 +69,7 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
 
   createChooseList(data, resultInput){
     this.dbfailed = false;
-    this.orig_list_items = data.map((entry, index) => `<li class="${index % 2 === 0 ? 'zebra1' : 'zebra2'}" onclick="((event) => { let compo = this.parentElement.parentElement.parentElement; console.log(compo); compo.querySelector('#${this.options.name}').value = event.target.value; compo.querySelector('ul').classList.add('selected-item'); compo.formInputHandler({target: compo}); compo.dispatchCustomEvent('form-input', event)})(event)" value="${entry[this.options.formWert]}">${Object.keys(entry).map(key => entry[key]).join(', ')}</li>`);
+    this.orig_list_items = data.map((entry, index) => `<li class="${index % 2 === 0 ? 'zebra1' : 'zebra2'}" onclick="(function(event){ console.log(event.target); let compo = event.target.parentElement.parentElement.parentElement; console.log(compo); compo.querySelector('#${this.options.name}').value = event.target.value; compo.querySelector('ul').classList.add('selected-item'); compo.formInputHandler({target: compo}); compo.dispatchCustomEvent('form-input', event)})(event)" value="${entry[this.options.formWert]}">${Object.keys(entry).map(key => entry[key]).join(', ')}</li>`);
     let choose_list = this.querySelector('.choose-list');
     let filterInput = this.querySelector('.filter-input');
     choose_list.innerHTML = resultInput.value === '' ? this.orig_list_items.join('\n') : this.orig_list_items.filter(value => value.toLowerCase().includes(resultInput.value)).join('\n');
@@ -84,8 +84,8 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
     [...this.querySelectorAll('li')].forEach(listItem => listItem.classList.remove('selected'));
     let matchingListItem = this.querySelector(`li[value="${model}"]`);
     if(matchingListItem) {
-      let scrollTo = matchingListItem.offsetTop - matchingListItem.clientHeight -matchingListItem.offsetHeight;
-      matchingListItem.parentElement.scrollTo({top: scrollTo})
+      // let scrollTo = matchingListItem.offsetTop - matchingListItem.clientHeight -matchingListItem.offsetHeight;
+      // matchingListItem.parentElement.scrollTo({top: scrollTo})
       matchingListItem.classList.add('selected');
       this.querySelector('ul').classList.add('selected-item')
     } else {

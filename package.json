@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "browserify -t browserify-css components/form-creator.js --standalone FormCreator > bundle.js",
-    "serve": "http-server -c-1 --cors ."
+    "serve": "http-server -c-1 --cors .",
+    "babel-build": "browserify -t browserify-css components/es5-polyfill.js -t [ babelify --presets [ @babel/preset-env ] ] --standalone FormCreator > bundle_es5.js",
+    "babel-build-min": "browserify -t browserify-css components/es5-polyfill.js -t [ babelify --presets [ @babel/preset-env ] ] -g [ uglifyify -x .js ] --standalone FormCreator > bundle_es5.min.js"
   },
   "repository": {
     "type": "git",
@@ -19,13 +21,24 @@
   },
   "homepage": "https://github.com/RobertSeidler/form-alpine#readme",
   "devDependencies": {
+    "@babel/cli": "^7.8.4",
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
+    "babelify": "^10.0.0",
     "browserify": "^16.5.0",
     "browserify-css": "^0.15.0",
     "http-server": "^0.12.1"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.8.7",
+    "@webcomponents/webcomponentsjs": "^2.4.3",
+    "bluebird": "^3.7.2",
+    "core-js": "^3.6.5",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "lodash": "^4.17.15"
+    "isomorphic-fetch": "^2.2.1",
+    "lodash": "^4.17.15",
+    "uglifyify": "^5.0.2",
+    "url-search-params-polyfill": "^8.0.0"
   }
 }

@@ -70,12 +70,14 @@ function loadSchemaFromDB(schemaId){
         }
     }) 
     .then(response => response.json())
-    .then(dataRows => dataRows.recordset[0].log)
+    .then(dataRows => JSON.parse(dataRows.recordset[0].log))
 }
 
 function getSchemaId(){
-    let url = new URL(location.href);
-    return url.searchParams.get('schema');
+    // let url = new URL(location.href);
+    // return url.searchParams.get('schema');
+    // (new URLSearchParams(location.search))
+    return (new URLSearchParams(location.search)).get('schema');
 }
 
 class FormCreator extends InputFieldObject{
@@ -90,7 +92,7 @@ class FormCreator extends InputFieldObject{
     connectedCallback(){        
         this.rootElement = document.createElement('form');
         this.rootElement.classList.add('form-root');
-        this.append(this.rootElement);
+        this.appendChild(this.rootElement);
 
         loadSchemaFromDB(getSchemaId())
             .then(schema => {
@@ -99,7 +101,7 @@ class FormCreator extends InputFieldObject{
     }
 
     applySchema(schema){
-        console.log(this.schema)
+        console.log(schema)
         this.schema = schema;
         this.options.name = schema.formular;
         this.options.label = `${schema.formular}`;
@@ -108,8 +110,9 @@ class FormCreator extends InputFieldObject{
         try{
             // this.options.initialModel = this.loadFromLocal();
             // this.options.initialModel = loadModelFromDB()
-            let url = new URL(location.href);
-            let modelId = url.searchParams.get('mid');
+            // let url = new URL(location.href);
+            // let modelId = url.searchParams.get('mid');
+            let modelId = (new URLSearchParams(location.search)).get('mid');
 
             if(modelId){
                 loadModelFromDB(modelId).then(model => {
@@ -159,13 +162,17 @@ class FormCreator extends InputFieldObject{
             }
         });
         btn.innerText = 'Erzeuge Model';
-        this.append(btn)
+        this.appendChild(btn)
     }
 
     newFormularButton(){
         let uri = new URL(location.href);
-        uri.searchParams.set('lsid', 'null');
-        uri.searchParams.delete('mid');
+        // uri.searchParams.set('lsid', 'null');
+        // uri.searchParams.delete('mid');
+        let search = (new URLSearchParams(location.search));
+        search.set('lsid', 'null');
+        search.delete('mid');
+        uri.search = search.toString();
         
         let btn = document.createElement('button');
         btn.setAttribute('type', 'button');
@@ -173,7 +180,7 @@ class FormCreator extends InputFieldObject{
             location.href = uri.href;
         });
         btn.innerText = 'Neu Anlegen';
-        this.append(btn);
+        this.appendChild(btn);
     }
 
     uploadModelButton(){
@@ -201,13 +208,14 @@ class FormCreator extends InputFieldObject{
             }
         });
         btn.innerText = 'Speichern';
-        this.append(btn);
+        this.appendChild(btn);
     }
 
     loadFromLocal(localStorageId){
         if(!localStorageId){
-            let uri = new URL(location.href);
-            localStorageId = uri.searchParams.get('lsid');
+            // let uri = new URL(location.href);
+            // localStorageId = uri.searchParams.get('lsid');
+            localStorageId = (new URLSearchParams(location.search)).get('lsid')
             localStorageId = localStorageId === null ? 'last' : localStorageId;
         }
                

@@ -1,0 +1,43 @@
+{
+  "formular": "seriennummervergabe",
+  "felder": [
+    {
+      "name": "vorgangsnummern",
+      "label": "Vorgangsnummern:",
+      "feldtyp": "enumtextarea",
+      "beschreibung": "Kommagetrennte Liste aller Vorgangsnummern",
+      "platzhalter": "Bsp.: 10000, 10001, 10002, ..."
+    },
+    {
+      "name": "platinennnummern",
+      "label": "Platinennummern:",
+      "feldtyp": "enumtextarea",
+      "beschreibung": "Kommagetrennte Liste aller relevanter Platinennummern",
+      "platzhalter": "Bsp.: 10000, 10001, 10002, ..."
+    },
+    {
+      "name": "seriennummer",
+      "label": "Seriennummer:",
+      "feldtyp": "text"
+    },
+    {
+      "name": "artikelnummer",
+      "label": "Artikelnummer:",
+      "feldtyp": "lookup",
+      "platzhalter": "zb: 1006000061", 
+      "muster": "[0-9]{10}|[0-9]{7}",
+      "queryUrl": "http://prot-subuntu:8081/master",
+      "query": "SELECT Artikelnummer, Matchcode FROM [prot-sage11].OLReweAbf.dbo.KHKArtikel WHERE Artikelnummer LIKE &#39;?&#39; OR Dimensionstext LIKE &#39;?&#39;"
+    },
+    {
+      "name": "macadresse",
+      "label": "MAC-Adresse:",
+      "feldtyp": "text",
+      "platzhalter": "Bsp.: 00:50:C2:9C:6F:A5"
+    },
+    {
+      "name": "microcontrollerid",
+      "label": "Microcontrollerid:",
+      "feldtyp": "text"
+    }
+  ]}

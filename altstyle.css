@@ -236,6 +236,12 @@ ul.selected-item {
   max-height: max-content;
 }
 
+@media all and (-ms-high-contrast:none) {
+  ul.selected-item {
+    min-height: auto;
+  }
+}
+
 ul.selected-item > li:not(.selected) {
   display: none;
 }

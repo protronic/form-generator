@@ -204,12 +204,14 @@ function loadSchemaFromDB(schemaId){
         }
     }) 
     .then(response => response.json())
-    .then(dataRows => dataRows.recordset[0].log)
+    .then(dataRows => JSON.parse(dataRows.recordset[0].log))
 }
 
 function getSchemaId(){
-    let url = new URL(location.href);
-    return url.searchParams.get('schema');
+    // let url = new URL(location.href);
+    // return url.searchParams.get('schema');
+    // (new URLSearchParams(location.search))
+    return (new URLSearchParams(location.search)).get('schema');
 }
 
 class FormCreator extends InputFieldObject{
@@ -224,7 +226,7 @@ class FormCreator extends InputFieldObject{
     connectedCallback(){        
         this.rootElement = document.createElement('form');
         this.rootElement.classList.add('form-root');
-        this.append(this.rootElement);
+        this.appendChild(this.rootElement);
 
         loadSchemaFromDB(getSchemaId())
             .then(schema => {
@@ -233,7 +235,7 @@ class FormCreator extends InputFieldObject{
     }
 
     applySchema(schema){
-        console.log(this.schema)
+        console.log(schema)
         this.schema = schema;
         this.options.name = schema.formular;
         this.options.label = `${schema.formular}`;
@@ -242,8 +244,9 @@ class FormCreator extends InputFieldObject{
         try{
             // this.options.initialModel = this.loadFromLocal();
             // this.options.initialModel = loadModelFromDB()
-            let url = new URL(location.href);
-            let modelId = url.searchParams.get('mid');
+            // let url = new URL(location.href);
+            // let modelId = url.searchParams.get('mid');
+            let modelId = (new URLSearchParams(location.search)).get('mid');
 
             if(modelId){
                 loadModelFromDB(modelId).then(model => {
@@ -293,13 +296,17 @@ class FormCreator extends InputFieldObject{
             }
         });
         btn.innerText = 'Erzeuge Model';
-        this.append(btn)
+        this.appendChild(btn)
     }
 
     newFormularButton(){
         let uri = new URL(location.href);
-        uri.searchParams.set('lsid', 'null');
-        uri.searchParams.delete('mid');
+        // uri.searchParams.set('lsid', 'null');
+        // uri.searchParams.delete('mid');
+        let search = (new URLSearchParams(location.search));
+        search.set('lsid', 'null');
+        search.delete('mid');
+        uri.search = search;
         
         let btn = document.createElement('button');
         btn.setAttribute('type', 'button');
@@ -307,7 +314,7 @@ class FormCreator extends InputFieldObject{
             location.href = uri.href;
         });
         btn.innerText = 'Neu Anlegen';
-        this.append(btn);
+        this.appendChild(btn);
     }
 
     uploadModelButton(){
@@ -335,13 +342,14 @@ class FormCreator extends InputFieldObject{
             }
         });
         btn.innerText = 'Speichern';
-        this.append(btn);
+        this.appendChild(btn);
     }
 
     loadFromLocal(localStorageId){
         if(!localStorageId){
-            let uri = new URL(location.href);
-            localStorageId = uri.searchParams.get('lsid');
+            // let uri = new URL(location.href);
+            // localStorageId = uri.searchParams.get('lsid');
+            localStorageId = (new URLSearchParams(location.search)).get('lsid')
             localStorageId = localStorageId === null ? 'last' : localStorageId;
         }
                
@@ -607,7 +615,7 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
 
   createChooseList(data, resultInput){
     this.dbfailed = false;
-    this.orig_list_items = data.map((entry, index) => `<li class="${index % 2 === 0 ? 'zebra1' : 'zebra2'}" onclick="((event) => { let compo = this.parentElement.parentElement.parentElement; console.log(compo); compo.querySelector('#${this.options.name}').value = event.target.value; compo.querySelector('ul').classList.add('selected-item'); compo.formInputHandler({target: compo}); compo.dispatchCustomEvent('form-input', event)})(event)" value="${entry[this.options.formWert]}">${Object.keys(entry).map(key => entry[key]).join(', ')}</li>`);
+    this.orig_list_items = data.map((entry, index) => `<li class="${index % 2 === 0 ? 'zebra1' : 'zebra2'}" onclick="(function(event){ console.log(event.target); let compo = event.target.parentElement.parentElement.parentElement; console.log(compo); compo.querySelector('#${this.options.name}').value = event.target.value; compo.querySelector('ul').classList.add('selected-item'); compo.formInputHandler({target: compo}); compo.dispatchCustomEvent('form-input', event)})(event)" value="${entry[this.options.formWert]}">${Object.keys(entry).map(key => entry[key]).join(', ')}</li>`);
     let choose_list = this.querySelector('.choose-list');
     let filterInput = this.querySelector('.filter-input');
     choose_list.innerHTML = resultInput.value === '' ? this.orig_list_items.join('\n') : this.orig_list_items.filter(value => value.toLowerCase().includes(resultInput.value)).join('\n');
@@ -622,8 +630,8 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
     [...this.querySelectorAll('li')].forEach(listItem => listItem.classList.remove('selected'));
     let matchingListItem = this.querySelector(`li[value="${model}"]`);
     if(matchingListItem) {
-      let scrollTo = matchingListItem.offsetTop - matchingListItem.clientHeight -matchingListItem.offsetHeight;
-      matchingListItem.parentElement.scrollTo({top: scrollTo})
+      // let scrollTo = matchingListItem.offsetTop - matchingListItem.clientHeight -matchingListItem.offsetHeight;
+      // matchingListItem.parentElement.scrollTo({top: scrollTo})
       matchingListItem.classList.add('selected');
       this.querySelector('ul').classList.add('selected-item')
     } else {
@@ -1092,11 +1100,11 @@ module.exports.InputFieldObject = class extends InputField{
 
   getModel(){
       let model = {};
-      for(let objProps of this.querySelector(`#${this.options.name}`).children) {
+      [...this.querySelector(`#${this.options.name}`).children].forEach(objProps => {
           let partialModel = objProps.getModel();
           if(partialModel)
               model[JSON.parse(objProps.getAttribute('name'))] = partialModel;
-      }
+      })
       if(Object.keys(model).length === 0)
           return undefined;
       else
@@ -1105,11 +1113,11 @@ module.exports.InputFieldObject = class extends InputField{
 
   checkValidity(){
       let valid = true;
-      for(let objProps of this.querySelector(`#${this.options.name}`).children) {
+      [...this.querySelector(`#${this.options.name}`).children].forEach(objProps => {
           //TODO CHANGE BACK if not implementing events like this. let partialValidity = objProps.checkValidity(); 
           let partialValidity = objProps.valid; 
           valid = valid && partialValidity;
-      }
+      })
       return valid;
   }
 }
@@ -1243,26 +1251,26 @@ const fieldTypeMap = {
 };
 
 module.exports.InputField = class extends HTMLElement {
-    schema = {};
-    template = '';
-    defaultOptions = {
-        initialModel: '',
-        name: '',
-        label: '',
-        beschreibung: '',
-        standard: '',
-        deaktiviert: false,
-        pflichtfeld: false,
-        hintergrundFarbe: 'none',
-    };
-    rootElement = this;
-    options = {};
-    model = {};
-    valid = true;
-    validityMessage = undefined;
+    
     constructor(){
         super();
-
+        this.schema = {};
+        this.template = '';
+        this.defaultOptions = {
+            initialModel: '',
+            name: '',
+            label: '',
+            beschreibung: '',
+            standard: '',
+            deaktiviert: false,
+            pflichtfeld: false,
+            hintergrundFarbe: 'none',
+        };
+        this.rootElement = this;
+        this.options = {};
+        this.model = {};
+        this.valid = true;
+        this.validityMessage = undefined;
         this.addEventListener('form-input', debounce(this.formInputHandler, 1000, {leading: false, trailing: true}));
     }
 

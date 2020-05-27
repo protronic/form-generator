@@ -62,11 +62,11 @@ module.exports.InputFieldObject = class extends InputField{
 
   getModel(){
       let model = {};
-      for(let objProps of this.querySelector(`#${this.options.name}`).children) {
+      [...this.querySelector(`#${this.options.name}`).children].forEach(objProps => {
           let partialModel = objProps.getModel();
           if(partialModel)
               model[JSON.parse(objProps.getAttribute('name'))] = partialModel;
-      }
+      })
       if(Object.keys(model).length === 0)
           return undefined;
       else
@@ -75,11 +75,11 @@ module.exports.InputFieldObject = class extends InputField{
 
   checkValidity(){
       let valid = true;
-      for(let objProps of this.querySelector(`#${this.options.name}`).children) {
+      [...this.querySelector(`#${this.options.name}`).children].forEach(objProps => {
           //TODO CHANGE BACK if not implementing events like this. let partialValidity = objProps.checkValidity(); 
           let partialValidity = objProps.valid; 
           valid = valid && partialValidity;
-      }
+      })
       return valid;
   }
 }
