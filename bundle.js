@@ -227,6 +227,7 @@ function uploadExistingModel(model, formular){
 function loadModelFromDB(modelId){
     return fetch(`${baseUrl}${modelPath}/${modelId}`)
         .then(response => response.json())
+        .then(data => {console.log(data); return data})
         // .then(dataRows => dataRows.recordset[0].log)
 }
 
@@ -292,12 +293,12 @@ class FormCreator extends InputFieldObject{
 
             if(modelId){
                 loadModelFromDB(modelId).then(model => {
-                    this.model = this.convertValue('initialModel', model);
-                    console.log(this.convertValue('initialModel', model))
+                    this.model = this.convertValue('initialModel', JSON.stringify(model));
+                    // console.log(this.convertValue('initialModel', model))
                     this.model['#modelID'] = modelId;
                     this.options.name = schema.formular;
                     this.options.label = `${this.options.label} ${modelId}`;
-                    this.options.initialModel = this.convertValue('initialModel', model);
+                    this.options.initialModel = this.convertValue('initialModel', JSON.stringify(model));
                     this.rootElement.options = this.options;
                     this.applyTemplate();
                 })    
@@ -331,7 +332,7 @@ class FormCreator extends InputFieldObject{
         btn.addEventListener('click', (event) => {
             if(this.checkValidity()){
                 this.model = {...this.model, ...this.getModel()};
-                console.log(this.model);
+                // console.log(this.model);
                 this.saveFormLocal(this.model['#modelID'], this.model);
             } else {
                 console.error('Einige Formular Elemente sind nicht korrekt ausgefüllt.');
@@ -1347,8 +1348,8 @@ module.exports.InputField = class extends HTMLElement {
             else 
                 return '';
         } catch(err){
-            console.log(key, value.toSource(), typeof value);
             console.error(err)
+            console.log(key, value.toSource(), typeof value);
         }
     }
 
