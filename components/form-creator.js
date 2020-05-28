@@ -263,7 +263,7 @@ class FormCreator extends InputFieldObject{
         let btn = document.createElement('button');
         btn.setAttribute('type', 'button');
         btn.addEventListener('click', () => {
-            if (confirm() && this.model['#modelID']){
+            if (this.model['#modelID'] && confirm(`Are you sure, you want to renove model with id: ${this.model['#modelID']}?`)){
                 fetch(`${baseUrl}${modelPath}/${this.model['#modelID']}`, {
                     method: 'DELETE'
                 })
