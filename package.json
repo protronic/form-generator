@@ -6,6 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "browserify -t browserify-css components/form-creator.js --standalone FormCreator > bundle.js",
+    "build-min": "browserify -t browserify-css components/form-creator.js -g [ uglifyify -x .js ] --standalone FormCreator > bundle.min.js",
     "serve": "http-server -c-1 --cors .",
     "babel-build": "browserify -t browserify-css components/es5-polyfill.js -t [ babelify --presets [ @babel/preset-env ] ] --standalone FormCreator > bundle_es5.js",
     "babel-build-min": "browserify -t browserify-css components/es5-polyfill.js -t [ babelify --presets [ @babel/preset-env ] ] -g [ uglifyify -x .js ] --standalone FormCreator > bundle_es5.min.js"
