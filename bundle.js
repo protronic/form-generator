@@ -163,6 +163,18 @@ class SearchParams {
     get(key){
         return this[key];
     }
+
+    set(key, value){
+        this[key] = value;
+    }
+
+    delete(key){
+        delete this[key];
+    }
+
+    toString(){
+        return ('?' + Object.keys(this).map(key => `${key}=${this[key]}`).join('&'));
+    }
 }
 
 function prepareModel(model, formular){
@@ -334,6 +346,7 @@ class FormCreator extends InputFieldObject{
         // this.testModelCreation();
         this.uploadModelButton();
         this.newFormularButton();
+        this.newRemoveButton();
         this.renderGeneralInfo(schema);
     }
 
@@ -361,21 +374,41 @@ class FormCreator extends InputFieldObject{
         this.appendChild(btn)
     }
 
-    newFormularButton(){
+    createNewFormURL(){
         let uri = new URL(location.href);
-        // uri.searchParams.set('lsid', 'null');
-        // uri.searchParams.delete('mid');
         let search = (new SearchParams(location.search));
         search.set('lsid', 'null');
         search.delete('mid');
         uri.search = search.toString();
-        
+        return uri.href;
+    }
+
+    newFormularButton(){
         let btn = document.createElement('button');
         btn.setAttribute('type', 'button');
-        btn.addEventListener('click', (event) => {
-            location.href = uri.href;
+        btn.addEventListener('click', () => {
+            location.href = this.createNewFormURL();
         });
         btn.innerText = 'Neu Anlegen';
+        this.appendChild(btn);
+    }
+
+    newRemoveButton(){
+        let btn = document.createElement('button');
+        btn.setAttribute('type', 'button');
+        btn.addEventListener('click', () => {
+            if (confirm() && this.model['#modelID']){
+                fetch(`${baseUrl}${modelPath}/${this.model['#modelID']}`, {
+                    method: 'DELETE'
+                })
+                    .then(res => (
+                        res.ok ? 
+                            location.href = this.createNewFormURL() : 
+                            console.error(res.status)
+                    ));
+            }
+        });
+        btn.innerText = 'Remove Model';
         this.appendChild(btn);
     }
 
