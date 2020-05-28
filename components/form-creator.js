@@ -11,6 +11,26 @@ Object.keys(fieldTypeMap).forEach(keyTag => {
   customElements.define(fieldTypeMap[keyTag].tag, fieldTypeMap[keyTag].conName);
 });
 
+class SearchParams {
+    constructor(search){
+        let self = this;
+        search.slice(1).split('&').forEach(function(entry){
+            let key = entry.split('=')[0];
+            let value = entry.split('=')[1];
+
+            self[key] = value;
+        })
+    }
+    
+    append(key, value){
+        this[key] = value;
+    }
+
+    get(key){
+        return this[key];
+    }
+}
+
 function prepareModel(model, formular){
     let user = '';
     let changedTime = (new Date()).getTime();
@@ -119,7 +139,7 @@ function getSchemaId(){
     // let url = new URL(location.href);
     // return url.searchParams.get('schema');
     // (new URLSearchParams(location.search))
-    return (new URLSearchParams(location.search)).get('schema');
+    return (new SearchParams(location.search)).get('schema');
 }
 
 class FormCreator extends InputFieldObject{
@@ -154,7 +174,7 @@ class FormCreator extends InputFieldObject{
             // this.options.initialModel = loadModelFromDB()
             // let url = new URL(location.href);
             // let modelId = url.searchParams.get('mid');
-            let modelId = (new URLSearchParams(location.search)).get('mid');
+            let modelId = (new SearchParams(location.search)).get('mid');
 
             if(modelId){
                 loadModelFromDB(modelId).then(model => {
@@ -211,7 +231,7 @@ class FormCreator extends InputFieldObject{
         let uri = new URL(location.href);
         // uri.searchParams.set('lsid', 'null');
         // uri.searchParams.delete('mid');
-        let search = (new URLSearchParams(location.search));
+        let search = (new SearchParams(location.search));
         search.set('lsid', 'null');
         search.delete('mid');
         uri.search = search.toString();
@@ -261,7 +281,7 @@ class FormCreator extends InputFieldObject{
         if(!localStorageId){
             // let uri = new URL(location.href);
             // localStorageId = uri.searchParams.get('lsid');
-            localStorageId = (new URLSearchParams(location.search)).get('lsid')
+            localStorageId = (new SearchParams(location.search)).get('lsid')
             localStorageId = localStorageId === null ? 'last' : localStorageId;
         }
                
