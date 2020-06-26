@@ -1,0 +1,437 @@
+{
+  "formular": "Reparaturbericht",
+  "felder": [
+      {
+          "name": "kundennummer",
+          "feldtyp": "choose",
+          "label": "Kundennummer:",
+          "platzhalter": "zb: 10000",
+          "muster": "[0-9]{5}",
+          "queryUrl": "http://prot-subuntu:8081/master",
+          "listenQuery": "SELECT kto, Name1, LieferOrt FROM [prot-sage11].OLReweAbf.dbo.WIKI_Kundenauskunft WHERE kto IS NOT NULL AND kto < 70000",
+          "formWert": "kto"
+      },
+      {
+          "name": "kontakt",
+          "feldtyp": "object",
+          "label": "Ansprechpartner:",
+          "representant": "name",
+          "subform": [
+              {
+                  "name": "anrede",
+                  "label": "Anrede:",
+                  "feldtyp": "radio",
+                  "items": [
+                      "Herr",
+                      "Frau"
+                  ]
+              },
+              {
+                  "name": "name",
+                  "label": "Vollständiger Name:",
+                  "feldtyp": "text"
+              },
+              {
+                  "name": "telefon",
+                  "label": "Telefon:",
+                  "feldtyp": "tel"
+              },
+              {
+                  "name": "email",
+                  "label": "E-Mail:",
+                  "feldtyp": "email"
+              },
+              {
+                  "name": "anschrift",
+                  "label": "Anschrift:",
+                  "feldtyp": "text"
+              },
+              {
+                  "name": "sonstiges",
+                  "label": "Sonstiges:",
+                  "feldtyp": "textarea"
+              }
+          ]
+      },
+      {
+          "name": "abw-liefern",
+          "label": "Lieferadresse",
+          "feldtyp": "object",
+          "subform": [
+              {
+                  "name": "hat-abweichende-lieferadresse",
+                  "label": "Lieferadresse weicht ab?",
+                  "beschreibung": "Ankreuzen, wenn die Lieferadresse nicht der im Sage beim Kunden hinterlegten Adresse entspricht.",
+                  "feldtyp": "boolean",
+                  "standard": false
+              },
+              {
+                  "name": "abweichende-lieferadresse",
+                  "feldtyp": "dependentchoose",
+                  "label": "Abw. Lieferadresse:",
+                  "beschreibung": "AdressID aus Sage; Oder 99999 (letzter Listeneintrag) um selbst eine Lieferadresse anzugeben.",
+                  "platzhalter": "zB.: 100",
+                  "muster": "[0-9]{1,5}",
+                  "pflichtfeld": true,
+                  "abhaengigFeld": "hat-abweichende-lieferadresse",
+                  "wertSichtbar": true,
+                  "queryUrl": "http://prot-subuntu:8081/master",
+                  "listenQuery": "SELECT Adresse, Matchcode, CONCAT(&#39;<br>&#39;, LieferLand, &#39;, &#39;, LieferPLZ, &#39; &#39;, LieferOrt, &#39;<br>&#39;, LieferStrasse) AS Anschrift FROM [prot-sage11].OLReweAbf.dbo.KHKAdressen UNION SELECT 99999, &#39;Adresse angeben&#39;, &#39;&#39;",
+                  "formWert": "Adresse"
+              },
+              {
+                  "name": "abweichende-lieferadresse-eingabe",
+                  "label": "Abw. Lieferadresse Eingabe:",
+                  "feldtyp": "dependentenumtextarea",
+                  "pflichtfeld": true,
+                  "abhaengigFeld": "abweichende-lieferadresse",
+                  "wertSichtbar": "99999"
+              }
+          ]
+      },
+      {
+          "name": "eingangsdatum",
+          "label": "Eingangsdatum:",
+          "feldtyp": "date"
+      },
+      {
+          "name": "artikelnummer",
+          "label": "Artikelnummer:",
+          "feldtyp": "lookup",
+          "platzhalter": "zb: 1006000061",
+          "muster": "[0-9]{10}|[0-9]{7}",
+          "queryUrl": "http://prot-subuntu:8081/master",
+          "query": "SELECT Artikelnummer, Matchcode FROM [prot-sage11].OLReweAbf.dbo.KHKArtikel WHERE Artikelnummer LIKE &#39;?&#39; OR Dimensionstext LIKE &#39;?&#39;"
+      },
+      {
+          "name": "seriennummer",
+          "label": "Seriennummer:",
+          "feldtyp": "text"
+      },
+      {
+          "name": "platinennnummernlist",
+          "label": "Platinennummern:",
+          "feldtyp": "enumtextarea",
+          "beschreibung": "Kommagetrennte Liste aller relevanter Platinennummern",
+          "platzhalter": "Bsp.: 10000, 10001, 10002, ...",
+          "vorlage": [
+              {
+                  "name": "platinennummer",
+                  "feldtyp": "text"
+              }
+          ]
+      },
+      {
+          "name": "pruefnummer",
+          "label": "Prüfnummer:",
+          "feldtyp": "text",
+          "platzhalter": "Bsp.: 1-129-3&#39;19",
+          "muster": ".*"
+      },
+      {
+          "name": "pruefnummerextern",
+          "label": "Prüfnummer v. extern:",
+          "feldtyp": "text",
+          "platzhalter": "Bsp.: 10059NLP | 100-03&#39;19"
+      },
+      {
+          "name": "macnummer",
+          "label": "MAC-Nummer:",
+          "feldtyp": "text",
+          "platzhalter": "Bsp.: 00:EE:56:9C:09"
+      },
+      {
+          "name": "busnummer",
+          "label": "BUS-Nummer:",
+          "feldtyp": "text"
+      },
+      {
+          "name": "qsnummer",
+          "label": "QS-Nummer:",
+          "feldtyp": "text"
+      },
+      {
+          "name": "qsabgeschlossen",
+          "label": "QS abgeschlossen?",
+          "feldtyp": "boolean",
+          "deaktiviert": true
+      },
+      {
+          "name": "auftragsnummer",
+          "label": "Auftragsnummer:",
+          "feldtyp": "text"
+      },
+      {
+          "name": "fehlerbeschreibung-kunde",
+          "label": "Fehlerbeschreibung des Kunden:",
+          "feldtyp": "textarea",
+          "platzhalter": ""
+      },
+      {
+          "name": "produktionsfehlerliste",
+          "feldtyp": "list",
+          "label": "Produktionsfehler",
+          "hintergrundFarbe": "#fe0e0f40",
+          "vorlage": [
+              {
+                  "name": "produktionsfehler",
+                  "feldtyp": "object",
+                  "label": " ",
+                  "subform": [
+                      {
+                          "name": "pf-designator",
+                          "label": "Designator:",
+                          "feldtyp": "text"
+                      },
+                      {
+                          "name": "pf-fehlerkategorie",
+                          "label": "Fehlerkategorie",
+                          "feldtyp": "dropdown",
+                          "standard": "auf dem Kopf",
+                          "items": [
+                              "fehlt",
+                              "verdreht",
+                              "auf dem Kopf",
+                              "Lötfehler",
+                              "Bestückfehler"
+                          ]
+                      },
+                      {
+                          "name": "pf-behebung",
+                          "label": "Behebung",
+                          "feldtyp": "dropdown",
+                          "items": [
+                              "Nacharbeiten",
+                              "Ersetzen"
+                          ]
+                      },
+                      {
+                          "name": "pf-ersetzte-artikelnummern",
+                          "label": "Artikelnummern ersetzt:",
+                          "feldtyp": "dependentenumtextarea",
+                          "pflichtfeld": true,
+                          "abhaengigFeld": "pf-behebung",
+                          "wertSichtbar": "Ersetzen"
+                      }
+                  ]
+              }
+          ]
+      },
+      {
+          "name": "mechanischefehlerliste",
+          "feldtyp": "list",
+          "label": "Mechanische Fehler",
+          "hintergrundFarbe": "#61018e40",
+          "vorlage": [
+              {
+                  "name": "mechanischefehler",
+                  "feldtyp": "object",
+                  "label": " ",
+                  "subform": [
+                      {
+                          "name": "mf-komponente",
+                          "label": "Komponente:",
+                          "feldtyp": "text"
+                      },
+                      {
+                          "name": "mf-fehlerkategorie",
+                          "label": "Fehlerkategorie",
+                          "feldtyp": "dropdown",
+                          "items": [
+                              "verschmutzt",
+                              "abgerissen",
+                              "gebrochen",
+                              "Wasserschaden",
+                              "zerschnitten/zerkratzt",
+                              "unvollständig",
+                              "verbogen"
+                          ]
+                      },
+                      {
+                          "name": "mf-ursache",
+                          "label": "Mögliche Ursache",
+                          "feldtyp": "dropdown",
+                          "items": [
+                              "Transportschaden",
+                              "Montageschaden",
+                              "Altersbedingt",
+                              "sonstige"
+                          ]
+                      },
+                      {
+                          "name": "mf-behebung",
+                          "label": "Behebung",
+                          "feldtyp": "dropdown",
+                          "items": [
+                              "Nacharbeiten",
+                              "Ersetzen"
+                          ]
+                      },
+                      {
+                          "name": "mf-ersetzte-artikelnummern",
+                          "label": "Artikelnummern ersetzt:",
+                          "feldtyp": "dependentenumtextarea",
+                          "pflichtfeld": true,
+                          "abhaengigFeld": "mf-behebung",
+                          "wertSichtbar": "Ersetzen"
+                      }
+                  ]
+              }
+          ]
+      },
+      {
+          "name": "elektronischefehlerliste",
+          "feldtyp": "list",
+          "label": "Elektronische Fehler",
+          "hintergrundFarbe": "#eeee0f40",
+          "vorlage": [
+              {
+                  "name": "elektronischefehler",
+                  "feldtyp": "object",
+                  "label": " ",
+                  "subform": [
+                      {
+                          "name": "ef-komponente",
+                          "label": "Komponente:",
+                          "feldtyp": "text"
+                      },
+                      {
+                          "name": "ef-fehlerkategorie",
+                          "label": "Fehlerkategorie",
+                          "feldtyp": "dropdown",
+                          "items": [
+                              "verbrannt",
+                              "geplatzt",
+                              "ausgelaufen",
+                              "defekt"
+                          ]
+                      },
+                      {
+                          "name": "ef-ursache",
+                          "label": "Mögliche Ursache",
+                          "feldtyp": "dropdown",
+                          "items": [
+                              "Überspannung",
+                              "Kurzschluss",
+                              "Verpohlung",
+                              "Bauteilfehler",
+                              "sonstige"
+                          ]
+                      },
+                      {
+                          "name": "ef-behebung",
+                          "label": "Behebung",
+                          "feldtyp": "dropdown",
+                          "items": [
+                              "Nacharbeiten",
+                              "Ersetzen"
+                          ]
+                      },
+                      {
+                          "name": "ef-ersetzte-artikelnummern2",
+                          "label": "Artikelnummern ersetzt:",
+                          "feldtyp": "dependentenumtextarea",
+                          "pflichtfeld": true,
+                          "abhaengigFeld": "ef-behebung",
+                          "wertSichtbar": "Ersetzen"
+                      }
+                  ]
+              }
+          ]
+      },
+      {
+          "name": "bedienfehlerliste",
+          "feldtyp": "list",
+          "label": "Bedienfehler",
+          "hintergrundFarbe": "#05ffb040",
+          "vorlage": [
+              {
+                  "name": "bedienfehler",
+                  "feldtyp": "object",
+                  "label": " ",
+                  "subform": [
+                      {
+                          "name": "bf-komponente",
+                          "label": "Komponente:",
+                          "feldtyp": "text"
+                      },
+                      {
+                          "name": "bf-fehlerkategorie",
+                          "label": "Fehlerkategorie:",
+                          "feldtyp": "dropdown",
+                          "items": [
+                              "Anschlussfehler",
+                              "Einstellungsfehler"
+                          ]
+                      },
+                      {
+                          "name": "bf-ursache",
+                          "label": "Mögliche Ursache:",
+                          "feldtyp": "dropdown",
+                          "items": [
+                              "Schaltplan",
+                              "Dokumentation",
+                              "Personal"
+                          ]
+                      },
+                      {
+                          "name": "bf-behebung",
+                          "label": "Behebung:",
+                          "feldtyp": "textarea",
+                          "platzhalter": "Werkseinstellungen zurückgesetzt | Telefonat | Ortsbesuch ..."
+                      }
+                  ]
+              }
+          ]
+      },
+      {
+          "name": "status",
+          "label": "Aktueller Status",
+          "feldtyp": "radio",
+          "standard": "in Klärung",
+          "pflichtfeld": true,
+          "items": [
+              "verschrottet",
+              "in Klärung",
+              "kein Fehler, geprüft IO",
+              "geprüft IO",
+              "Instand gesetzt IO"
+          ]
+      },
+      {
+          "name": "garantie",
+          "label": "Garantie:",
+          "feldtyp": "radio",
+          "items": [
+              "ja",
+              "nein",
+              "Kulanz"
+          ]
+      },
+      {
+          "name": "gutschrift",
+          "label": "Gutschrift erteilt?",
+          "feldtyp": "boolean",
+          "standard": false
+      },
+      {
+          "name": "ausgangslieferschein",
+          "label": "Ausgangslieferschein:",
+          "platzhalter": "zB.: 2019-21000",
+          "muster": "[0-9]{4}-[0-9]{5}",
+          "feldtyp": "text"
+      },
+      {
+          "name": "ausgangsrechnung",
+          "label": "Ausgangsrechnung:",
+          "platzhalter": "zB.: 2019-11000",
+          "muster": "[0-9]{4}-[0-9]{5}",
+          "feldtyp": "text"
+      },
+      {
+          "name": "memo",
+          "label": "Memo",
+          "feldtyp": "textarea"
+      }
+  ]
+}

@@ -12,11 +12,9 @@ module.exports.InfoFieldSummary = class extends InputField{
   countFields(){
     let result = {};
     this.options.observed_fields.forEach((field) => {
-      console.log(field);
       let foundObjs = document.querySelectorAll(`#${field}`);
       foundObjs.forEach((foundObj) => {
         let fieldObj = foundObj.parentElement.parentElement;
-        // console.log({fieldObj: fieldObj, fieldObjModel: fieldObj.getModel()})
         let model = fieldObj.getModel();
         if(model) model.forEach((item) => {
           result[item] = result[item] === undefined ? 1 : result[item] + 1;
@@ -27,7 +25,6 @@ module.exports.InfoFieldSummary = class extends InputField{
   }
 
   runCounting(){
-    console.log(this)
     let countedFields = this.countFields();
     this.resultList.innerHTML = `${Object.keys(countedFields).map((item) => `<li>${countedFields[item]} x <span class="span-fett">${item}</span></li>`).join('')}`;
   }
