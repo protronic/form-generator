@@ -13,13 +13,13 @@ form-creator span.span-fett {
   font-weight: bold;
 }
 
-input-field-object > .form-element > .form-group, 
+form-creator input-field-object > .form-element > .form-group, 
 form > .form-element > .form-group {
   overflow-y: hidden;
   height: auto;
 }
 
-input-field-object > .form-element > .form-group.hidden,
+form-creator input-field-object > .form-element > .form-group.hidden,
 form > .form-element > .form-group.hidden {
   overflow-y: hidden;
   max-height: 0px;
@@ -43,15 +43,15 @@ form-creator button {
   box-shadow: 1px 2px 5px 1px gray;
 }
 
-.formular-title > * {
+form-creator .formular-title > * {
   text-align: center;
 }
 
-div.form-element {
+form-creator div.form-element {
   margin: 5px;
 }
 
-span.pflichtfeld {
+form-creator span.pflichtfeld {
   /* float: right; */
   position: absolute;
   bottom: 0px;
@@ -60,23 +60,23 @@ span.pflichtfeld {
   vertical-align: bottom;
 }
 
-.form-list > *[name] {
+form-creator .form-list > *[name] {
   display: inline-block;
   width: 100%;
 }
 
-.form-list {
+form-creator .form-list {
   display: grid;
   grid-template-columns: 98% 2%;
   border-radius: 5px;
 }
 
-input-field-list > .form-element {
+form-creator input-field-list > .form-element {
   border-radius: 10px;
   border: 2px solid gray;
 }
 
-.form-list > button.form-list-removebtn {
+form-creator .form-list > button.form-list-removebtn {
   margin-top: 5px;
   margin-bottom: 5px;
   width: 100%;
@@ -86,7 +86,7 @@ input-field-list > .form-element {
   padding: 2px;
 }
 
-.form-list-addbtn {
+form-creator .form-list-addbtn {
   clear: both;
   position: relative;
   width: 99%;
@@ -96,17 +96,17 @@ input-field-list > .form-element {
   padding: 2px;
 }
 
-.hidden {
+form-creator .hidden {
   display: none;
 }
 
-input-field-object > .form-element {
+form-creator input-field-object > .form-element {
   border: 1px solid darkgray;
   border-radius: 10px;
   box-shadow: 2px 2px 10px 2px darkgray;
 }
 
-.form-object-collapse {
+form-creator .form-object-collapse {
   position: absolute;
   right: 0px;
   top: 0px;
@@ -116,7 +116,7 @@ input-field-object > .form-element {
   z-index: 1;
 }
 
-.clear-radio-btn {
+form-creator .clear-radio-btn {
   /* float: right; */
   position: absolute;
   right: 0px;
@@ -125,11 +125,11 @@ input-field-object > .form-element {
   background-color: lightpink;
 }
 
-label {
+form-creator label {
   font-size: smaller;
 }
 
-.form-element > label {
+form-creator .form-element > label {
   font-weight: bold;
   vertical-align: top;
 }
@@ -139,28 +139,27 @@ form-creator > form {
   border-radius: 10px;
 }
 
-input[type="text"],input[type="tel"], input[type="email"], input[type="date"], textarea {
+form-creator input[type="text"],input[type="tel"], input[type="email"], input[type="date"], textarea {
   width: 60%;
-  border: none;
   border: 1px solid gray;
   box-shadow: inset -2px -2px 5px 2px gray;
   vertical-align: middle;
 }
 
-input[type="text"],input[type="tel"], input[type="email"], input[type="date"]{
+form-creator input[type="text"],input[type="tel"], input[type="email"], input[type="date"]{
   height: 2em;
   padding: 3px;
 }
 
-textarea {
+form-creator textarea {
   padding: 5px;
 }
 
-input[type="dropdown"] {
+form-creator input[type="dropdown"] {
   border-radius: 10px;
 }
 
-.form-element select {
+form-creator .form-element select {
   border-radius: 5px;
   border: none;
   box-shadow: inset -2px -2px 2px 1px gray;
@@ -168,13 +167,13 @@ input[type="dropdown"] {
   background-color: rgb(255, 255, 255);
 }
 
-button.form-object-collapse {
+form-creator button.form-object-collapse {
   background-color: antiquewhite;
   height: 1.5em;
   margin: 1px;
 }
 
-.output-display {
+form-creator .output-display {
   padding: 3px;
   background-color: rgba(0, 0, 0, 0.03);
   color: gray;
@@ -184,7 +183,7 @@ button.form-object-collapse {
   width: 60%;
 }
 
-.choose-list {
+form-creator .choose-list {
   display: block;
   min-height: 200px;
   max-height: 200px;
@@ -199,7 +198,7 @@ button.form-object-collapse {
   margin-bottom: 8px;
 }
 
-.choose-list > li {
+form-creator .choose-list > li {
   list-style: none;
   margin-top: 2px;
   margin-bottom: 2px;
@@ -214,25 +213,25 @@ button.form-object-collapse {
   /* border: 1px dotted rgb(173, 173, 173);   */
 }
 
-.choose-list > li:first-child {
+form-creator .choose-list > li:first-child {
   margin-top: 0px;
 }
 
-.choose-list > li:hover {
+form-creator .choose-list > li:hover {
   background-color: lightblue;
   cursor: pointer;
 }
 
-.choose-list > li.selected {
+form-creator .choose-list > li.selected {
   background-color: #2020e360;
 }
 
-[pflichtfeld="true"] > label, [pflichtfeld="true"] > .form-element > label:first-of-type {
+form-creator [pflichtfeld="true"] > label, [pflichtfeld="true"] > .form-element > label:first-of-type {
   font-style: italic;
   text-decoration-line: underline;
 }
 
-.separator {
+form-creator .separator {
   width: 100%;
   height: 0px;
   box-sizing: border-box;
@@ -241,104 +240,106 @@ button.form-object-collapse {
   border-radius: 20px;
 }
 
-ul.selected-item {
+form-creator ul.selected-item {
   min-height: max-content;
   max-height: max-content;
 }
 
 @media all and (-ms-high-contrast:none) {
-  ul.selected-item {
+  form-creator ul.selected-item {
     min-height: auto;
   }
 }
 
-ul.selected-item > li:not(.selected) {
+form-creator ul.selected-item > li:not(.selected) {
   display: none;
 }
 
-input-field-radio > .form-element {
+form-creator input-field-radio > .form-element {
   border: 2px solid gray;
   display: block;
   border-radius: 10px;
 }
 
-.warning > div.form-element input:not(.helper), .warning > div.form-element select:not(.helper), 
-.warning > div.form-element textarea:not(.helper) {
+form-creator .warning > div.form-element input:not(.helper), 
+form-creator .warning > div.form-element select:not(.helper), 
+form-creator .warning > div.form-element textarea:not(.helper) {
   border: 1px solid #ffda0bd8;
   box-shadow: inset 2px 2px 10px 2px #ffda0bd8;
 }
 
-.invalid.radio-form > .form-element {
+form-creator .invalid.radio-form > .form-element {
   border: 1px solid #ff0b0bd8;
   box-shadow: inset 2px 2px 10px 1px #ff0b0bd8;  
 }
 
-.invalid > div.form-element input:not(.helper), .invalid > div.form-element select:not(.helper), 
-.invalid > div.form-element textarea:not(.helper){
+form-creator .invalid > div.form-element input:not(.helper), 
+form-creator .invalid > div.form-element select:not(.helper), 
+form-creator .invalid > div.form-element textarea:not(.helper){
   border: 1px solid #ff0b0bd8;
   box-shadow: inset 2px 2px 10px 1px #ff0b0bd8;
 }
 
-*.delete-waiting > .form-element {
+form-creator *.delete-waiting > .form-element {
   background-color: #ff0b0b;
   opacity: 0.2;
   z-index: 1000;
 }
 
-*.delete-waiting > .form-element input, 
-*.delete-waiting > .form-element select {
+form-creator *.delete-waiting > .form-element input, 
+form-creator *.delete-waiting > .form-element select {
   background-color: white;
 }
 
-li.zebra1 {
+form-creator li.zebra1 {
   background-color: rgb(223, 240, 255);
 }
 
-li.zebra2 {
+form-creator li.zebra2 {
   background-color: white;
 }
 
-.invalid, .warning {
+form-creator .invalid, .warning {
   position: relative;
   text-decoration: none;
 }
 
-.warning:not(.invalid):after {
+form-creator .warning:not(.invalid):after {
   right: -700px;
   left: unset;
 }
 
-.validity-message {
+form-creator .validity-message {
   display: none;
 }
 
-.warning .validity-message {
+form-creator .warning .validity-message {
   display: block;
   word-wrap: normal;
   padding: 5px;
   color: darkgoldenrod;
 }
 
-.invalid .validity-message {
+form-creator .invalid .validity-message {
   display: block;
   word-wrap: normal;
   padding: 5px;
   color: darkred;
 }
 
-.invalid:hover:after, .warning:hover:after {
+form-creator .invalid:hover:after, .warning:hover:after {
   bottom: 100%;
 }
 
-.invalid:hover:before, .warning:hover:before {
+form-creator .invalid:hover:before, .warning:hover:before {
   bottom: 70%;
 }
 
-.invalid:hover:after, .invalid:before, .warning:hover:after, .warning:before {
+form-creator .invalid:hover:after, .invalid:before, .warning:hover:after, .warning:before {
   opacity: 1;
 }
 
-.form-element {
+form-creator .form-element {
   position: relative;
   padding: 5px;
   margin-top: 10px;
@@ -346,16 +347,16 @@ li.zebra2 {
   border-radius: 10px;
 }
 
-.warning:after {
+form-creator .warning:after {
   background: #ffda0b;
   color: black;
 }
 
-.warning:before {
+form-creator .warning:before {
   border-top: 20px solid #ffda0b2d;
 }
 
-input.filter-input {
+form-creator input.filter-input {
   height: 2em;
   font-size: smaller;
   box-shadow: none;
