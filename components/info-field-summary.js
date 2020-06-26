@@ -12,12 +12,24 @@ module.exports.InfoFieldSummary = class extends InputField{
   countFields(){
     let result = {};
     this.options.observed_fields.forEach((field) => {
-      fieldObj = document.querySelector(`#${field}`).parentElement.parentElement;
-      fieldObj.getModel().forEach((item) => {
-        result[item] = result[item] === undefined ? 1 : result[item]++;
-      })
+      console.log(field);
+      let foundObjs = document.querySelectorAll(`#${field}`);
+      foundObjs.forEach((foundObj) => {
+        let fieldObj = foundObj.parentElement.parentElement;
+        // console.log({fieldObj: fieldObj, fieldObjModel: fieldObj.getModel()})
+        let model = fieldObj.getModel();
+        if(model) model.forEach((item) => {
+          result[item] = result[item] === undefined ? 1 : result[item] + 1;
+        })
+      });      
     })
     return result;
+  }
+
+  runCounting(){
+    console.log(this)
+    let countedFields = this.countFields();
+    this.resultList.innerHTML = `${Object.keys(countedFields).map((item) => `<li>${countedFields[item]} x <span class="span-fett">${item}</span></li>`).join('')}`;
   }
 
   applyTemplate(){
@@ -27,12 +39,9 @@ module.exports.InfoFieldSummary = class extends InputField{
               <ul id=${this.options.name}></ul>
           </div>
       `);
-      let resultList = this.querySelector(`#${this.options.name}`);
-      this.querySelector('.form-root').addEventListener('form-valid', () => {
-        console.log({this:this, resultList: resultList});
-        let countedFields = this.countFields();
-        resultList.innerHTML = `${Object.keys(countedFields).map((item) => `<li>${countedFields[item]} x ${item}</li>`)}`;
-      })
+      this.resultList = this.querySelector(`#${this.options.name}`);
+      document.querySelector('.form-root').addEventListener('form-valid', this.runCounting.bind(this));
+      setTimeout(this.runCounting.bind(this), 1000);
   }
 
   getModel(){
