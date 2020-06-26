@@ -20,6 +20,7 @@ const fieldTypeMap = {
     'object': 'input-field-object', 
     'choose': 'input-field-choose-list',
     'dependentchoose': 'input-field-dependent-choose-list',
+    'infosummary': 'info-field-summary',
 };
 
 module.exports.InputField = class extends HTMLElement {

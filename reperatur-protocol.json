@@ -5,7 +5,7 @@
             "name": "kundennummer",
             "feldtyp": "choose",
             "label": "Kundennummer:",
-            "platzhalter": "zb: 10000", 
+            "platzhalter": "zb: 10000",
             "muster": "[0-9]{5}",
             "queryUrl": "http://prot-subuntu:8081/master",
             "listenQuery": "SELECT kto, Name1, LieferOrt FROM [prot-sage11].OLReweAbf.dbo.WIKI_Kundenauskunft WHERE kto IS NOT NULL AND kto < 70000",
@@ -21,7 +21,10 @@
                     "name": "anrede",
                     "label": "Anrede:",
                     "feldtyp": "radio",
-                    "items": ["Herr", "Frau"]
+                    "items": [
+                        "Herr",
+                        "Frau"
+                    ]
                 },
                 {
                     "name": "name",
@@ -67,7 +70,7 @@
                     "feldtyp": "dependentchoose",
                     "label": "Abw. Lieferadresse:",
                     "beschreibung": "AdressID aus Sage; Oder 99999 (letzter Listeneintrag) um selbst eine Lieferadresse anzugeben.",
-                    "platzhalter": "zB.: 100", 
+                    "platzhalter": "zB.: 100",
                     "muster": "[0-9]{1,5}",
                     "pflichtfeld": true,
                     "abhaengigFeld": "hat-abweichende-lieferadresse",
@@ -87,18 +90,18 @@
             ]
         },
         {
-            "name": "eingangsdatum", 
-            "label": "Eingangsdatum:", 
+            "name": "eingangsdatum",
+            "label": "Eingangsdatum:",
             "feldtyp": "date"
         },
         {
             "name": "artikelnummer",
             "label": "Artikelnummer:",
             "feldtyp": "lookup",
-            "platzhalter": "zb: 1006000061", 
+            "platzhalter": "zb: 1006000061",
             "muster": "[0-9]{10}|[0-9]{7}",
             "queryUrl": "http://prot-subuntu:8081/master",
-            "query": "SELECT Artikelnummer, Matchcode FROM [prot-sage11].OLReweAbf.dbo.KHKArtikel WHERE Artikelnummer LIKE '?' OR Dimensionstext LIKE '?'"
+            "query": "SELECT Artikelnummer, Matchcode FROM [prot-sage11].OLReweAbf.dbo.KHKArtikel WHERE Artikelnummer LIKE &#39;?&#39; OR Dimensionstext LIKE &#39;?&#39;"
         },
         {
             "name": "seriennummer",
@@ -176,8 +179,8 @@
                     "label": " ",
                     "subform": [
                         {
-                            "name": "pf-designator", 
-                            "label": "Designator:", 
+                            "name": "pf-designator",
+                            "label": "Designator:",
                             "feldtyp": "text"
                         },
                         {
@@ -185,13 +188,22 @@
                             "label": "Fehlerkategorie",
                             "feldtyp": "dropdown",
                             "standard": "auf dem Kopf",
-                            "items": ["fehlt", "verdreht", "auf dem Kopf", "Lötfehler", "Bestückfehler"]
+                            "items": [
+                                "fehlt",
+                                "verdreht",
+                                "auf dem Kopf",
+                                "Lötfehler",
+                                "Bestückfehler"
+                            ]
                         },
                         {
                             "name": "pf-behebung",
                             "label": "Behebung",
                             "feldtyp": "dropdown",
-                            "items": ["Nacharbeiten", "Ersetzen"]
+                            "items": [
+                                "Nacharbeiten",
+                                "Ersetzen"
+                            ]
                         },
                         {
                             "name": "pf-ersetzte-artikelnummern",
@@ -217,27 +229,43 @@
                     "label": " ",
                     "subform": [
                         {
-                            "name": "mf-komponente", 
-                            "label": "Komponente:", 
+                            "name": "mf-komponente",
+                            "label": "Komponente:",
                             "feldtyp": "text"
                         },
                         {
                             "name": "mf-fehlerkategorie",
                             "label": "Fehlerkategorie",
                             "feldtyp": "dropdown",
-                            "items": ["verschmutzt", "abgerissen", "gebrochen", "Wasserschaden", "zerschnitten/zerkratzt", "unvollständig", "verbogen"]
+                            "items": [
+                                "verschmutzt",
+                                "abgerissen",
+                                "gebrochen",
+                                "Wasserschaden",
+                                "zerschnitten/zerkratzt",
+                                "unvollständig",
+                                "verbogen"
+                            ]
                         },
                         {
                             "name": "mf-ursache",
                             "label": "Mögliche Ursache",
                             "feldtyp": "dropdown",
-                            "items": ["Transportschaden", "Montageschaden", "Altersbedingt", "sonstige"]
+                            "items": [
+                                "Transportschaden",
+                                "Montageschaden",
+                                "Altersbedingt",
+                                "sonstige"
+                            ]
                         },
                         {
                             "name": "mf-behebung",
                             "label": "Behebung",
                             "feldtyp": "dropdown",
-                            "items": ["Nacharbeiten", "Ersetzen"]
+                            "items": [
+                                "Nacharbeiten",
+                                "Ersetzen"
+                            ]
                         },
                         {
                             "name": "mf-ersetzte-artikelnummern",
@@ -263,27 +291,41 @@
                     "label": " ",
                     "subform": [
                         {
-                            "name": "ef-komponente", 
-                            "label": "Komponente:", 
+                            "name": "ef-komponente",
+                            "label": "Komponente:",
                             "feldtyp": "text"
                         },
                         {
                             "name": "ef-fehlerkategorie",
                             "label": "Fehlerkategorie",
                             "feldtyp": "dropdown",
-                            "items": ["verbrannt", "geplatzt", "ausgelaufen", "defekt"]
+                            "items": [
+                                "verbrannt",
+                                "geplatzt",
+                                "ausgelaufen",
+                                "defekt"
+                            ]
                         },
                         {
                             "name": "ef-ursache",
                             "label": "Mögliche Ursache",
                             "feldtyp": "dropdown",
-                            "items": ["Überspannung", "Kurzschluss", "Verpohlung", "Bauteilfehler", "sonstige"]
+                            "items": [
+                                "Überspannung",
+                                "Kurzschluss",
+                                "Verpohlung",
+                                "Bauteilfehler",
+                                "sonstige"
+                            ]
                         },
                         {
                             "name": "ef-behebung",
                             "label": "Behebung",
                             "feldtyp": "dropdown",
-                            "items": ["Nacharbeiten", "Ersetzen"]
+                            "items": [
+                                "Nacharbeiten",
+                                "Ersetzen"
+                            ]
                         },
                         {
                             "name": "ef-ersetzte-artikelnummern2",
@@ -317,13 +359,20 @@
                             "name": "bf-fehlerkategorie",
                             "label": "Fehlerkategorie:",
                             "feldtyp": "dropdown",
-                            "items": ["Anschlussfehler", "Einstellungsfehler"]
+                            "items": [
+                                "Anschlussfehler",
+                                "Einstellungsfehler"
+                            ]
                         },
                         {
                             "name": "bf-ursache",
                             "label": "Mögliche Ursache:",
                             "feldtyp": "dropdown",
-                            "items": ["Schaltplan", "Dokumentation", "Personal"]
+                            "items": [
+                                "Schaltplan",
+                                "Dokumentation",
+                                "Personal"
+                            ]
                         },
                         {
                             "name": "bf-behebung",
@@ -341,19 +390,32 @@
             "feldtyp": "radio",
             "standard": "in Klärung",
             "pflichtfeld": true,
-            "items": ["verschrottet", "in Klärung", "kein Fehler, geprüft IO", "geprüft IO", "Instand gesetzt IO"]
+            "items": [
+                "verschrottet",
+                "in Klärung",
+                "kein Fehler, geprüft IO",
+                "geprüft IO",
+                "Instand gesetzt IO"
+            ]
         },
         {
             "name": "garantie",
             "label": "Garantie:",
             "feldtyp": "radio",
-            "items": ["ja", "nein", "Kulanz"]
+            "items": [
+                "ja",
+                "nein",
+                "Kulanz"
+            ]
         },
         {
-            "name": "gutschrift",
-            "label": "Gutschrift erteilt?",
-            "feldtyp": "boolean",
-            "standard": false
+            "name": "gutschriftberechtigt",
+            "label": "Gutschrift berechtigt?",
+            "feldtyp": "radio",
+            "items": [
+                "ja",
+                "nein"
+            ]
         },
         {
             "name": "ausgangslieferschein",
@@ -368,6 +430,22 @@
             "platzhalter": "zB.: 2019-11000",
             "muster": "[0-9]{4}-[0-9]{5}",
             "feldtyp": "text"
+        },
+        {
+            "name": "gutschrift",
+            "label": "Gutschrift erteilt?",
+            "feldtyp": "boolean",
+            "standard": false
+        },
+        {
+            "name": "ersetzteartikel",
+            "label": "ersetzte Artikel:",
+            "feldtyp": "infosummary",
+            "observed_fields": [
+                "ef-ersetzte-artikelnummern2",
+                "pf-ersetzte-artikelnummern",
+                "mf-ersetzte-artikelnummern"
+            ]
         },
         {
             "name": "memo",

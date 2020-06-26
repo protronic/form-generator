@@ -8,6 +8,7 @@ const { InputFieldAbhaengig, DependenceMixin } = require('./dependent-fields.js'
 const { InputFieldList } = require('./input-field-list.js');
 const { InputFieldObject } = require('./input-field-object.js');
 const { InputFieldChooseList } = require('./input-field-choose-list.js');
+const { InfoFieldSummary } = require('./info-field-summary.js');
 
 const InputFieldDependentEnumTextarea = class extends EnumListableMixin(DependenceMixin(InputFieldTextarea)){
     constructor(){
@@ -99,6 +100,10 @@ const fieldTypeMap = module.exports.fieldTypeMap = {
     'dependentchoose': {
         tag: 'input-field-dependent-choose-list',
         conName: InputFieldDependentChooseList,
+    },
+    'infosummary': {
+        tag: 'info-field-summary',
+        conName: InfoFieldSummary,
     }
 };
 
