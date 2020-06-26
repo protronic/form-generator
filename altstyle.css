@@ -3,6 +3,16 @@ form-creator {
   display: block;
 }
 
+form-creator ul {
+  list-style: circle;
+  font-size: 14px;
+  margin-block-start: 3px;
+}
+
+form-creator span.span-fett {
+  font-weight: bold;
+}
+
 input-field-object > .form-element > .form-group, 
 form > .form-element > .form-group {
   overflow-y: hidden;
