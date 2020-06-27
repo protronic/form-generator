@@ -1,8 +1,6 @@
 const { InputFieldObject } = require('./input-field-object.js');
 const { fieldTypeMap } = require('./formular-components.js');
 
-// require('../altstyle.css');
-
 var baseUrl = 'http://10.19.28.94:8000'
 var schemaPath = '/schema'
 var modelPath = '/model'
@@ -51,29 +49,14 @@ function prepareModel(model, formular){
         user = wikiContext.UserName;
     } catch(err) {
         console.log('wikiContext not in scope.');
-        // console.error(err);
     }
 
     model['#parentForm'] = formular;
     model['#changed_user'] = user;
     model['#changed_time'] = changedTime;
 
-    // return JSON.stringify(JSON.stringify(model)).slice(1, -1);
     return JSON.stringify(model);
 }
-
-// function uploadNewModel(model, formular){
-//     let serialModel = prepareModel(model, formular);
-//     return fetch('http://prot-subuntu:8081/formly', {
-//         method: 'POST',
-//         body: `{"q": "INSERT INTO model (log) VALUES ('${serialModel}');SELECT TOP 1 _id FROM model WHERE log = '${serialModel}' ORDER BY _id DESC;"}`,
-//         headers: {
-//             'Content-Type': 'application/json'
-//         }
-//     })
-//         .then(response => response.json())
-//         .then(dataRows => dataRows.recordset[0]._id)
-// }
 
 function uploadNewModel(model, formular){
     let serialModel = prepareModel(model, formular);
@@ -88,17 +71,6 @@ function uploadNewModel(model, formular){
         .then(data => data['#modelID'])
 }
 
-// function uploadExistingModel(model, formular){
-//     let serialModel = prepareModel(model, formular);
-//     return fetch('http://prot-subuntu:8081/formly', {
-//         method: 'POST',
-//         body: `{"q": "UPDATE model SET log = '${serialModel}' WHERE _id = ${model['#modelID']}"}`,
-//         headers: {
-//             'Content-Type': 'application/json'
-//         }
-//     }).then(response => response.json()).then(response => console.log(response))
-// }
-
 function uploadExistingModel(model, formular){
     let serialModel = prepareModel(model, formular);
     return fetch(`${baseUrl}${modelPath}/${model['#modelID']}`, {
@@ -110,47 +82,18 @@ function uploadExistingModel(model, formular){
     }).then(response => response.json()).then(response => console.log(response))
 }
 
-// function loadModelFromDB(modelId){
-//     return fetch('http://prot-subuntu:8081/formly', {
-//         method: 'POST',
-//         body: `{"q": "SELECT log FROM model WHERE _id = ${modelId}"}`,
-//         headers: {
-//             'Content-Type': 'application/json'
-//         }
-//     })
-//         .then(response => response.json())
-//         .then(dataRows => dataRows.recordset[0].log)
-// }
-
 function loadModelFromDB(modelId){
     return fetch(`${baseUrl}${modelPath}/${modelId}`)
         .then(response => response.json())
         .then(data => {console.log(data); return data})
-        // .then(dataRows => dataRows.recordset[0].log)
 }
-
-// function loadSchemaFromDB(schemaId){
-//     return fetch('http://prot-subuntu:8081/formly', {
-//         method: 'POST',
-//         body: `{"q": "SELECT log FROM schemas WHERE _id= ${schemaId}"}`,
-//         headers: {
-//             'Content-Type': 'application/json'
-//         }
-//     }) 
-//     .then(response => response.json())
-//     .then(dataRows => JSON.parse(dataRows.recordset[0].log))
-// }
 
 function loadSchemaFromDB(schemaId){
     return fetch(`${baseUrl}${schemaPath}/${schemaId}`) 
     .then(response => response.json())
-    // .then(dataRows => dataRows)
 }
 
 function getSchemaId(){
-    // let url = new URL(location.href);
-    // return url.searchParams.get('schema');
-    // (new URLSearchParams(location.search))
     return (new SearchParams(location.search)).get('schema');
 }
 
@@ -158,8 +101,6 @@ class FormCreator extends InputFieldObject{
     constructor(){
         super();
         this.model = {};
-
-        // this.addEventListener('form-valid', (event => console.log(event))); 
     }
 
     connectedCallback(){        
@@ -183,16 +124,11 @@ class FormCreator extends InputFieldObject{
         this.options.subform = schema.felder;
 
         try{
-            // this.options.initialModel = this.loadFromLocal();
-            // this.options.initialModel = loadModelFromDB()
-            // let url = new URL(location.href);
-            // let modelId = url.searchParams.get('mid');
             let modelId = (new SearchParams(location.search)).get('mid');
 
             if(modelId){
                 loadModelFromDB(modelId).then(model => {
                     this.model = this.convertValue('initialModel', JSON.stringify(model));
-                    // console.log(this.convertValue('initialModel', model))
                     this.model['#modelID'] = modelId;
                     this.options.name = schema.formular;
                     this.options.label = `${this.options.label} ${modelId}`;
@@ -210,7 +146,6 @@ class FormCreator extends InputFieldObject{
             console.error(err);
         }
 
-        // this.testModelCreation();
         this.uploadModelButton();
         this.newFormularButton();
         this.newRemoveButton();
@@ -231,7 +166,6 @@ class FormCreator extends InputFieldObject{
         btn.addEventListener('click', (event) => {
             if(this.checkValidity()){
                 this.model = {...this.model, ...this.getModel()};
-                // console.log(this.model);
                 this.saveFormLocal(this.model['#modelID'], this.model);
             } else {
                 console.error('Einige Formular Elemente sind nicht korrekt ausgefüllt.');
@@ -313,8 +247,6 @@ class FormCreator extends InputFieldObject{
 
     loadFromLocal(localStorageId){
         if(!localStorageId){
-            // let uri = new URL(location.href);
-            // localStorageId = uri.searchParams.get('lsid');
             localStorageId = (new SearchParams(location.search)).get('lsid')
             localStorageId = localStorageId === null ? 'last' : localStorageId;
         }
