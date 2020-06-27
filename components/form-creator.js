@@ -166,6 +166,7 @@ class FormCreator extends InputFieldObject{
         this.rootElement = document.createElement('form');
         this.rootElement.classList.add('form-root');
         this.appendChild(this.rootElement);
+        baseUrl = this.getAttribute('data-url') ? this.getAttribute('data-url') : baseUrl;
 
         loadSchemaFromDB(getSchemaId())
             .then(schema => {
