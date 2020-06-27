@@ -283,4 +283,4 @@ class FormCreator extends InputFieldObject{
     }
 }
 
-customElements.define('form-creator', FormCreator);
+customElements.define('prot-form-creator', FormCreator);
