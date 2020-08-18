@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify -t browserify-css components/form-creator.js --standalone FormCreator > dist/prot-form-gen.js && cp altstyle.css dist/prot-form-gen.css",
-    "build-min": "browserify -g [ uglifyify -x .js ] -t browserify-css components/form-creator.js --standalone FormCreator > dist/prot-form-gen.js && cp altstyle.css dist/prot-form-gen.css",
-    "serve": "http-server -c-1 --cors --port 4200 .",
+    "build": "browserify -t browserify-css components/form-creator.js --standalone FormCreator > dist/prot-form-gen.js && cp altstyle.css dist/prot-form-gen.css && cp index.html dist/index.html",
+    "build-min": "browserify -g [ uglifyify -x .js ] -t browserify-css components/form-creator.js --standalone FormCreator > dist/prot-form-gen.js && cp altstyle.css dist/prot-form-gen.css && cp index.html dist/index.html",
+    "serve": "http-server -c-1 --cors --port 4200 dist",
     "babel-build": "browserify -t browserify-css components/es5-polyfill.js -t [ babelify --presets [ @babel/preset-env ] ] --standalone FormCreator > bundle_es5.js",
     "babel-build-min": "browserify -t browserify-css components/es5-polyfill.js -t [ babelify --presets [ @babel/preset-env ] ] -g [ uglifyify -x .js ] --standalone FormCreator > bundle_es5.min.js"
   },

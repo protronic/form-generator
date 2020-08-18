@@ -1,9 +1,9 @@
 const { InputFieldObject } = require('./input-field-object.js');
 const { fieldTypeMap } = require('./formular-components.js');
 
-var baseUrl = 'http://10.19.28.94:8000'
-var schemaPath = '/schema'
-var modelPath = '/model'
+var baseUrl = 'http://10.19.28.94:8084/query'
+// var schemaPath = '/schema'
+// var modelPath = '/model'
 
 Object.keys(fieldTypeMap).forEach(keyTag => {
   customElements.define(fieldTypeMap[keyTag].tag, fieldTypeMap[keyTag].conName);
@@ -60,22 +60,22 @@ function prepareModel(model, formular){
 
 function uploadNewModel(model, formular){
     let serialModel = prepareModel(model, formular);
-    return fetch(`${baseUrl}${modelPath}`, {
+    return fetch(`${baseUrl}?database=formly`, {
         method: 'POST',
-        body: `${serialModel}`,
+        body: `{"query": "INSERT INTO model (log) VALUES ('${serialModel}'); SELECT SCOPE_IDENTITY() as _id;"}`,
         headers: {
             'Content-Type': 'application/json'
         }
     })
         .then(response => response.json())
-        .then(data => data['#modelID'])
+        .then(data => data['_id'])
 }
 
 function uploadExistingModel(model, formular){
     let serialModel = prepareModel(model, formular);
-    return fetch(`${baseUrl}${modelPath}/${model['#modelID']}`, {
+    return fetch(`${baseUrl}?database=formly`, {
         method: 'POST',
-        body: serialModel,
+        body: `{"query": "UPDATE model SET log='${serialModel}' WHERE _id=${model['#modelID']};"}`,
         headers: {
             'Content-Type': 'application/json'
         }
@@ -83,14 +83,27 @@ function uploadExistingModel(model, formular){
 }
 
 function loadModelFromDB(modelId){
-    return fetch(`${baseUrl}${modelPath}/${modelId}`)
+    return fetch(`${baseUrl}?database=formly`, {
+        method: 'POST',
+        body: `{"query": "SELECT log FROM model WHERE _id=${modelId}"}`,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
         .then(response => response.json())
+        .then(tableResponse => JSON.parse(tableResponse['log']))
         .then(data => {console.log(data); return data})
 }
 
 function loadSchemaFromDB(schemaId){
-    return fetch(`${baseUrl}${schemaPath}/${schemaId}`) 
-    .then(response => response.json())
+    return fetch(`${baseUrl}?database=schemas`, {
+        method: 'POST',
+        body: `{"query": "SELECT log FROM schemas WHERE _id=${schemaId}"}`,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+        .then(response => response.json())
 }
 
 function getSchemaId(){
@@ -107,6 +120,7 @@ class FormCreator extends InputFieldObject{
         this.rootElement = document.createElement('form');
         this.rootElement.classList.add('form-root');
         this.appendChild(this.rootElement);
+        baseUrl = this.getAttribute('data-url') ? this.getAttribute('data-url') : baseUrl;
 
         loadSchemaFromDB(getSchemaId())
             .then(schema => {
@@ -198,8 +212,12 @@ class FormCreator extends InputFieldObject{
         btn.setAttribute('type', 'button');
         btn.addEventListener('click', () => {
             if (this.model['#modelID'] && confirm(`Are you sure, you want to renove model with id: ${this.model['#modelID']}?`)){
-                fetch(`${baseUrl}${modelPath}/${this.model['#modelID']}`, {
-                    method: 'DELETE'
+                fetch(`${baseUrl}?database=formly /${this.model['#modelID']}`, {
+                    method: 'POST',
+                    body: `{"query": "DELETE FROM model WHERE _id=${this.model['#modelID']}"}`,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
                 })
                     .then(res => (
                         res.ok ? 
@@ -282,4 +300,4 @@ class FormCreator extends InputFieldObject{
     }
 }
 
-customElements.define('form-creator', FormCreator);
+customElements.define('prot-form-gen', FormCreator);
