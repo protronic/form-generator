@@ -59,7 +59,7 @@ function prepareModel(model, formular){
 }
 
 function uploadNewModel(model, formular){
-    let serialModel = prepareModel(model, formular);
+    let serialModel = prepareModel(model, formular).split('"').join('\\"');
     return fetch(`${baseUrl}?database=formly`, {
         method: 'POST',
         body: `{"query": "INSERT INTO model (log) VALUES ('${serialModel}'); SELECT SCOPE_IDENTITY() as _id;"}`,
@@ -68,11 +68,11 @@ function uploadNewModel(model, formular){
         }
     })
         .then(response => response.json())
-        .then(data => data['_id'])
+        .then(data => data[0]['_id'])
 }
 
 function uploadExistingModel(model, formular){
-    let serialModel = prepareModel(model, formular);
+    let serialModel = prepareModel(model, formular).split('"').join('\\"');
     return fetch(`${baseUrl}?database=formly`, {
         method: 'POST',
         body: `{"query": "UPDATE model SET log='${serialModel}' WHERE _id=${model['#modelID']};"}`,
@@ -91,19 +91,20 @@ function loadModelFromDB(modelId){
         }
     })
         .then(response => response.json())
-        .then(tableResponse => JSON.parse(tableResponse['log']))
+        .then(tableResponse => JSON.parse(tableResponse[0]['log']))
         .then(data => {console.log(data); return data})
 }
 
 function loadSchemaFromDB(schemaId){
-    return fetch(`${baseUrl}?database=schemas`, {
+    return fetch(`${baseUrl}?database=formly`, {
         method: 'POST',
-        body: `{"query": "SELECT log FROM schemas WHERE _id=${schemaId}"}`,
+        body: `{"query": "SELECT log FROM schemas WHERE _id=${schemaId};"}`,
         headers: {
             'Content-Type': 'application/json'
         }
-    })
-        .then(response => response.json())
+    }) 
+    .then(response => response.json())
+    .then(response => JSON.parse(response[0]['log']))
 }
 
 function getSchemaId(){
@@ -212,9 +213,9 @@ class FormCreator extends InputFieldObject{
         btn.setAttribute('type', 'button');
         btn.addEventListener('click', () => {
             if (this.model['#modelID'] && confirm(`Are you sure, you want to renove model with id: ${this.model['#modelID']}?`)){
-                fetch(`${baseUrl}?database=formly /${this.model['#modelID']}`, {
+                fetch(`${baseUrl}?database=formly`, {
                     method: 'POST',
-                    body: `{"query": "DELETE FROM model WHERE _id=${this.model['#modelID']}"}`,
+                    body: `{"query": "DELETE FROM model WHERE _id=${this.model['#modelID']};"}`,
                     headers: {
                         'Content-Type': 'application/json'
                     }
@@ -300,4 +301,5 @@ class FormCreator extends InputFieldObject{
     }
 }
 
-customElements.define('prot-form-gen', FormCreator);
+// customElements.define('prot-form-gen', FormCreator);
+customElements.define('form-creator', FormCreator);
