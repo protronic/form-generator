@@ -550,18 +550,18 @@ class FormCreator extends InputFieldObject{
     copyModelButton(){
         let btn = document.createElement('button');
         btn.setAttribute('type', 'button');
-        btn.addEventListener('click', this.copyModelButtonClickListener);
+        btn.addEventListener('click', this.copyModelButtonClickListener.bind(this, this));
         btn.innerText = 'Model kopieren';
         this.appendChild(btn);
     }
 
-    copyModelButtonClickListener(event){
-        this.remove();
-            this.model['#modelID'] = undefined;
-            uploadNewModel(this.model, this.schema.formular)
+    copyModelButtonClickListener(self, event){
+        self.remove();
+            self.model['#modelID'] = undefined;
+            uploadNewModel(self.model, self.schema.formular)
                 .then(modelId => {
-                    this.model['#modelID'] = modelId;
-                    this.createNewFormURL(modelId);
+                    self.model['#modelID'] = modelId;
+                    self.createNewFormURL(modelId);
                     document.body.append(document.createElement('prot-form-gen'));
                 })
                 .catch(err => createCustomAlert(err.message, "Fehler"));
