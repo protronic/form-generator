@@ -176,10 +176,8 @@ const { fieldTypeMap } = require('./formular-components.js');
 const { createCustomAlert } = require('./custom-alert-box.js');
 const { sendLogToLogstash } = require('./logging-connector.js');
 
-var backup;
-
 var baseUrl = ''
-var baseUrl = 'http://10.19.28.94:8087'  // TESTCASE base URL
+// var baseUrl = 'http://10.19.28.94:8087'  // TESTCASE base URL
 
 var schemaPath = '/schema'
 var modelPath = '/model'
@@ -505,7 +503,6 @@ class FormCreator extends InputFieldObject{
                 removeExistingModel(this.model, this.schema.formular)
                     .then(() => {
                         this.createNewFormURL();
-                        backup = this;
                         this.remove();
                         document.body.append(document.createElement('prot-form-gen'));
                     })
@@ -553,8 +550,13 @@ class FormCreator extends InputFieldObject{
     copyModelButton(){
         let btn = document.createElement('button');
         btn.setAttribute('type', 'button');
-        btn.addEventListener('click', (event) => {
-            this.remove();
+        btn.addEventListener('click', this.copyModelButtonClickListener);
+        btn.innerText = 'Model kopieren';
+        this.appendChild(btn);
+    }
+
+    copyModelButtonClickListener(event){
+        this.remove();
             this.model['#modelID'] = undefined;
             uploadNewModel(this.model, this.schema.formular)
                 .then(modelId => {
@@ -563,9 +565,6 @@ class FormCreator extends InputFieldObject{
                     document.body.append(document.createElement('prot-form-gen'));
                 })
                 .catch(err => createCustomAlert(err.message, "Fehler"));
-        });
-        btn.innerText = 'Model kopieren';
-        this.appendChild(btn);
     }
 
     loadFromLocal(localStorageId){
