@@ -6,13 +6,13 @@ const genericLookUpQuery = module.exports.genericLookUpQuery = function(uri, inp
 
   return fetch(uri, {
     method: "POST",
-    body: JSON.stringify({ q: query.split("?").join(`${input}`) }),
+    body: JSON.stringify({ query: query.split("?").join(`${input}`) }),
     headers: {
       "Content-Type": "application/json"
     }
   })
     .then(response => (response.json()))
-    .then(data => (console.log(data), data.recordset));
+    .then(data => (console.log(data), data));
 };
 
 // customElements.define('input-field-lookup', InputFieldLookup);

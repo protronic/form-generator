@@ -1,13 +1,32 @@
 const { InputFieldObject } = require('./input-field-object.js');
 const { fieldTypeMap } = require('./formular-components.js');
+const { createCustomAlert } = require('./custom-alert-box.js');
+const { sendLogToLogstash } = require('./logging-connector.js');
 
-var baseUrl = 'http://10.19.28.94:8000'
+var backup;
+
+var baseUrl = ''
+var baseUrl = 'http://10.19.28.94:8087'  // TESTCASE base URL
+
 var schemaPath = '/schema'
 var modelPath = '/model'
 
 Object.keys(fieldTypeMap).forEach(keyTag => {
   customElements.define(fieldTypeMap[keyTag].tag, fieldTypeMap[keyTag].conName);
 });
+
+function sendErrorReport (errorMsg, form, model, message){
+    let errorObj = Object.assign({
+        appname: "json-form-creator",
+        audit: true,
+        form: form,
+        model: model,
+        error: errorMsg,
+        message: message
+    });
+    sendLogToLogstash(errorObj);
+    throw new Error(errorMsg);
+}
 
 class SearchParams {
     constructor(search){
@@ -67,8 +86,28 @@ function uploadNewModel(model, formular){
             'Content-Type': 'application/json'
         }
     })
-        .then(response => response.json())
-        .then(data => data['#modelID'])
+        .then(response => {
+            if (response.ok)
+                return response.json()
+            else
+                sendErrorReport(
+                    `Verbindung zur Datenbank ist Fehlgeschlagen mit status ${response.status} und folgender Meldung: ${response.statusText}.`,
+                    JSON.stringify(formular),
+                    JSON.stringify(model),
+                    `URL: ${baseUrl}${modelPath}}`
+                );
+        })
+        .then(response => {
+            if(!typeof response === 'number' && !typeof response === 'string')
+                sendErrorReport(
+                    "Speichern des Models ist aus einem unbekannten Grund fehlgeschlagen. Für mehr Informationen mit 'r.seidler' in Verbindung setzen.",
+                    JSON.stringify(formular),
+                    JSON.stringify(model),
+                    `URL: ${baseUrl}${modelPath}}`
+                );
+            console.log(response);
+            return response['_id'];
+        });
 }
 
 function uploadExistingModel(model, formular){
@@ -79,18 +118,95 @@ function uploadExistingModel(model, formular){
         headers: {
             'Content-Type': 'application/json'
         }
-    }).then(response => response.json()).then(response => console.log(response))
+    }).then(response => {
+        if (response.ok)
+            return response.json();
+        else 
+            sendErrorReport(
+                `Verbindung zur Datenbank ist Fehlgeschlagen mit status ${response.status} und folgender Meldung: ${response.statusText}.`,
+                JSON.stringify(formular),
+                JSON.stringify(model),
+                `URL: ${baseUrl}${modelPath}/${model['#modelID']}`
+            );
+        // throw new Error(`Verbindung zur Datenbank ist Fehlgeschlagen mit status ${response.status} und folgender Meldung: ${response.statusText}.`);
+    }).then(response => {
+        if (Object.keys(response).length !== 0)
+            sendErrorReport(
+                "Speichern des Models ist aus einem unbekannten Grund fehlgeschlagen. Für mehr Informationen mit 'r.seidler' in Verbindung setzen.",
+                JSON.stringify(formular),
+                JSON.stringify(model),
+                `URL: ${baseUrl}${modelPath}/${model['#modelID']}`
+            );
+        // throw new Error("Speichern des Models ist aus einem unbekannten Grund fehlgeschlagen. Für mehr Informationen mit 'r.seidler' in Verbindung setzen.")
+        console.log(response)
+    })
 }
 
-function loadModelFromDB(modelId){
+function removeExistingModel(model, formular){
+    let modelId = model['#modelID'];
+    return fetch(`${baseUrl}${modelPath}/${modelId}`, {method: 'DELETE'})
+        .then(response => {
+            if (response.ok)
+                return;
+            else
+                sendErrorReport(
+                    `Beim Löschen des models hat die Datenbank einen Fehlercode zurückgegeben. Fehlercode: ${response.status}; Fehlernachricht: ${response.statusText}`,
+                    JSON.stringify(formular),
+                    JSON.stringify(model),
+                    `URL: ${baseUrl}${modelPath}/${modelId}`
+                );
+        })
+}
+
+function loadModelFromDB(modelId, formular){
     return fetch(`${baseUrl}${modelPath}/${modelId}`)
-        .then(response => response.json())
-        .then(data => {console.log(data); return data})
+        .then(response => {
+            if (response.ok)
+                return response.json();
+            else
+                sendErrorReport(
+                    `Beim Laden des models hat die Datenbank einen Fehlercode zurückgegeben. Fehlercode: ${response.status}; Fehlernachricht: ${response.statusText}`,
+                    JSON.stringify(formular),
+                    "",
+                    `URL: ${baseUrl}${modelPath}/${modelId}`
+                );
+                // throw new Error(`Beim laden des models hat die Datenbank einen Fehlercode zurückgegeben. Fehlercode: ${response.status}; Fehlernachricht: ${response.statusText}`);
+        })
+        .then(data => {
+            console.log({model: data}); 
+            return data
+        })
 }
 
 function loadSchemaFromDB(schemaId){
-    return fetch(`${baseUrl}${schemaPath}/${schemaId}`) 
-    .then(response => response.json())
+    if (schemaId == undefined) 
+        createCustomAlert("Es ist kein Schema angegeben. In der URL muss der Parameter 'schema' mit einer gültigen schema ID angegeben sein (zB.: http://wiki.protronic-gmbh.de:8087/form-gen/prot-form-gen.html?schema=1012).");
+    else
+        return fetch(`${baseUrl}${schemaPath}/${schemaId}`) 
+    .then(response => {
+        if (response.ok || response.status == 500)  // status 500 wird im nächsten schritt behandelt
+            return response.json();
+        else 
+            sendErrorReport(
+                `Datenbank Anfrage gab Fehlercode ${response.status}, mit folgender Nachricht zurück: "${response.statusText}".`,
+                "",
+                "",
+                `URL: ${baseUrl}${schemaPath}/${schemaId}`
+            );
+            // throw new Error(`Datenbank Anfrage gab Fehlercode ${response.status}, mit folgender Nachricht zurück: "${response.statusText}".`);
+    })
+    .then(response => {
+        if (response.error != undefined ) 
+            sendErrorReport(
+                `Schema #${schemaId} konnte in der Datenbank nicht gefunden werden.`,
+                "",
+                "",
+                `URL: ${baseUrl}${schemaPath}/${schemaId}`
+            );
+            // throw new Error(`Schema #${schemaId} konnte in der Datenbank nicht gefunden werden.`);
+        else
+            return response;
+    })
 }
 
 function getSchemaId(){
@@ -107,16 +223,20 @@ class FormCreator extends InputFieldObject{
         this.rootElement = document.createElement('form');
         this.rootElement.classList.add('form-root');
         this.appendChild(this.rootElement);
+        baseUrl = this.getAttribute('data-url') ? this.getAttribute('data-url') : baseUrl;
 
         loadSchemaFromDB(getSchemaId())
             .then(schema => {
-                console.log(schema)
+                // console.log(schema)
                 this.applySchema(schema);
+            })
+            .catch(err => {
+                createCustomAlert(err.message);
             })
     }
 
     applySchema(schema){
-        console.log(schema)
+        console.log({schema: schema})
         this.schema = schema;
         this.options.name = schema.formular;
         this.options.label = `${schema.formular}`;
@@ -126,15 +246,17 @@ class FormCreator extends InputFieldObject{
             let modelId = (new SearchParams(location.search)).get('mid');
 
             if(modelId){
-                loadModelFromDB(modelId).then(model => {
-                    this.model = this.convertValue('initialModel', JSON.stringify(model));
-                    this.model['#modelID'] = modelId;
-                    this.options.name = schema.formular;
-                    this.options.label = `${this.options.label} ${modelId}`;
-                    this.options.initialModel = this.convertValue('initialModel', JSON.stringify(model));
-                    this.rootElement.options = this.options;
-                    this.applyTemplate();
-                })    
+                loadModelFromDB(modelId, schema.formular)
+                    .then(model => {
+                        this.model = this.convertValue('initialModel', JSON.stringify(model));
+                        this.model['#modelID'] = modelId;
+                        this.options.name = schema.formular;
+                        this.options.label = `${this.options.label} ${modelId}`;
+                        this.options.initialModel = this.convertValue('initialModel', JSON.stringify(model));
+                        this.rootElement.options = this.options;
+                        this.applyTemplate();
+                    })
+                    .catch(err => createCustomAlert(err.message, "Fehler"));    
             } else {
                 this.options.initialModel = this.loadFromLocal();
                 this.rootElement.options = this.options;
@@ -148,6 +270,7 @@ class FormCreator extends InputFieldObject{
         this.uploadModelButton();
         this.newFormularButton();
         this.newRemoveButton();
+        this.copyModelButton();
         this.renderGeneralInfo(schema);
     }
 
@@ -174,12 +297,18 @@ class FormCreator extends InputFieldObject{
         this.appendChild(btn)
     }
 
-    createNewFormURL(){
+    createNewFormURL(modelId){
         let uri = new URL(location.href);
         let search = (new SearchParams(location.search));
         search.set('lsid', 'null');
         search.delete('mid');
-        uri.search = search.toString();
+        if (modelId !== undefined) {
+            search.set('mid', modelId);
+            location.search = search;
+        } else {
+            uri.search = search.toString();
+            location.search = search;
+        }
         return uri.href;
     }
 
@@ -187,7 +316,9 @@ class FormCreator extends InputFieldObject{
         let btn = document.createElement('button');
         btn.setAttribute('type', 'button');
         btn.addEventListener('click', () => {
-            location.href = this.createNewFormURL();
+            this.createNewFormURL();
+            this.remove();
+            document.body.append(document.createElement('prot-form-gen'));
         });
         btn.innerText = 'Neu Anlegen';
         this.appendChild(btn);
@@ -198,14 +329,14 @@ class FormCreator extends InputFieldObject{
         btn.setAttribute('type', 'button');
         btn.addEventListener('click', () => {
             if (this.model['#modelID'] && confirm(`Are you sure, you want to renove model with id: ${this.model['#modelID']}?`)){
-                fetch(`${baseUrl}${modelPath}/${this.model['#modelID']}`, {
-                    method: 'DELETE'
-                })
-                    .then(res => (
-                        res.ok ? 
-                            location.href = this.createNewFormURL() : 
-                            console.error(res.status)
-                    ));
+                removeExistingModel(this.model, this.schema.formular)
+                    .then(() => {
+                        this.createNewFormURL();
+                        backup = this;
+                        this.remove();
+                        document.body.append(document.createElement('prot-form-gen'));
+                    })
+                    .catch(err => createCustomAlert(err.message, "Fehler"));
             }
         });
         btn.innerText = 'Remove Model';
@@ -226,14 +357,16 @@ class FormCreator extends InputFieldObject{
                     if(this.model['#modelID']){
                         console.log(this.model)
                         uploadExistingModel(this.model, this.schema.formular)
-                            .then(() => alert(`Änderungen an ${this.model['#modelID']} wurden gespeichert.`))
+                            .then(() => createCustomAlert(`Änderungen an ${this.model['#modelID']} wurden gespeichert.`, "Erfolg"))
+                            .catch(err => createCustomAlert(err.message, "Fehler"))
                     } else {
                         uploadNewModel(this.model, this.schema.formular)
                             .then(modelId => 
                                 (this.model['#modelID'] = modelId,
                                 this.querySelector(`label[for="${this.schema.formular}"]`).innerText = `${this.options.label} ${modelId}`, 
-                                alert(`Daten wurden erfolgreich in der Datenbank unter folgender ID abgelegt.\n${modelId}`))
-                            );
+                                createCustomAlert(`Daten wurden erfolgreich in der Datenbank unter folgender ID abgelegt.\n${modelId}`, "Erfolg"))
+                            )
+                            .catch(err => createCustomAlert(err.message, "Fehler"));
                     }    
                 }                
             } else {
@@ -241,6 +374,24 @@ class FormCreator extends InputFieldObject{
             }
         });
         btn.innerText = 'Speichern';
+        this.appendChild(btn);
+    }
+
+    copyModelButton(){
+        let btn = document.createElement('button');
+        btn.setAttribute('type', 'button');
+        btn.addEventListener('click', (event) => {
+            this.remove();
+            this.model['#modelID'] = undefined;
+            uploadNewModel(this.model, this.schema.formular)
+                .then(modelId => {
+                    this.model['#modelID'] = modelId;
+                    this.createNewFormURL(modelId);
+                    document.body.append(document.createElement('prot-form-gen'));
+                })
+                .catch(err => createCustomAlert(err.message, "Fehler"));
+        });
+        btn.innerText = 'Model kopieren';
         this.appendChild(btn);
     }
 
@@ -282,4 +433,4 @@ class FormCreator extends InputFieldObject{
     }
 }
 
-customElements.define('form-creator', FormCreator);
+customElements.define('prot-form-gen', FormCreator);

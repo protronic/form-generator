@@ -1,39 +1,39 @@
-form-creator {
+prot-form-gen {
   width: 800px;
   display: block;
 }
 
-form-creator ul {
+prot-form-gen ul {
   list-style: circle;
   font-size: 14px;
   margin-block-start: 3px;
 }
 
-form-creator span.span-fett {
+prot-form-gen span.span-fett {
   font-weight: bold;
 }
 
-form-creator input-field-object > .form-element > .form-group, 
+prot-form-gen input-field-object > .form-element > .form-group, 
 form > .form-element > .form-group {
   overflow-y: hidden;
   height: auto;
 }
 
-form-creator input-field-object > .form-element > .form-group.hidden,
+prot-form-gen input-field-object > .form-element > .form-group.hidden,
 form > .form-element > .form-group.hidden {
   overflow-y: hidden;
   max-height: 0px;
 }
 
-form-creator input, textarea {
+prot-form-gen input, textarea {
   border-radius: 5px;
 }
 
-form-creator label {
+prot-form-gen label {
   margin-right: 10px;
 }
 
-form-creator button {
+prot-form-gen button {
   cursor: pointer;
   border-radius: 10px;
   border: none;
@@ -43,15 +43,15 @@ form-creator button {
   box-shadow: 1px 2px 5px 1px gray;
 }
 
-form-creator .formular-title > * {
+prot-form-gen .formular-title > * {
   text-align: center;
 }
 
-form-creator div.form-element {
+prot-form-gen div.form-element {
   margin: 5px;
 }
 
-form-creator span.pflichtfeld {
+prot-form-gen span.pflichtfeld {
   /* float: right; */
   position: absolute;
   bottom: 0px;
@@ -60,23 +60,23 @@ form-creator span.pflichtfeld {
   vertical-align: bottom;
 }
 
-form-creator .form-list > *[name] {
+prot-form-gen .form-list > *[name] {
   display: inline-block;
   width: 100%;
 }
 
-form-creator .form-list {
+prot-form-gen .form-list {
   display: grid;
   grid-template-columns: 98% 2%;
   border-radius: 5px;
 }
 
-form-creator input-field-list > .form-element {
+prot-form-gen input-field-list > .form-element {
   border-radius: 10px;
   border: 2px solid gray;
 }
 
-form-creator .form-list > button.form-list-removebtn {
+prot-form-gen .form-list > button.form-list-removebtn {
   margin-top: 5px;
   margin-bottom: 5px;
   width: 100%;
@@ -86,7 +86,7 @@ form-creator .form-list > button.form-list-removebtn {
   padding: 2px;
 }
 
-form-creator .form-list-addbtn {
+prot-form-gen .form-list-addbtn {
   clear: both;
   position: relative;
   width: 99%;
@@ -96,17 +96,17 @@ form-creator .form-list-addbtn {
   padding: 2px;
 }
 
-form-creator .hidden {
+prot-form-gen .hidden {
   display: none;
 }
 
-form-creator input-field-object > .form-element {
+prot-form-gen input-field-object > .form-element {
   border: 1px solid darkgray;
   border-radius: 10px;
   box-shadow: 2px 2px 10px 2px darkgray;
 }
 
-form-creator .form-object-collapse {
+prot-form-gen .form-object-collapse {
   position: absolute;
   right: 0px;
   top: 0px;
@@ -116,7 +116,7 @@ form-creator .form-object-collapse {
   z-index: 1;
 }
 
-form-creator .clear-radio-btn {
+prot-form-gen .clear-radio-btn {
   /* float: right; */
   position: absolute;
   right: 0px;
@@ -125,41 +125,41 @@ form-creator .clear-radio-btn {
   background-color: lightpink;
 }
 
-form-creator label {
+prot-form-gen label {
   font-size: smaller;
 }
 
-form-creator .form-element > label {
+prot-form-gen .form-element > label {
   font-weight: bold;
   vertical-align: top;
 }
 
-form-creator > form {
+prot-form-gen > form {
   box-shadow: 2px 2px 10px 2px gray;
   border-radius: 10px;
 }
 
-form-creator input[type="text"],input[type="tel"], input[type="email"], input[type="date"], textarea {
+prot-form-gen input[type="text"],input[type="tel"], input[type="email"], input[type="date"], textarea {
   width: 60%;
   border: 1px solid gray;
   box-shadow: inset -2px -2px 5px 2px gray;
   vertical-align: middle;
 }
 
-form-creator input[type="text"],input[type="tel"], input[type="email"], input[type="date"]{
+prot-form-gen input[type="text"],input[type="tel"], input[type="email"], input[type="date"]{
   height: 2em;
   padding: 3px;
 }
 
-form-creator textarea {
+prot-form-gen textarea {
   padding: 5px;
 }
 
-form-creator input[type="dropdown"] {
+prot-form-gen input[type="dropdown"] {
   border-radius: 10px;
 }
 
-form-creator .form-element select {
+prot-form-gen .form-element select {
   border-radius: 5px;
   border: none;
   box-shadow: inset -2px -2px 2px 1px gray;
@@ -167,13 +167,13 @@ form-creator .form-element select {
   background-color: rgb(255, 255, 255);
 }
 
-form-creator button.form-object-collapse {
+prot-form-gen button.form-object-collapse {
   background-color: antiquewhite;
   height: 1.5em;
   margin: 1px;
 }
 
-form-creator .output-display {
+prot-form-gen .output-display {
   padding: 3px;
   background-color: rgba(0, 0, 0, 0.03);
   color: gray;
@@ -183,7 +183,7 @@ form-creator .output-display {
   width: 60%;
 }
 
-form-creator .choose-list {
+prot-form-gen .choose-list {
   display: block;
   min-height: 200px;
   max-height: 200px;
@@ -198,7 +198,7 @@ form-creator .choose-list {
   margin-bottom: 8px;
 }
 
-form-creator .choose-list > li {
+prot-form-gen .choose-list > li {
   list-style: none;
   margin-top: 2px;
   margin-bottom: 2px;
@@ -213,25 +213,25 @@ form-creator .choose-list > li {
   /* border: 1px dotted rgb(173, 173, 173);   */
 }
 
-form-creator .choose-list > li:first-child {
+prot-form-gen .choose-list > li:first-child {
   margin-top: 0px;
 }
 
-form-creator .choose-list > li:hover {
+prot-form-gen .choose-list > li:hover {
   background-color: lightblue;
   cursor: pointer;
 }
 
-form-creator .choose-list > li.selected {
+prot-form-gen .choose-list > li.selected {
   background-color: #2020e360;
 }
 
-form-creator [pflichtfeld="true"] > label, [pflichtfeld="true"] > .form-element > label:first-of-type {
+prot-form-gen [pflichtfeld="true"] > label, [pflichtfeld="true"] > .form-element > label:first-of-type {
   font-style: italic;
   text-decoration-line: underline;
 }
 
-form-creator .separator {
+prot-form-gen .separator {
   width: 100%;
   height: 0px;
   box-sizing: border-box;
@@ -240,106 +240,106 @@ form-creator .separator {
   border-radius: 20px;
 }
 
-form-creator ul.selected-item {
+prot-form-gen ul.selected-item {
   min-height: max-content;
   max-height: max-content;
 }
 
 @media all and (-ms-high-contrast:none) {
-  form-creator ul.selected-item {
+  prot-form-gen ul.selected-item {
     min-height: auto;
   }
 }
 
-form-creator ul.selected-item > li:not(.selected) {
+prot-form-gen ul.selected-item > li:not(.selected) {
   display: none;
 }
 
-form-creator input-field-radio > .form-element {
+prot-form-gen input-field-radio > .form-element {
   border: 2px solid gray;
   display: block;
   border-radius: 10px;
 }
 
-form-creator .warning > div.form-element input:not(.helper), 
-form-creator .warning > div.form-element select:not(.helper), 
-form-creator .warning > div.form-element textarea:not(.helper) {
+prot-form-gen .warning > div.form-element input:not(.helper), 
+prot-form-gen .warning > div.form-element select:not(.helper), 
+prot-form-gen .warning > div.form-element textarea:not(.helper) {
   border: 1px solid #ffda0bd8;
   box-shadow: inset 2px 2px 10px 2px #ffda0bd8;
 }
 
-form-creator .invalid.radio-form > .form-element {
+prot-form-gen .invalid.radio-form > .form-element {
   border: 1px solid #ff0b0bd8;
   box-shadow: inset 2px 2px 10px 1px #ff0b0bd8;  
 }
 
-form-creator .invalid > div.form-element input:not(.helper), 
-form-creator .invalid > div.form-element select:not(.helper), 
-form-creator .invalid > div.form-element textarea:not(.helper){
+prot-form-gen .invalid > div.form-element input:not(.helper), 
+prot-form-gen .invalid > div.form-element select:not(.helper), 
+prot-form-gen .invalid > div.form-element textarea:not(.helper){
   border: 1px solid #ff0b0bd8;
   box-shadow: inset 2px 2px 10px 1px #ff0b0bd8;
 }
 
-form-creator *.delete-waiting > .form-element {
+prot-form-gen *.delete-waiting > .form-element {
   background-color: #ff0b0b;
   opacity: 0.2;
   z-index: 1000;
 }
 
-form-creator *.delete-waiting > .form-element input, 
-form-creator *.delete-waiting > .form-element select {
+prot-form-gen *.delete-waiting > .form-element input, 
+prot-form-gen *.delete-waiting > .form-element select {
   background-color: white;
 }
 
-form-creator li.zebra1 {
+prot-form-gen li.zebra1 {
   background-color: rgb(223, 240, 255);
 }
 
-form-creator li.zebra2 {
+prot-form-gen li.zebra2 {
   background-color: white;
 }
 
-form-creator .invalid, .warning {
+prot-form-gen .invalid, .warning {
   position: relative;
   text-decoration: none;
 }
 
-form-creator .warning:not(.invalid):after {
+prot-form-gen .warning:not(.invalid):after {
   right: -700px;
   left: unset;
 }
 
-form-creator .validity-message {
+prot-form-gen .validity-message {
   display: none;
 }
 
-form-creator .warning .validity-message {
+prot-form-gen .warning .validity-message {
   display: block;
   word-wrap: normal;
   padding: 5px;
   color: darkgoldenrod;
 }
 
-form-creator .invalid .validity-message {
+prot-form-gen .invalid .validity-message {
   display: block;
   word-wrap: normal;
   padding: 5px;
   color: darkred;
 }
 
-form-creator .invalid:hover:after, .warning:hover:after {
+prot-form-gen .invalid:hover:after, .warning:hover:after {
   bottom: 100%;
 }
 
-form-creator .invalid:hover:before, .warning:hover:before {
+prot-form-gen .invalid:hover:before, .warning:hover:before {
   bottom: 70%;
 }
 
-form-creator .invalid:hover:after, .invalid:before, .warning:hover:after, .warning:before {
+prot-form-gen .invalid:hover:after, .invalid:before, .warning:hover:after, .warning:before {
   opacity: 1;
 }
 
-form-creator .form-element {
+prot-form-gen .form-element {
   position: relative;
   padding: 5px;
   margin-top: 10px;
@@ -347,16 +347,16 @@ form-creator .form-element {
   border-radius: 10px;
 }
 
-form-creator .warning:after {
+prot-form-gen .warning:after {
   background: #ffda0b;
   color: black;
 }
 
-form-creator .warning:before {
+prot-form-gen .warning:before {
   border-top: 20px solid #ffda0b2d;
 }
 
-form-creator input.filter-input {
+prot-form-gen input.filter-input {
   height: 2em;
   font-size: smaller;
   box-shadow: none;
@@ -364,4 +364,84 @@ form-creator input.filter-input {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   border-radius: 10px 10px 0px 0px;
+}
+
+#modalContainer {
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 100;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    width: 100%;
+}
+
+#modalContainer > #alertBox {
+    --HIGHLIGHT-COLOR: white;
+    --TEXT-COLOR: black;
+    background: white;
+    z-index: 1000;
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    display: block;
+    width: 300px;
+    box-shadow: inset var(--HIGHLIGHT-COLOR) 0px 0.5em 40px 10px;
+}
+
+#modalContainer > #alertBox > h1 {
+    margin: 0;
+    font: bold 0.9em verdana,arial;
+    border-bottom: 1px solid #000;
+    padding: 2px 0 2px 5px;
+    cursor: pointer;
+    user-select: none;
+    background-color: var(--HIGHLIGHT-COLOR);
+    color: var(--TEXT-COLOR);
+}
+
+#modalContainer > #alertBox > p {
+    font: 0.7em verdana,arial;
+    height: 50px;
+    padding-left: 5px;
+    margin-left: 5px;
+}
+
+#modalContainer > #alertBox > a {
+    display: block;
+    position: relative;
+    margin: 5px auto;
+    padding: 3px;
+    border: 2px solid #000;
+    width: 70px;
+    font: 0.7em verdana,arial;
+    text-transform: uppercase;
+    text-align: center;
+    text-decoration: none;
+    background-color: var(--HIGHLIGHT-COLOR);
+    color: var(--TEXT-COLOR);
+}
+
+#modalContainer > #alertBox.fehler-alert {
+    --HIGHLIGHT-COLOR: #dc3545;
+    --TEXT-COLOR: #fff;
+}
+
+#modalContainer > #alertBox.warnung-alert {
+    --HIGHLIGHT-COLOR: #ffc107;
+    --TEXT-COLOR: #000;
+}
+
+#modalContainer > #alertBox.info-alert {
+    --HIGHLIGHT-COLOR: #17a2b8;
+    --TEXT-COLOR: #fff;
+}
+
+#modalContainer > #alertBox.erfolg-alert {
+    --HIGHLIGHT-COLOR: #28a745;
+    --TEXT-COLOR: #fff;
+}
+
+#modalContainer > #alertBox.debug-alert {
+    --HIGHLIGHT-COLOR: #6c757d;
+    --TEXT-COLOR: #fff;
 }
