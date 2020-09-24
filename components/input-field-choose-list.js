@@ -34,7 +34,7 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
       this.querySelector('.form-element').insertAdjacentHTML('afterend', `<div class="separator"></div>`);
       // this.rootElement.insertAdjacentHTML('beforeend', );
 
-    genericLookUpQuery(this.options.queryUrl, '', this.options.listenQuery.split("'").join("&#39;"))
+    genericLookUpQuery(this.options.queryUrl, '', this.options.listenQuery.split("''").join("&#39;"))
       .then(data => {
         let resultInput = this.querySelector(`input#${this.options.name}`);
         this.createChooseList(data, resultInput);
