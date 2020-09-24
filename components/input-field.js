@@ -46,9 +46,6 @@ module.exports.InputField = class extends HTMLElement {
         this.model = {};
         this.valid = true;
         this.validityMessage = undefined;
-        this.options.initialModel = this.options.nomodel 
-            ? localStorage.getItem(`${this.options.nomodel_unique_id}|${this.options.name}`) 
-            : this.options.initialModel;
         this.addEventListener('form-input', debounce(this.formInputHandler, 1000, {leading: false, trailing: true}));
     }
 
@@ -59,6 +56,10 @@ module.exports.InputField = class extends HTMLElement {
             // if(key === 'initialModel') console.log(this.getAttribute(key), typeof this.getAttribute(key));
             this.options[key] = this.convertValue(key, this.getAttribute(key)) || this.defaultOptions[key];
         });
+
+        if(this.options.nomodel){ 
+            this.options.initialModel = localStorage.getItem(`${this.options.nomodel_unique_id}|${this.options.name}`);
+        }
 
         if(this.options.initialModel == undefined || this.options.initialModel == ''){
             this.options.initialModel = this.options.standard;
