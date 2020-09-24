@@ -993,7 +993,7 @@ class GenericInputField extends InputField{
   getModel(){
       let formControl = this.querySelector(`#${this.options.name}`);
       let model = formControl ? formControl.value : undefined;
-      return model != '' ? model : undefined;
+      return model != '' ? model.split('@').join('&#64;') : undefined;
   }
 
   checkValidity(){

@@ -38,12 +38,17 @@ module.exports.InputField = class extends HTMLElement {
             deaktiviert: false,
             pflichtfeld: false,
             hintergrundFarbe: 'none',
+            nomodel: false,
+            nomodel_unique_id: ''
         };
         this.rootElement = this;
         this.options = {};
         this.model = {};
         this.valid = true;
         this.validityMessage = undefined;
+        this.options.initialModel = this.options.nomodel 
+            ? localStorage.getItem(`${this.options.nomodel_unique_id}|${this.options.name}`) 
+            : this.options.initialModel;
         this.addEventListener('form-input', debounce(this.formInputHandler, 1000, {leading: false, trailing: true}));
     }
 
