@@ -60,7 +60,7 @@ class GenericInputField extends InputField{
         }
     })
 
-    let historyEle = document.querySelector(`#${this.options.name}-history-container > ul`);
+    let historyEle = document.querySelector(`#${this.options.name}-history-container`);
     historyEle.append(ulEle);
     let form = root.schema.formular;
     let mid = root.modelId;

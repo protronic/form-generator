@@ -1021,8 +1021,8 @@ class GenericInputField extends InputField{
         }
     })
 
-    historyEle.append(ulEle);
     let historyEle = document.querySelector(`#${this.options.name}-history-container > ul`);
+    historyEle.append(ulEle);
     let form = root.schema.formular;
     let mid = root.modelId;
     let inp = this.options.name;
