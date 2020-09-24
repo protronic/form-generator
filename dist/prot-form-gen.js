@@ -1132,7 +1132,7 @@ module.exports.InputFieldList = class extends InputField {
           ${this.options.vorlage.map(formElement => `
               <${this.mapFieldType(formElement.feldtyp)} 
                   ${Object.keys(formElement).map(key => `${key}='${this.saveValue(key, formElement[key], lfdNr)}'`).join(' ')}
-                  initialModel='${Object.keys(formElement).includes('nomodule') ? (console. log(`${formElement['nomodel_unique_id']}|${formElement['name']}|${document.querySelector('prot-form-gen').model['#modelID']}`), localStorage.getItem(`${formElement['nomodel_unique_id']}|${formElement['name']}|${document.querySelector('prot-form-gen').model['#modelID']}`)) : this.saveValue('initialModel', listItem)}'
+                  initialModel='${this.saveValue('initialModel', listItem)}'
               ></${this.mapFieldType(formElement.feldtyp)}>
           `).join('\n')}
           <button class="form-list-removebtn" tabIndex="-1" onclick="this.previousElementSibling.classList.add('delete-waiting'); if(confirm('sicher, dass der gewählte Eintrag gelöscht werden soll?')) (function(event){event.srcElement.previousElementSibling.remove(); event.srcElement.remove()})(event); else this.previousElementSibling.classList.remove('delete-waiting')" type="button">${this.options.entfernenLabel}</button>
@@ -1554,8 +1554,6 @@ module.exports.InputField = class extends HTMLElement {
             deaktiviert: false,
             pflichtfeld: false,
             hintergrundFarbe: 'none',
-            nomodel: false,
-            nomodel_unique_id: ''
         };
         this.rootElement = this;
         this.options = {};
@@ -1572,10 +1570,6 @@ module.exports.InputField = class extends HTMLElement {
             // if(key === 'initialModel') console.log(this.getAttribute(key), typeof this.getAttribute(key));
             this.options[key] = this.convertValue(key, this.getAttribute(key)) || this.defaultOptions[key];
         });
-
-        // if(this.options.nomodel && this.model['#modelID']){ 
-        //     // this.options.initialModel = ;
-        // }
 
         if(this.options.initialModel == undefined || this.options.initialModel == ''){
             this.options.initialModel = this.options.standard;
