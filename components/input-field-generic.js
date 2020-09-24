@@ -17,7 +17,6 @@ class GenericInputField extends InputField{
               ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
               <input 
                   id="${this.options.name}" 
-                  autocomplete="on"
                   placeholder="${this.options.platzhalter}" 
                   ${(this.options.initialModel) ? `value="${this.options.initialModel}"` : ''}
                   pattern="${this.options.muster}" 
@@ -25,11 +24,83 @@ class GenericInputField extends InputField{
                   type="${this.options.inputType}"
                   title="${this.options.beschreibung}"
               >
+              <div id="${this.options.name}-history-container" class="history hidden"></div>
               <span class="validity-message"></span>
               <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
           </div>
       `);
       this.querySelector(`#${this.options.name}`).addEventListener('input', this.dispatchCustomEvent.bind(this, 'form-input'));
+  }
+
+  createHistoryStor(){
+    let root = document.querySelector('prot-form-gen');
+    let inpEle = document.querySelector('#${this.options.name}');
+    let contEle = document.querySelector(`#${this.options.name}-history-container`);
+    let ulEle = document.createElement('ul');
+    ulEle.addEventListener('click', function(event){
+        let liEle = event.target;
+        if(liEle.nodeName === 'li'){
+            event.preventDefault();
+            inpEle.value = liEle.innerText;
+        }
+    });
+    inpEle.addEventListener('focus', function(event){
+        contEle.classList.remove('hidden');
+    });
+    inpEle.addEventListener('blur', function(event){
+        contEle.classList.add('hidden');
+    });
+    inpEle.addEventListener('keydown', function(event){
+        if(event.which == 38){
+            this.history_store.move(-1);
+        }
+        if(event.which == 40){
+            this.history_store.move(1);
+        }
+    })
+
+    historyEle.append(ulEle);
+    let historyEle = document.querySelector(`#${this.options.name}-history-container > ul`);
+    let form = root.schema.formular;
+    let mid = root.modelId;
+    let inp = this.options.name;
+
+    this.history_store = {
+        cursor: 0,
+        previousEntries: localStorage.getItem(`${form}.${mid}.${inp}`) | [],
+        filteredEntries: localStorage.getItem(`${form}.${mid}.${inp}`) | [],
+        put: function(val){
+            this.previousEntries.push(val);
+            let entryEle = document.createElement('li');
+            entryEle.innerText = val;
+            historyEle.append(entryEle);
+            this.save();
+        },
+        get: function(){
+            return this.filteredEntries[this.cursor];
+        },
+        filter: function(str){
+            let filtered = this.previousEntries.filter(entry => entry.startsWith(str));
+            this.cursor = filtered.length - 1 < this.cursor ? filtered.length - 1 : this.cursor;
+            this.filteredEntries = filtered;
+        },
+        move: function(dir){
+            historyEle.childNodes.get(this.cursor).classList.remove('marked');
+            let moved = this.cursor + dir;
+            let max = this.filteredEntries.length - 1;
+            this.cursor = (moved > 0) ? (moved < max ? moved : max) : 0;
+            historyEle.childNodes.get(this.cursor).classList.remove('marked');
+        },
+        save: function(){
+            localStorage.setItem(`${form}.${mid}.${inp}`, this.previousEntries);
+        }
+    }
+
+    this.history_store.filteredEntries.forEach(entry => {
+        let entryEle = document.createElement('li');
+        entryEle.innerText = entry;
+    })
+
   }
 
   getModel(){

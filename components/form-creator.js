@@ -242,7 +242,7 @@ class FormCreator extends InputFieldObject{
         this.options.subform = schema.felder;
 
         try{
-            let modelId = (new SearchParams(location.search)).get('mid');
+            let modelId = this.modelId = (new SearchParams(location.search)).get('mid');
 
             if(modelId){
                 loadModelFromDB(modelId, schema.formular)

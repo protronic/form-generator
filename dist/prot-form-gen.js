@@ -978,6 +978,7 @@ class GenericInputField extends InputField{
               ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
               <input 
                   id="${this.options.name}" 
+                  autocomplete="on"
                   placeholder="${this.options.platzhalter}" 
                   ${(this.options.initialModel) ? `value="${this.options.initialModel}"` : ''}
                   pattern="${this.options.muster}" 

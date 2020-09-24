@@ -445,3 +445,28 @@ prot-form-gen input.filter-input {
     --HIGHLIGHT-COLOR: #6c757d;
     --TEXT-COLOR: #fff;
 }
+
+div.history {
+    visibility: visible;
+    position: absolute;
+    top: 100%;
+    left: 0px;
+    height: 1em;
+    max-height: 4em;
+    width: 100%;
+    --CURRENT-MARK: 0;
+}
+
+div.history.hidden {
+    visibility: hidden;
+}
+
+div.history > ul {
+    position: relative;
+    width: 100%;
+    overflow-y: scroll;
+}
+
+div.history > ul > li.marked {
+    background: lightgreen;
+}
