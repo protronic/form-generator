@@ -345,6 +345,7 @@ function loadModelFromDB(modelId, formular){
         })
         .then(data => {
             console.log({model: data}); 
+            data['#modelID'] = modelId;
             return data
         })
 }
