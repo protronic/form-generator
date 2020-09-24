@@ -854,7 +854,7 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
       this.querySelector('.form-element').insertAdjacentHTML('afterend', `<div class="separator"></div>`);
       // this.rootElement.insertAdjacentHTML('beforeend', );
     console.log(this.options.listenQuery);
-    genericLookUpQuery(this.options.queryUrl, '', this.options.listenQuery.split("'").join("&#39;"))
+    genericLookUpQuery(this.options.queryUrl, '', this.options.listenQuery)
       .then(data => {
         let resultInput = this.querySelector(`input#${this.options.name}`);
         this.createChooseList(data, resultInput);
@@ -1206,7 +1206,7 @@ const LookupMixin = module.exports.LookupMixin = superclass => class extends sup
   databaseLookup(inputValueFn, event) {
     if (event.target.validity ? event.target.validity.valid : event.target.valid && event.target.value !== "") {
       console.log(this.options.query);
-      genericLookUpQuery(this.options.queryUrl, inputValueFn.bind(this)(), this.options.query.split("'").join("&#39;"))
+      genericLookUpQuery(this.options.queryUrl, inputValueFn.bind(this)(), this.options.query)
         .then(data =>
           data.map(entry =>
             Object.keys(entry)

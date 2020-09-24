@@ -37,7 +37,7 @@ module.exports.InputFieldTextarea = class extends InputField{
       let model = formControl ? formControl.value : undefined;
       let resultModel = model != '' ? model.split('@').join('&#64;').split("'").join("&#39;") : undefined;
       if (this.options.nomodel){
-        localStorage.setItem(`${this.options.nomodel_unique_id}|${this.options.name}`, resultModel);
+        localStorage.setItem(`${this.options.nomodel_unique_id}|${this.options.name}|${this.model['#modelID']}`, resultModel);
         return undefined;
       } 
       return resultModel;
