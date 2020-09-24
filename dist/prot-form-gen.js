@@ -1506,7 +1506,7 @@ module.exports.InputFieldTextarea = class extends InputField{
       let model = formControl ? formControl.value : undefined;
       let resultModel = model != '' ? model.split('@').join('&#64;').split("'").join("&#39;") : undefined;
       if (this.options.nomodel){
-        localStorage.setItem(`${this.options.nomodel_unique_id}|${this.options.name}`, resultModel);
+        localStorage.setItem(`${this.options.nomodel_unique_id}|${this.options.name}|${this.model['#modelID']}`, resultModel);
         return undefined;
       } 
       return resultModel;
@@ -1572,8 +1572,8 @@ module.exports.InputField = class extends HTMLElement {
             this.options[key] = this.convertValue(key, this.getAttribute(key)) || this.defaultOptions[key];
         });
 
-        if(this.options.nomodel){ 
-            this.options.initialModel = localStorage.getItem(`${this.options.nomodel_unique_id}|${this.options.name}`);
+        if(this.options.nomodel && this.model['#modelID']){ 
+            this.options.initialModel = localStorage.getItem(`${this.options.nomodel_unique_id}|${this.options.name}|${this.model['#modelID']}`);
         }
 
         if(this.options.initialModel == undefined || this.options.initialModel == ''){
