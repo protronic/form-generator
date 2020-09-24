@@ -531,11 +531,12 @@ class FormCreator extends InputFieldObject{
                             .catch(err => createCustomAlert(err.message, "Fehler"))
                     } else {
                         uploadNewModel(this.model, this.schema.formular)
-                            .then(modelId => 
-                                (this.model['#modelID'] = modelId,
-                                this.querySelector(`label[for="${this.schema.formular}"]`).innerText = `${this.options.label} ${modelId}`, 
-                                createCustomAlert(`Daten wurden erfolgreich in der Datenbank unter folgender ID abgelegt.\n${modelId}`, "Erfolg"))
-                            )
+                            .then(modelId => {
+                                this.model['#modelID'] = modelId;
+                                createNewFormURL(modelId);
+                                this.querySelector(`label[for="${this.schema.formular}"]`).innerText = `${this.options.label} ${modelId}`;
+                                createCustomAlert(`Daten wurden erfolgreich in der Datenbank unter folgender ID abgelegt.\n${modelId}`, "Erfolg");
+                            })
                             .catch(err => createCustomAlert(err.message, "Fehler"));
                     }    
                 }                
