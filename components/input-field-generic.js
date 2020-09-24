@@ -35,7 +35,7 @@ class GenericInputField extends InputField{
 
   createHistoryStore(){
     let root = document.querySelector('prot-form-gen');
-    let inpEle = document.querySelector('#${this.options.name}');
+    let inpEle = document.querySelector(`#${this.options.name}`);
     let contEle = document.querySelector(`#${this.options.name}-history-container`);
     let ulEle = document.createElement('ul');
     ulEle.addEventListener('click', function(event){

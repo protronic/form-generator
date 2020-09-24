@@ -991,10 +991,10 @@ class GenericInputField extends InputField{
           </div>
       `);
       this.querySelector(`#${this.options.name}`).addEventListener('input', this.dispatchCustomEvent.bind(this, 'form-input'));
-      createHistoryStor();
+      this.createHistoryStore();
   }
 
-  createHistoryStor(){
+  createHistoryStore(){
     let root = document.querySelector('prot-form-gen');
     let inpEle = document.querySelector('#${this.options.name}');
     let contEle = document.querySelector(`#${this.options.name}-history-container`);
