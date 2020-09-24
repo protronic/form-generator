@@ -32,7 +32,8 @@ const LookupMixin = module.exports.LookupMixin = superclass => class extends sup
 
   databaseLookup(inputValueFn, event) {
     if (event.target.validity ? event.target.validity.valid : event.target.valid && event.target.value !== "") {
-      genericLookUpQuery(this.options.queryUrl, inputValueFn.bind(this)(), this.options.query.split("''").join("&#39;"))
+      console.log(this.options.query);
+      genericLookUpQuery(this.options.queryUrl, inputValueFn.bind(this)(), this.options.query.split("'").join("&#39;"))
         .then(data =>
           data.map(entry =>
             Object.keys(entry)
