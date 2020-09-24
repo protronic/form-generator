@@ -33,7 +33,13 @@ module.exports.InputFieldTextarea = class extends InputField{
   }
 
   getModel(){
-      let model = this.querySelector(`#${this.options.name}`).value;
-      return model != '' ? model : undefined;
+      let formControl = this.querySelector(`#${this.options.name}`);
+      let model = formControl ? formControl.value : undefined;
+      let resultModel = model != '' ? model.split('@').join('&#64;').split("'").join("&#39;") : undefined;
+      if (this.options.nomodel){
+        localStorage.setItem(`${this.options.nomodel_unique_id}|${this.options.name}`, resultModel);
+        return undefined;
+      } 
+      return resultModel;
   }
 }

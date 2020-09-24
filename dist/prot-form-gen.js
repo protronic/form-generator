@@ -854,7 +854,7 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
       this.querySelector('.form-element').insertAdjacentHTML('afterend', `<div class="separator"></div>`);
       // this.rootElement.insertAdjacentHTML('beforeend', );
 
-    genericLookUpQuery(this.options.queryUrl, '', this.options.listenQuery)
+    genericLookUpQuery(this.options.queryUrl, '', this.options.listenQuery.split("'").join("&#39;"))
       .then(data => {
         let resultInput = this.querySelector(`input#${this.options.name}`);
         this.createChooseList(data, resultInput);
@@ -993,7 +993,12 @@ class GenericInputField extends InputField{
   getModel(){
       let formControl = this.querySelector(`#${this.options.name}`);
       let model = formControl ? formControl.value : undefined;
-      return model != '' ? model.split('@').join('&#64;') : undefined;
+      let resultModel = model != '' ? model.split('@').join('&#64;').split("'").join("&#39;") : undefined;
+      if (this.options.nomodel){
+        localStorage.setItem(`${this.options.nomodel_unique_id}|${this.options.name}`, resultModel);
+        return undefined;
+      } 
+      return resultModel;
   }
 
   checkValidity(){
@@ -1199,7 +1204,7 @@ const LookupMixin = module.exports.LookupMixin = superclass => class extends sup
 
   databaseLookup(inputValueFn, event) {
     if (event.target.validity ? event.target.validity.valid : event.target.valid && event.target.value !== "") {
-      genericLookUpQuery(this.options.queryUrl, inputValueFn.bind(this)(), this.options.query)
+      genericLookUpQuery(this.options.queryUrl, inputValueFn.bind(this)(), this.options.query.split("'").join("&#39;"))
         .then(data =>
           data.map(entry =>
             Object.keys(entry)
@@ -1540,12 +1545,17 @@ module.exports.InputField = class extends HTMLElement {
             deaktiviert: false,
             pflichtfeld: false,
             hintergrundFarbe: 'none',
+            nomodel: false,
+            nomodel_unique_id: ''
         };
         this.rootElement = this;
         this.options = {};
         this.model = {};
         this.valid = true;
         this.validityMessage = undefined;
+        this.options.initialModel = this.options.nomodel 
+            ? localStorage.getItem(`${this.options.nomodel_unique_id}|${this.options.name}`) 
+            : this.options.initialModel;
         this.addEventListener('form-input', debounce(this.formInputHandler, 1000, {leading: false, trailing: true}));
     }
 
