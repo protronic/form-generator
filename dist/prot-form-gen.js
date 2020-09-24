@@ -991,6 +991,7 @@ class GenericInputField extends InputField{
           </div>
       `);
       this.querySelector(`#${this.options.name}`).addEventListener('input', this.dispatchCustomEvent.bind(this, 'form-input'));
+      createHistoryStor();
   }
 
   createHistoryStor(){
