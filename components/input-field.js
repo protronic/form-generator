@@ -38,8 +38,6 @@ module.exports.InputField = class extends HTMLElement {
             deaktiviert: false,
             pflichtfeld: false,
             hintergrundFarbe: 'none',
-            nomodel: false,
-            nomodel_unique_id: ''
         };
         this.rootElement = this;
         this.options = {};
@@ -56,10 +54,6 @@ module.exports.InputField = class extends HTMLElement {
             // if(key === 'initialModel') console.log(this.getAttribute(key), typeof this.getAttribute(key));
             this.options[key] = this.convertValue(key, this.getAttribute(key)) || this.defaultOptions[key];
         });
-
-        // if(this.options.nomodel && this.model['#modelID']){ 
-        //     // this.options.initialModel = ;
-        // }
 
         if(this.options.initialModel == undefined || this.options.initialModel == ''){
             this.options.initialModel = this.options.standard;
