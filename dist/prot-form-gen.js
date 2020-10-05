@@ -27,9 +27,19 @@ function createCustomAlert(txt, level) {
 	btn.id = "closeBtn";
 	btn.appendChild(document.createTextNode(ALERT_BUTTON_TEXT));
 	btn.href = "#";
-	btn.onclick = function() { removeCustomAlert();return false; }
+	btn.onclick = function() { 
+        removeCustomAlert();
+        return false; 
+    }
+    document.addEventListener('keydown', enterPressedListener);
+}
 
-	
+function enterPressedListener(event){
+    if(event.which == 13) {
+        document.removeEventListener('keydown', enterPressedListener);
+        removeCustomAlert();
+        return false;
+    }
 }
 
 function removeCustomAlert() {
@@ -170,11 +180,14 @@ module.exports.InputFieldAbhaengig = class extends DependenceMixin(InputFieldTex
 //   }
 // }
 
-},{"./input-field-generic.js":9}],3:[function(require,module,exports){
+},{"./input-field-generic.js":10}],3:[function(require,module,exports){
+require('./history-input-extender.js');
+
 const { InputFieldObject } = require('./input-field-object.js');
 const { fieldTypeMap } = require('./formular-components.js');
 const { createCustomAlert } = require('./custom-alert-box.js');
 const { sendLogToLogstash } = require('./logging-connector.js');
+
 
 var baseUrl = ''
 // var baseUrl = 'http://10.19.28.94:8087'  // TESTCASE base URL
@@ -405,6 +418,8 @@ class FormCreator extends InputFieldObject{
             .catch(err => {
                 createCustomAlert(err.message);
             })
+
+        this.fetchGlobalHistoryModels();
     }
 
     applySchema(schema){
@@ -439,10 +454,8 @@ class FormCreator extends InputFieldObject{
             console.error(err);
         }
 
-        this.uploadModelButton();
-        this.newFormularButton();
-        this.newRemoveButton();
-        this.copyModelButton();
+        this.createButtonContainer()
+        this.createExplanation();
         this.renderGeneralInfo(schema);
     }
 
@@ -469,6 +482,16 @@ class FormCreator extends InputFieldObject{
         this.appendChild(btn)
     }
 
+    createButtonContainer(){
+        this.buttonContainer = document.createElement('div');
+        this.buttonContainer.classList.add('btn-container');
+        this.appendChild(this.buttonContainer);
+        this.uploadModelButton();
+        this.newFormularButton();
+        this.removeButton();
+        this.copyModelButton();
+    }
+
     createNewFormURL(modelId){
         let uri = new URL(location.href);
         let search = (new SearchParams(location.search));
@@ -476,97 +499,215 @@ class FormCreator extends InputFieldObject{
         search.delete('mid');
         if (modelId !== undefined) {
             search.set('mid', modelId);
-            location.search = search;
+            uri.search = search.toString();
+            history.pushState({schema: search.get('schema'), mid: modelId}, '', uri.toString());
         } else {
             uri.search = search.toString();
-            location.search = search;
+            history.pushState({schema: search.get('schema')}, '', uri.toString());
         }
         return uri.href;
+    }
+
+    transformToHistoryModel(model){
+        let result = {};
+        function unpackObj(obj, target){
+            Object.keys(obj).forEach((key) => {
+                if(typeof obj[key] === 'object'){
+                    unpackObj(obj[key], target);
+                } else {
+                    target[key] = obj[key];
+                }
+            });
+        }
+        unpackObj(model, result);
+        return result;
+    }
+
+    fetchGlobalHistoryModels(){
+        fetch(`${baseUrl}${modelPath}`)
+            .then(res => res.json())
+            .then(data => (data.map(entry => (entry.log))))
+            .then(data => {
+                return data.map(entry => {
+                    try{
+                        return JSON.parse(entry);
+                    } catch(e) {
+                        // console.error('failed');
+                    }
+                })
+            })
+            .then(data => data.filter(entry => entry ? entry['#parentForm'] == this.options.name  : false))
+            .then(data => data.map(model => this.transformToHistoryModel(model)))
+            .then(data => {
+                console.log(data);
+                window.postMessage(JSON.stringify({messageType: 'history-source-models', messageData: data}));
+            })
     }
 
     newFormularButton(){
         let btn = document.createElement('button');
         btn.setAttribute('type', 'button');
-        btn.addEventListener('click', () => {
-            this.createNewFormURL();
-            this.remove();
-            document.body.append(document.createElement('prot-form-gen'));
-        });
+        btn.addEventListener('click', this.newFormularButtonClickListener.bind(this));
+        document.addEventListener('keydown', this.newFormularButtonHotkeyListener.bind(this));
         btn.innerText = 'Neu Anlegen';
-        this.appendChild(btn);
+        this.buttonContainer.appendChild(btn);
     }
 
-    newRemoveButton(){
+    newFormularButtonHotkeyListener(event){
+        if(event.ctrlKey && event.which == 45){
+            this.newFormularButtonClickListener.bind(this, undefined)();
+            event.preventDefault();
+        }
+    }
+
+    newFormularButtonClickListener(event){
+        this.createNewFormURL();
+        this.remove();
+        document.body.append(document.createElement('prot-form-gen'));
+    }
+
+    removeButton(){
         let btn = document.createElement('button');
         btn.setAttribute('type', 'button');
-        btn.addEventListener('click', () => {
-            if (this.model['#modelID'] && confirm(`Are you sure, you want to renove model with id: ${this.model['#modelID']}?`)){
-                removeExistingModel(this.model, this.schema.formular)
-                    .then(() => {
-                        this.createNewFormURL();
-                        this.remove();
-                        document.body.append(document.createElement('prot-form-gen'));
-                    })
-                    .catch(err => createCustomAlert(err.message, "Fehler"));
-            }
-        });
-        btn.innerText = 'Remove Model';
-        this.appendChild(btn);
+        btn.addEventListener('click', this.removeButtonClickListener.bind(this));
+        document.addEventListener('keydown', this.removeButtonHotkeyListener.bind(this));
+        btn.innerText = 'Löschen';
+        this.buttonContainer.appendChild(btn);
+    }
+
+    removeButtonHotkeyListener(event){
+        if(event.ctrlKey && event.which == 46){
+            this.removeButtonClickListener.bind(this, undefined)();
+            event.preventDefault();
+        }        
+    }
+
+    removeButtonClickListener(event){
+        if (this.model['#modelID'] && confirm(`Are you sure, you want to renove model with id: ${this.model['#modelID']}?`)){
+            removeExistingModel(this.model, this.schema.formular)
+                .then(() => {
+                    this.createNewFormURL();
+                    this.remove();
+                    document.body.append(document.createElement('prot-form-gen'));
+                })
+                .catch(err => createCustomAlert(err.message, "Fehler"));
+        }
     }
 
     uploadModelButton(){
         let btn = document.createElement('button');
         btn.setAttribute('type', 'button');
-        btn.addEventListener('click', (event) => {
-            if(this.checkValidity()){
-                let modelResult = this.getModel();
-                if(modelResult === undefined ){
-                    console.log('empty model');
-                } else {
-                    this.model = {...this.model, ...modelResult};
-                    this.saveFormLocal(this.model['#modelID'], this.model);
-                    if(this.model['#modelID']){
-                        console.log(this.model)
-                        uploadExistingModel(this.model, this.schema.formular)
-                            .then(() => createCustomAlert(`Änderungen an ${this.model['#modelID']} wurden gespeichert.`, "Erfolg"))
-                            .catch(err => createCustomAlert(err.message, "Fehler"))
-                    } else {
-                        uploadNewModel(this.model, this.schema.formular)
-                            .then(modelId => {
-                                this.model['#modelID'] = modelId;
-                                this.createNewFormURL(modelId);
-                                this.querySelector(`label[for="${this.schema.formular}"]`).innerText = `${this.options.label} ${modelId}`;
-                                createCustomAlert(`Daten wurden erfolgreich in der Datenbank unter folgender ID abgelegt.\n${modelId}`, "Erfolg");
-                            })
-                            .catch(err => createCustomAlert(err.message, "Fehler"));
-                    }    
-                }                
-            } else {
-                console.log('invalid')
-            }
-        });
+        btn.addEventListener('click', this.uploadModelButtonClickListener.bind(this));
+        document.addEventListener('keydown', this.uploadModelButtonHotkeyListener.bind(this));
         btn.innerText = 'Speichern';
-        this.appendChild(btn);
+        this.buttonContainer.appendChild(btn);
+    }
+
+    uploadModelButtonHotkeyListener(event){
+        if(event.ctrlKey && event.which == 83){
+            this.uploadModelButtonClickListener.bind(this, undefined)();
+            event.preventDefault();
+        }
+    }
+
+    uploadModelButtonClickListener(event){
+        if(this.checkValidity()){
+            let modelResult = this.getModel();
+            if(modelResult === undefined ){
+                console.log('empty model');
+            } else {
+                this.model = {...this.model, ...modelResult};
+                window.postMessage(JSON.stringify({messageType: 'submit-msg', messageData: this.transformToHistoryModel(this.model)}));
+                this.saveFormLocal(this.model['#modelID'], this.model);
+                if(this.model['#modelID']){
+                    console.log(this.model)
+                    uploadExistingModel(this.model, this.schema.formular)
+                        .then(() => createCustomAlert(`Änderungen an ${this.model['#modelID']} wurden gespeichert.`, "Erfolg"))
+                        .catch(err => createCustomAlert(err.message, "Fehler"))
+                } else {
+                    uploadNewModel(this.model, this.schema.formular)
+                        .then(modelId => {
+                            this.model['#modelID'] = modelId;
+                            this.createNewFormURL(modelId);
+                            this.querySelector(`label[for="${this.schema.formular}"]`).innerText = `${this.options.label} ${modelId}`;
+                            createCustomAlert(`Daten wurden erfolgreich in der Datenbank unter folgender ID abgelegt.\n${modelId}`, "Erfolg");
+                        })
+                        .catch(err => createCustomAlert(err.message, "Fehler"));
+                }    
+            }                
+        } else {
+            console.log('invalid')
+        }
     }
 
     copyModelButton(){
         let btn = document.createElement('button');
         btn.setAttribute('type', 'button');
-        btn.addEventListener('click', this.copyModelButtonClickListener.bind(this, this));
-        btn.innerText = 'Model kopieren';
-        this.appendChild(btn);
+        btn.addEventListener('click', this.copyModelButtonClickListener.bind(this));
+        document.addEventListener('keydown', this.copyModelButtonHotkeyListener.bind(this));
+        btn.innerText = 'Kopieren';
+        this.buttonContainer.appendChild(btn);
     }
 
-    copyModelButtonClickListener(self, event){
-        self.remove();
-            self.model['#modelID'] = undefined;
-            uploadNewModel(self.model, self.schema.formular)
+    copyModelButtonHotkeyListener(event){
+        if(event.ctrlKey && event.which == 75){
+            this.copyModelButtonClickListener.bind(this, undefined)();
+            event.preventDefault();
+        }
+    }
+
+    copyModelButtonClickListener(event){
+        this.remove();
+            this.model['#modelID'] = undefined;
+            uploadNewModel(this.model, this.schema.formular)
                 .then(modelId => {
-                    self.model['#modelID'] = modelId;
-                    self.createNewFormURL(modelId);
+                    this.model['#modelID'] = modelId;
+                    this.createNewFormURL(modelId);
                     document.body.append(document.createElement('prot-form-gen'));
                 })
                 .catch(err => createCustomAlert(err.message, "Fehler"));
+    }
+
+    createExplanation(){
+        let explanationContainer = document.createElement('div');
+        explanationContainer.classList.add('explanation-container');
+        explanationContainer.innerHTML = `
+            <h2>Buttons/Hotkeys</h2>
+            <p><b>Speichern</b> - [<b>strg</b>] + [<b>s</b>]:
+                <p>Sichert die Eingabe des aktiven Formulars in der Datenbank. Vor dem Speichern werden validitäts Prüfungen durchgeführt.</p>
+                <p>Speichern kann durch fehlende Verbindung zur Datenbank oder durch invalide Eingabe fehlschlagen.</p>
+            </p>
+            <p><b>Neu Anlegen</b> - [<b>strg</b>] + [<b>einfg</b>]:
+                <p>Öffnet ein neues, leeres Formular ohne ID. Beim ersten Speichern wird eine neue ID generiert.</p>
+                <p>Schließt das aktive Formular. Eingaben sollten vorher gespeichert werden.</p>
+            </p>
+            <p><b>Löschen</b> - [<b>strg</b>] + [<b>entf</b>]:
+                <p>Löscht das aktive Formular und markiert den entsprechenden Eintrag in der Datenbank als gelöscht. Es kann noch immer geöffnet und bearbeitet werden, taucht jedoch nicht mehr in der Übersicht auf.</p>
+                <p>Das Wiederherstellen eines gelöschten Formulars kann, momentan, nur durch manuelles Ändern der Löschmarkierung in der Datenbank rückgängig gemacht werden. Wenn nötig bei <b>r.seidler</b> melden.</p>
+            </p>
+            <p><b>Kopieren</b> - [<b>strg</b>] + [<b>k</b>]:
+                <p>Erstellt ein neues Formular mit neuer ID, übernimmt aber alle Eingaben des aktuellen Formulars.</p>
+                <p>Schließt das aktive Formular. Eingaben sollten vorher gespeichert werden.</p>
+            </p>
+            <br/>
+            <h2>Eingabe Historie</h2>
+            <p><b>Geplante Funktionsweise</b>: 
+                <p>Alle Text-Eingabe-Felder haben einen Nutzer bzw. Browser Spezifischen Speicher vorangegangener Eingaben. Bei jedem Speichern werden dabei alle Eingaben für jedes Feld individuell im Browser gesichert.</p>
+                <p>Beim Fokusieren eines Text-Eingabe-Feldes sollte sich ein Dropdown-Menü mit vorigen Eingaben öffnen (falls vorhanden).</p>
+                <p>Mit den Pfeiltasten [hoch] und [runter] lässt sich zwischenn Einträgen wechseln. [Enter] überträgt die aktuelle Auswahl ins Eingabe-Feld. [Esc] oder Fokuswechsel sollte das Dropdown-Menü schließen.</p>
+                <p>Alternativ können Einträge mit der Maus ausgewählt werden.</p>
+                <p>Mit [entf] kann der aktuell markierte Eintrag gelöscht werden.</p>
+                <p>Nach einer Zeichen-Eingabe wird die Auswahl-Liste entsprechend der Eingabe gefiltert.</p>
+            </p>
+            <p><b>Alternativer Modus</b>:
+                <p>Auf Anfrage bei <b>r.seidler</b> können Eingabe-Felder auf die Nutzung von Einträgen aus der Datenbank umgeschalten werden. Die Eingabe-Vorschläge sind dann alle momentan für das entsprechende Feld gespeicherten Eintäge.</p>
+                <p>Allerdings lassen sich dann für diese Felder keine individuellen Anpassungen mehr vornehmen (eg. Einträge Löschen).</p>
+            </p>
+            <br/>
+            
+        `;
+
+        this.append(explanationContainer);
     }
 
     loadFromLocal(localStorageId){
@@ -608,7 +749,7 @@ class FormCreator extends InputFieldObject{
 }
 
 customElements.define('prot-form-gen', FormCreator);
-},{"./custom-alert-box.js":1,"./formular-components.js":4,"./input-field-object.js":12,"./logging-connector.js":16}],4:[function(require,module,exports){
+},{"./custom-alert-box.js":1,"./formular-components.js":4,"./history-input-extender.js":5,"./input-field-object.js":13,"./logging-connector.js":17}],4:[function(require,module,exports){
 const { InputFieldText, InputFieldEnumListText, EnumListableMixin, InputFieldEmail, InputFieldTel, InputFieldDate, InputFieldNumber } = require('./input-field-generic.js');
 const { InputFieldTextarea } = require('./input-field-textarea.js');
 const { InputFieldBoolean } = require('./input-field-boolean.js');
@@ -735,7 +876,239 @@ const fieldTypeMap = module.exports.fieldTypeMap = {
 //     'input-field-object': InputFieldObject,
 //   }
   
-},{"./dependent-fields.js":2,"./info-field-summary.js":5,"./input-field-boolean.js":6,"./input-field-choose-list.js":7,"./input-field-dropdown.js":8,"./input-field-generic.js":9,"./input-field-list.js":10,"./input-field-lookup.js":11,"./input-field-object.js":12,"./input-field-radio.js":13,"./input-field-textarea.js":14}],5:[function(require,module,exports){
+},{"./dependent-fields.js":2,"./info-field-summary.js":6,"./input-field-boolean.js":7,"./input-field-choose-list.js":8,"./input-field-dropdown.js":9,"./input-field-generic.js":10,"./input-field-list.js":11,"./input-field-lookup.js":12,"./input-field-object.js":13,"./input-field-radio.js":14,"./input-field-textarea.js":15}],5:[function(require,module,exports){
+function generateRandomString(){
+    let length = Math.floor(Math.random() * 10) + 1;
+    return [...(new Array(length))].map(() => String.fromCharCode(Math.floor((Math.random() * 26) + 97))).join('');
+}
+
+function removeDuplicates(list){
+    let result = [];
+    list.forEach(entry => {
+        if(!result.includes(entry)){
+            result.push(entry);
+        }
+    })
+    return result;
+}
+
+
+class HistoryInputExtender extends HTMLElement {
+    constructor(){
+        super();
+    }
+
+    connectedCallback(){
+        this.historySource = this.getAttribute('history-source') || 'local'; // one of ['local', 'global']
+        this.historyInputSelector = this.getAttribute('history-input-selector') || 'input'; // selector to get the input element referenced
+        this.historyInputResultAttr = this.getAttribute('history-input-result-attr') || 'value';
+        this.elements = {
+            root: document.querySelector('prot-form-gen') || {schema: {formular: 'test_form'}, modelId: 100},
+            in: this.parentElement.querySelector(this.historyInputSelector),
+            ul: undefined,
+            li: [],
+        };
+        this.storageName = `${this.elements.root.schema.formular}.${this.elements.root.modelId}.${this.elements.in.id}`;
+        this.markedItem = -1;
+        if(!this.historyInputResultAttr in this.elements.in){
+            throw new Error(`Referenced ELement has no ${this.historyInputResultAttr} attribute;`);
+        };
+        this.obtainHistorySource();
+    }
+
+    obtainHistorySource(){
+        if(this.historySource === 'local'){
+            this.history = this.filteredHistory = JSON.parse(localStorage.getItem(this.storageName) || '[]');
+            // this.history = this.filteredHistory = [...(new Array(20))].map(() => generateRandomString());
+            this.createHistory();
+        } else if (this.historySource === 'global'){
+            window.addEventListener('message', this.onMessageSourceListener.bind(this, this.createHistory));
+        }
+    }
+
+    createHistory(){
+        this.createDropdown();
+        this.setupListeners();
+    }
+
+    applyFilter(){
+        this.filteredHistory = this.history.filter(value => Boolean(value)).filter(value => value.toLowerCase().startsWith(this.elements.in[this.historyInputResultAttr].toLowerCase()));
+        this.createListElements();
+    }
+
+    createDropdown(){
+        this.isVisible = false;
+        this.className = 'history hidden';
+        this.elements.ul = document.createElement('ul');
+        this.createListElements();
+        this.append(this.elements.ul);
+    }
+
+    showDropdown(){
+        this.classList.remove('hidden');
+        this.isVisible = true;
+    }
+
+    hideDropdown(){
+        this.classList.add('hidden');
+        let markedLiElement = document.querySelector('li.marked');
+        if (markedLiElement) markedLiElement.classList.remove('marked');
+        this.markedItem = -1;
+        this.isVisible = false;
+    }
+
+    createListElements(premarked){
+        this.elements.li = [];
+        this.elements.ul.innerHTML = "";
+        this.markedItem = this.markedItem > -1 ? (premarked || 0) : -1;
+        this.filteredHistory.forEach((entry, index) => {
+            let liElement = document.createElement('li');
+            this.elements.li.push(liElement);
+            if(index === this.markedItem) liElement.classList.add('marked');
+            liElement.innerText = entry;
+            this.elements.ul.append(liElement);
+        });
+    }
+
+    moveMarkedItem(fromIndex, direction /* either 1 or -1 */){
+        if(fromIndex !== -1) this.elements.li[fromIndex].classList.remove('marked');
+        if(fromIndex === -1) {
+            this.markedItem = (direction === -1) ? (this.filteredHistory.length - 1) : 0;
+        }
+        else if (this.filteredHistory.length === 1) {
+            this.markedItem = fromIndex === 0 ? -1 : 0;
+        }
+        else if (fromIndex === 0) {
+            this.markedItem = (direction === -1) ? -1 : (fromIndex + direction);
+        }
+        else if (fromIndex === (this.filteredHistory.length - 1)) {
+            this.markedItem = (direction === -1) ? (fromIndex + direction) : -1;
+        }
+        else {
+            this.markedItem = fromIndex + direction;
+        }
+        if(this.markedItem !== -1) {
+            this.elements.li[this.markedItem].classList.add('marked');
+            this.elements.ul.scrollTo(0, this.elements.li[this.markedItem].offsetTop);
+            // this.elements.li[this.markedItem].scrollIntoView(false);
+        }
+        
+    }
+
+    onClickListener(event){
+        if(event.target.nodeName === 'LI'){
+            event.preventDefault();
+            this.elements.in[this.historyInputResultAttr] = event.target.innerText;
+            this.hideDropdown();
+        }
+    }
+
+    onFocusListener(event){
+        this.applyFilter();
+        if(this.filteredHistory.length > 0){
+            this.showDropdown();
+        }
+    }
+
+    onBlurListener(event){
+        this.hideDropdown();
+    }
+
+    onMouseDownListener(event){
+        event.preventDefault();
+    }
+
+    onKeyListener(event){
+        if(event.which == 13){
+            if(this.markedItem !== -1) {
+                this.elements.in[this.historyInputResultAttr] = this.filteredHistory[this.markedItem];
+                this.hideDropdown();
+            }
+        }
+        if(event.which == 27){
+            if(this.isVisible){
+                this.hideDropdown();
+                event.preventDefault();
+            }
+        }
+        if(event.which == 38 && (this.filteredHistory.length > 0)){
+            this.moveMarkedItem(this.markedItem, -1);
+            this.showDropdown();
+            event.preventDefault();
+        }
+        if(event.which == 40 && (this.filteredHistory.length > 0)){
+            this.moveMarkedItem(this.markedItem, 1);
+            this.showDropdown();
+            event.preventDefault();
+        }
+        if(!event.ctrlKey && event.which == 46 && this.historySource === 'local'){
+            if(this.markedItem !== -1){
+                this.removeValue(this.filteredHistory[this.markedItem]);
+                if(this.history.length === 0) {
+                    this.hideDropdown();
+                }
+                event.preventDefault();
+            }
+        }
+    }
+
+    onInputListener(event){
+        this.applyFilter();
+    }
+
+    onMessageListener(event){
+        let msg = JSON.parse(event.data);
+        if(msg.messageType === 'submit-msg' && this.historySource === 'local'){
+            this.recordValue(msg.messageData[this.elements.in.id])
+        } else if (msg.messageType === 'clear-storage' && this.historySource === 'local'){
+            if(msg.messageData[this.elements.in.id]){
+                localStorage.setItem(this.storageName, '[]');
+            }
+        }
+    }
+
+    onMessageSourceListener(callback, event){
+        let msg = JSON.parse(event.data);
+        if (msg.messageType === 'history-source-models'){
+            // should contain an Array of models for messageData
+            this.history = this.filteredHistory = removeDuplicates(msg.messageData.map(model => model[this.elements.in.id]));
+            callback.bind(this)();
+        }
+    }
+
+    setupListeners(){
+        this.elements.ul.addEventListener('click', this.onClickListener.bind(this));
+        this.elements.ul.addEventListener('mousedown', this.onMouseDownListener.bind(this));
+        this.elements.in.addEventListener('focus', this.onFocusListener.bind(this));
+        this.elements.in.addEventListener('blur', this.onBlurListener.bind(this));
+        this.elements.in.addEventListener('keydown', this.onKeyListener.bind(this));
+        this.elements.in.addEventListener('input', this.onInputListener.bind(this));
+        window.addEventListener('message', this.onMessageListener.bind(this));
+    }
+
+    recordValue(value){
+        console.log({operation: 'record', element: this.elements.in.id, value: value});
+        if(!Boolean(value)) return;
+        let index = this.history.findIndex((entry) => (value.toLowerCase() === entry.toLowerCase()));
+        if (index === -1){
+            this.history.push(value);
+        } 
+        localStorage.setItem(this.storageName, JSON.stringify(this.history));
+    }
+
+    removeValue(value){
+        console.log({operation: 'remove', element: this.elements.in.id, value: value});
+        this.history = this.history.filter(entry => (entry.toLowerCase() !== value.toLowerCase()));
+        this.filteredHistory = this.history.filter(value => Boolean(value)).filter(value => value.toLowerCase().startsWith(this.elements.in[this.historyInputResultAttr].toLowerCase()));
+        if(this.markedItem === this.filteredHistory.length) this.markedItem -= 1;
+        localStorage.setItem(this.storageName, JSON.stringify(this.history));
+        this.createListElements(this.markedItem);        
+    }
+}
+
+customElements.define('history-input-extender', HistoryInputExtender);
+
+},{}],6:[function(require,module,exports){
 const { InputField } = require('./input-field.js');
 
 module.exports.InfoFieldSummary = class extends InputField{
@@ -783,7 +1156,7 @@ module.exports.InfoFieldSummary = class extends InputField{
       return undefined;
   }
 }
-},{"./input-field.js":15}],6:[function(require,module,exports){
+},{"./input-field.js":16}],7:[function(require,module,exports){
 const { InputField } = require('./input-field.js');
 
 module.exports.InputFieldBoolean = class extends InputField{
@@ -818,7 +1191,7 @@ module.exports.InputFieldBoolean = class extends InputField{
   }
 }
 
-},{"./input-field.js":15}],7:[function(require,module,exports){
+},{"./input-field.js":16}],8:[function(require,module,exports){
 const { InputFieldText } = require('./input-field-generic.js');
 const { genericLookUpQuery } = require('./input-field-lookup.js');
 
@@ -924,7 +1297,7 @@ module.exports.InputFieldChooseList = class extends InputFieldText {
   //   // return super.formInputHandler(event);
   // }
 }
-},{"./input-field-generic.js":9,"./input-field-lookup.js":11}],8:[function(require,module,exports){
+},{"./input-field-generic.js":10,"./input-field-lookup.js":12}],9:[function(require,module,exports){
 const { InputField } = require('./input-field.js');
 
 module.exports.InputFieldDropdown = class extends InputField {
@@ -958,7 +1331,7 @@ module.exports.InputFieldDropdown = class extends InputField {
   }
 }
 
-},{"./input-field.js":15}],9:[function(require,module,exports){
+},{"./input-field.js":16}],10:[function(require,module,exports){
 const { InputField } = require('./input-field.js');
 
 class GenericInputField extends InputField{
@@ -968,7 +1341,8 @@ class GenericInputField extends InputField{
           ...this.defaultOptions,
           platzhalter: '',
           muster: '.*',
-          inputType: inputType
+          inputType: inputType,
+          history: 'local', // one of ['local', 'global', 'none']
       };
   }
 
@@ -985,91 +1359,18 @@ class GenericInputField extends InputField{
                   type="${this.options.inputType}"
                   title="${this.options.beschreibung}"
               >
-              <div id="${this.options.name}-history-container" class="history hidden"></div>
+              ${this.options.history !== 'none' ? `<history-input-extender history-source="${this.options.history}"></history-input-extender>` : ''}
               <span class="validity-message"></span>
               <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
           </div>
       `);
       this.querySelector(`#${this.options.name}`).addEventListener('input', this.dispatchCustomEvent.bind(this, 'form-input'));
-      this.createHistoryStore();
-  }
-
-  createHistoryStore(){
-    let root = document.querySelector('prot-form-gen');
-    let inpEle = document.querySelector(`#${this.options.name}`);
-    let contEle = document.querySelector(`#${this.options.name}-history-container`);
-    let ulEle = document.createElement('ul');
-    ulEle.addEventListener('click', function(event){
-        let liEle = event.target;
-        if(liEle.nodeName === 'li'){
-            event.preventDefault();
-            inpEle.value = liEle.innerText;
-        }
-    });
-    inpEle.addEventListener('focus', function(event){
-        contEle.classList.remove('hidden');
-    });
-    inpEle.addEventListener('blur', function(event){
-        contEle.classList.add('hidden');
-    });
-    inpEle.addEventListener('keydown', function(event){
-        if(event.which == 38){
-            this.history_store.move(-1);
-        }
-        if(event.which == 40){
-            this.history_store.move(1);
-        }
-    })
-
-    let historyEle = document.querySelector(`#${this.options.name}-history-container > ul`);
-    historyEle.append(ulEle);
-    let form = root.schema.formular;
-    let mid = root.modelId;
-    let inp = this.options.name;
-
-    this.history_store = {
-        cursor: 0,
-        previousEntries: localStorage.getItem(`${form}.${mid}.${inp}`) | [],
-        filteredEntries: localStorage.getItem(`${form}.${mid}.${inp}`) | [],
-        put: function(val){
-            this.previousEntries.push(val);
-            let entryEle = document.createElement('li');
-            entryEle.innerText = val;
-            historyEle.append(entryEle);
-            this.save();
-        },
-        get: function(){
-            return this.filteredEntries[this.cursor];
-        },
-        filter: function(str){
-            let filtered = this.previousEntries.filter(entry => entry.startsWith(str));
-            this.cursor = filtered.length - 1 < this.cursor ? filtered.length - 1 : this.cursor;
-            this.filteredEntries = filtered;
-        },
-        move: function(dir){
-            historyEle.childNodes.get(this.cursor).classList.remove('marked');
-            let moved = this.cursor + dir;
-            let max = this.filteredEntries.length - 1;
-            this.cursor = (moved > 0) ? (moved < max ? moved : max) : 0;
-            historyEle.childNodes.get(this.cursor).classList.remove('marked');
-        },
-        save: function(){
-            localStorage.setItem(`${form}.${mid}.${inp}`, this.previousEntries);
-        }
-    }
-
-    this.history_store.filteredEntries.forEach(entry => {
-        let entryEle = document.createElement('li');
-        entryEle.innerText = entry;
-    })
-
   }
 
   getModel(){
       let formControl = this.querySelector(`#${this.options.name}`);
       let model = formControl ? formControl.value : undefined;
       let resultModel = model != '' ? model.split('@').join('&#64;').split("'").join("&#39;") : undefined;
-      this.history_store.put(resultModel);
       return resultModel;
   }
 
@@ -1158,7 +1459,7 @@ module.exports.InputFieldEnumListText = class extends EnumListableMixin(InputFie
 
 
 
-},{"./input-field.js":15}],10:[function(require,module,exports){
+},{"./input-field.js":16}],11:[function(require,module,exports){
 const { InputField } = require('./input-field.js');
 
 module.exports.InputFieldList = class extends InputField {
@@ -1241,7 +1542,7 @@ module.exports.InputFieldList = class extends InputField {
 }
 
 // customElements.define('input-field-list', InputFieldList);
-},{"./input-field.js":15}],11:[function(require,module,exports){
+},{"./input-field.js":16}],12:[function(require,module,exports){
 const { InputFieldText } = require("./input-field-generic.js");
 const { debounce } = require('lodash');
 
@@ -1387,7 +1688,7 @@ module.exports.InputFieldLookup = class extends LookupMixin(InputFieldText) {
     super();
   }
 }
-},{"./input-field-generic.js":9,"lodash":17}],12:[function(require,module,exports){
+},{"./input-field-generic.js":10,"lodash":18}],13:[function(require,module,exports){
 const { InputField } = require('./input-field.js');
 
 module.exports.InputFieldObject = class extends InputField{
@@ -1474,7 +1775,7 @@ module.exports.InputFieldObject = class extends InputField{
   }
 }
 
-},{"./input-field.js":15}],13:[function(require,module,exports){
+},{"./input-field.js":16}],14:[function(require,module,exports){
 const { InputField } = require('./input-field.js');
 
 module.exports.InputFieldRadio = class extends InputField {
@@ -1537,7 +1838,7 @@ module.exports.InputFieldRadio = class extends InputField {
     }
 }
 
-},{"./input-field.js":15}],14:[function(require,module,exports){
+},{"./input-field.js":16}],15:[function(require,module,exports){
 const { InputField } = require('./input-field.js');
 
 module.exports.InputFieldTextarea = class extends InputField{
@@ -1548,7 +1849,8 @@ module.exports.InputFieldTextarea = class extends InputField{
           platzhalter: '',
           cols: 50,
           rows: 5,
-          wrap: 'soft'
+          wrap: 'soft',
+          history: 'local',
       };
   }
 
@@ -1565,6 +1867,7 @@ module.exports.InputFieldTextarea = class extends InputField{
                   wrap="${this.options.wrap}"
                   title="${this.options.beschreibung}"
               >${(this.options.initialModel) ? this.options.initialModel : ''}</textarea>
+              ${this.options.history !== 'none' ? `<history-input-extender history-source="${this.options.history}" history-input-selector="textarea"></history-input-extender>` : ''}
               <span class="validity-message"></span>
               <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
           </div>
@@ -1583,7 +1886,7 @@ module.exports.InputFieldTextarea = class extends InputField{
       return resultModel;
   }
 }
-},{"./input-field.js":15}],15:[function(require,module,exports){
+},{"./input-field.js":16}],16:[function(require,module,exports){
 // const { fieldTypeMap } = require('./formular-components.js')
 const { debounce } = require('lodash');
 
@@ -1739,7 +2042,7 @@ module.exports.InputField = class extends HTMLElement {
         else this.dispatchCustomEvent('form-invalid', {target: this});
     }
 }
-},{"lodash":17}],16:[function(require,module,exports){
+},{"lodash":18}],17:[function(require,module,exports){
 const url = "http://theia.protronic-gmbh.de:4040/";
 
 function sendLogToLogstash(errorObj) {
@@ -1754,7 +2057,7 @@ function sendLogToLogstash(errorObj) {
 }
 
 module.exports = {sendLogToLogstash};
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 (function (global){
 /**
  * @license

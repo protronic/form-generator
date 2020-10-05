@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <meta charset="utf-8"/>
+        <style>
+            input {
+                border-radius: 5px;
+                width: 60%;
+                border: 1px solid gray;
+                box-shadow: inset -2px -2px 5px 2px gray;
+                vertical-align: middle;
+                height: 2em;
+                padding: 3px;
+            }
+
+            history-input-extender.history {
+                visibility: visible;
+                position: relative;
+                display: block;
+                overflow: visible;
+                top: 100%;
+                left: 0px;
+                /* height: 1em; */
+                max-height: 4em;
+                width: 60%;
+                --CURRENT-MARK: 0;
+            }
+
+            history-input-extender.history.hidden {
+                visibility: hidden;
+            }
+
+            history-input-extender.history > ul {
+                position: absolute;
+                width: 100%;
+                max-height: 10em;
+                background: white;
+                top: 0;
+                left: 0;
+                list-style: none;
+                margin-top: 4px;
+                margin: 2px;
+                padding-left: 2px;
+                overflow-y: scroll;
+                cursor: pointer;
+                user-select: none;
+                border: 1px solid black;
+            }
+
+            history-input-extender.history > ul > li {
+                /* border: 1px solid gray; */
+                padding: 2px;
+            }
+
+            history-input-extender.history > ul > li.marked {
+                background: lightblue;
+            }
+
+            history-input-extender.history > ul > li:hover {
+                background: lightblue;
+            }
+
+        </style>
+        <!-- <script src="node_modules/@webcomponents/webcomponentsjs/webcomponents-bundle.js"></script> -->
+        <script src="src/history-input-extender.js"></script>
+    </head>
+    <body>
+        <!-- <prot-form-gen></prot-form-gen> -->
+        
+        <div>
+            <input id="test1">
+            <history-input-extender></history-input-extender>
+        </div>
+        <div>
+            <input id="test2">
+            <history-input-extender></history-input-extender>
+        </div>
+        <div>
+            <input id="test3">
+            <history-input-extender history-source="global"></history-input-extender>
+        </div>
+        <button type="button" id="submit-btn">submit</button>
+        <button type="button" id="clear-history">clear history</button>
+        <script> // Testbutton setup
+            document.addEventListener('DOMContentLoaded', function(){
+                function testSubmitButtonClickListener(){
+                    let message = {};
+                    [...document.querySelectorAll('input')].forEach(input => {
+                        message[input.id] = input.value;
+                    })
+                    
+                    window.postMessage(JSON.stringify({messageType: 'submit-msg', messageData: message}));
+                    setTimeout((() => location.reload()), 500);
+                }
+
+                function testClearHistoryButtonClickListener(){
+                    let message = {};
+                    [...document.querySelectorAll('input')].forEach(input => {
+                        message[input.id] = true;
+                    })
+                    window.postMessage(JSON.stringify({messageType: 'clear-storage', messageData: message}));
+                    setTimeout((() => location.reload()), 500);
+                }
+
+                document.querySelector('#submit-btn').addEventListener('click', testSubmitButtonClickListener);
+                document.querySelector('#clear-history').addEventListener('click', testClearHistoryButtonClickListener);
+
+                setTimeout(() => (window.postMessage(JSON.stringify({messageType: 'history-source-models', messageData: [{test3: 'Ali'}, {test3: 'baba'}, {test3: 'läuft'}]}))), 5000) 
+            });
+        </script>
+    </body>
+</html>
