@@ -78,6 +78,18 @@ class HistoryInputExtender extends HTMLElement {
         this.isVisible = false;
     }
 
+    chooseEntry(chosenEntry){
+        this.elements.in[this.historyInputResultAttr] = chosenEntry;
+        // console.log({chosen: chosenEntry});
+        this.elements.in.dispatchEvent(new Event(
+            'input', {
+                bubbles: true,
+                cancelable: true,
+            }
+        ));
+        this.hideDropdown();
+    }
+
     createListElements(premarked){
         this.elements.li = [];
         this.elements.ul.innerHTML = "";
@@ -119,8 +131,9 @@ class HistoryInputExtender extends HTMLElement {
     onClickListener(event){
         if(event.target.nodeName === 'LI'){
             event.preventDefault();
-            this.elements.in[this.historyInputResultAttr] = event.target.innerText;
-            this.hideDropdown();
+            this.chooseEntry(event.target.innerText);
+            // this.elements.in[this.historyInputResultAttr] = event.target.innerText;
+            // this.hideDropdown();
         }
     }
 
@@ -142,8 +155,11 @@ class HistoryInputExtender extends HTMLElement {
     onKeyListener(event){
         if(event.which == 13){
             if(this.markedItem !== -1) {
-                this.elements.in[this.historyInputResultAttr] = this.filteredHistory[this.markedItem];
-                this.hideDropdown();
+                this.chooseEntry(this.filteredHistory[this.markedItem]);
+                // this.elements.in[this.historyInputResultAttr] = this.filteredHistory[this.markedItem];
+                // let rootField = this.parentElement.parentElement;
+                // rootField.dispatchEvent.bind(rootField, 'form-input')();
+                // this.hideDropdown();
             }
         }
         if(event.which == 27){

@@ -78,6 +78,42 @@ function prepareModel(model, formular){
     return JSON.stringify(model);
 }
 
+function transformToHistoryModel(model){
+    let result = {};
+    function unpackObj(obj, target){
+        if (obj) Object.keys(obj).forEach((key) => {
+            if(typeof obj[key] === 'object'){
+                unpackObj(obj[key], target);
+            } else {
+                target[key] = obj[key];
+            }
+        });
+    }
+    unpackObj(model, result);
+    return result;
+}
+
+function fetchGlobalHistoryModels(parentForm){
+    fetch(`${baseUrl}${modelPath}?parentForm=${parentForm}`)
+        .then(res => res.json())
+        .then(data => (data.map(entry => (entry.log))))
+        .then(data => {
+            return data.map(entry => {
+                try{
+                    return JSON.parse(entry);
+                } catch(e) {
+                    // console.error('failed');
+                }
+            })
+        })
+        // .then(data => data.filter(entry => entry ? entry['#parentForm'] == this.options.name  : false))
+        .then(data => data.map(model => transformToHistoryModel(model)))
+        .then(data => {
+            console.log(data);
+            window.postMessage(JSON.stringify({messageType: 'history-source-models', messageData: data}));
+        })
+}
+
 function uploadNewModel(model, formular){
     let serialModel = prepareModel(model, formular);
     return fetch(`${baseUrl}${modelPath}`, {
@@ -236,7 +272,7 @@ class FormCreator extends InputFieldObject{
                 createCustomAlert(err.message);
             })
 
-        this.fetchGlobalHistoryModels();
+        fetchGlobalHistoryModels();
     }
 
     applySchema(schema){
@@ -325,42 +361,6 @@ class FormCreator extends InputFieldObject{
         return uri.href;
     }
 
-    transformToHistoryModel(model){
-        let result = {};
-        function unpackObj(obj, target){
-            Object.keys(obj).forEach((key) => {
-                if(typeof obj[key] === 'object'){
-                    unpackObj(obj[key], target);
-                } else {
-                    target[key] = obj[key];
-                }
-            });
-        }
-        unpackObj(model, result);
-        return result;
-    }
-
-    fetchGlobalHistoryModels(){
-        fetch(`${baseUrl}${modelPath}`)
-            .then(res => res.json())
-            .then(data => (data.map(entry => (entry.log))))
-            .then(data => {
-                return data.map(entry => {
-                    try{
-                        return JSON.parse(entry);
-                    } catch(e) {
-                        // console.error('failed');
-                    }
-                })
-            })
-            .then(data => data.filter(entry => entry ? entry['#parentForm'] == this.options.name  : false))
-            .then(data => data.map(model => this.transformToHistoryModel(model)))
-            .then(data => {
-                console.log(data);
-                window.postMessage(JSON.stringify({messageType: 'history-source-models', messageData: data}));
-            })
-    }
-
     newFormularButton(){
         let btn = document.createElement('button');
         btn.setAttribute('type', 'button');
@@ -434,7 +434,7 @@ class FormCreator extends InputFieldObject{
                 console.log('empty model');
             } else {
                 this.model = {...this.model, ...modelResult};
-                window.postMessage(JSON.stringify({messageType: 'submit-msg', messageData: this.transformToHistoryModel(this.model)}));
+                window.postMessage(JSON.stringify({messageType: 'submit-msg', messageData: transformToHistoryModel(this.model)}));
                 this.saveFormLocal(this.model['#modelID'], this.model);
                 if(this.model['#modelID']){
                     console.log(this.model)
