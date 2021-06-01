@@ -489,7 +489,7 @@ class FormCreator extends InputFieldObject{
         let explanationContainer = document.createElement('div');
         explanationContainer.classList.add('explanation-container');
         explanationContainer.innerHTML = `
-            <h2>Buttons/Hotkeys</h2>
+            <h2>Hotkeys/Schaltflächen</h2>
             <p><b>Speichern</b> - [<b>strg</b>] + [<b>s</b>]:
                 <p>Sichert die Eingabe des aktiven Formulars in der Datenbank. Vor dem Speichern werden validitäts Prüfungen durchgeführt.</p>
                 <p>Speichern kann durch fehlende Verbindung zur Datenbank oder durch invalide Eingabe fehlschlagen.</p>

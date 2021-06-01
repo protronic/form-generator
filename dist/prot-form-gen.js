@@ -672,7 +672,7 @@ class FormCreator extends InputFieldObject{
         let explanationContainer = document.createElement('div');
         explanationContainer.classList.add('explanation-container');
         explanationContainer.innerHTML = `
-            <h2>Buttons/Hotkeys</h2>
+            <h2>Hotkeys/Schaltflächen</h2>
             <p><b>Speichern</b> - [<b>strg</b>] + [<b>s</b>]:
                 <p>Sichert die Eingabe des aktiven Formulars in der Datenbank. Vor dem Speichern werden validitäts Prüfungen durchgeführt.</p>
                 <p>Speichern kann durch fehlende Verbindung zur Datenbank oder durch invalide Eingabe fehlschlagen.</p>
@@ -702,6 +702,7 @@ class FormCreator extends InputFieldObject{
             <p><b>Alternativer Modus</b>:
                 <p>Auf Anfrage bei <b>r.seidler</b> können Eingabe-Felder auf die Nutzung von Einträgen aus der Datenbank umgeschalten werden. Die Eingabe-Vorschläge sind dann alle momentan für das entsprechende Feld gespeicherten Eintäge.</p>
                 <p>Allerdings lassen sich dann für diese Felder keine individuellen Anpassungen mehr vornehmen (eg. Einträge Löschen).</p>
+                <p>Als Beispiel nutzt das <b>Artikelnummer</b> Feld vorerst diesen Modus.</p>
             </p>
             <br/>
             
