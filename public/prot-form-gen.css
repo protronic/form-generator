@@ -1,7 +1,7 @@
 prot-form-gen {
   /* width: 800px; */
   display: grid;
-  grid-template-columns: 60% 40%;
+  grid-template-columns: minmax(60%, 800px) 1fr;
   grid-template-rows: auto 1fr auto;
 }
 
