@@ -1,50 +1,50 @@
 {
-  "name": "json-form-gen",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "test-history": "http-server -c-1 --cors --port 4200 components",
-    "build": "browserify -t browserify-css components/form-creator.js --standalone FormCreator > dist/prot-form-gen.js && cp public/* dist && cp components/* dist/src",
-    "build-min": "browserify -g [ uglifyify -x .js ] -t browserify-css components/form-creator.js --standalone FormCreator > dist/prot-form-gen.min.js && cp public/* dist && cp components/* dist/src",
-    "build-all": "npm run build && npm run build-min",
-    "git-push": "bash /home/project/bash/deploy-script-utils/git-push.sh",
-    "deploy": "npm run build-all && scp -r -i /home/project/cert/theia_rsa ./dist/* rseidler@prot-subuntu:/media/daten/theia/project/java/json-mirror/src/main/resources/META-INF/resources/form-gen/",
-    "deploy-all": "npm run git-push && npm run deploy && ssh protronic@prot-subuntu \"cd /media/daten/theia/project/java/json-mirror && docker stop json-mirror && sudo ./mvnw package -Pnative -Dquarkus.native.container-build=true -Dquarkus.container-image.build=true && docker rm json-mirror && docker run -p 8087:8080 -d --restart always --name json-mirror root/json-mirror:1.0.0-SNAPSHOT\"",
-    "serve": "http-server -c-1 --cors --port 4200 dist",
-    "babel-build": "browserify -t browserify-css components/es5-polyfill.js -t [ babelify --presets [ @babel/preset-env ] ] --standalone FormCreator > bundle_es5.js",
-    "babel-build-min": "browserify -t browserify-css components/es5-polyfill.js -t [ babelify --presets [ @babel/preset-env ] ] -g [ uglifyify -x .js ] --standalone FormCreator > bundle_es5.min.js"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/RobertSeidler/form-alpine.git"
-  },
-  "author": "Robert Seidler",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/RobertSeidler/form-alpine/issues"
-  },
-  "homepage": "https://github.com/RobertSeidler/form-alpine#readme",
-  "devDependencies": {
-    "@babel/cli": "^7.8.4",
-    "@babel/core": "^7.9.0",
-    "@babel/preset-env": "^7.9.5",
-    "babelify": "^10.0.0",
-    "browserify": "^16.5.0",
-    "browserify-css": "^0.15.0",
-    "http-server": "^0.12.1"
-  },
-  "dependencies": {
-    "@babel/polyfill": "^7.8.7",
-    "@webcomponents/webcomponentsjs": "^2.4.3",
-    "bluebird": "^3.7.2",
-    "core-js": "^3.6.5",
-    "cors": "^2.8.5",
-    "express": "^4.17.1",
-    "isomorphic-fetch": "^2.2.1",
-    "lodash": "^4.17.15",
-    "uglifyify": "^5.0.2",
-    "url-search-params-polyfill": "^8.0.0"
-  }
+    "name": "json-form-gen",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "test-history": "http-server -c-1 --cors --port 4200 components",
+        "build": "browserify -t browserify-css components/form-creator.js --standalone FormCreator > dist/prot-form-gen.js && cp public/* dist && cp components/* dist/src",
+        "build-min": "browserify -g [ uglifyify -x .js ] -t browserify-css components/form-creator.js --standalone FormCreator > dist/prot-form-gen.min.js && cp public/* dist && cp components/* dist/src",
+        "build-all": "npm run build && npm run build-min",
+        "git-push": "bash /home/project/bash/deploy-script-utils/git-push.sh",
+        "deploy": "npm run build-all && scp -r -i /home/project/cert/theia_rsa ./dist/* rseidler@prot-subuntu:/media/daten/theia/project/java/json-mirror/src/main/resources/META-INF/resources/form-gen/",
+        "deploy-all": "npm run git-push && npm run deploy && ssh protronic@prot-subuntu \"cd /media/daten/theia/project/java/json-mirror && docker stop json-mirror && sudo ./mvnw package -Pnative -Dquarkus.native.container-build=true -Dquarkus.container-image.build=true && docker rm json-mirror && docker run -p 8087:8080 -d --restart always --name json-mirror root/json-mirror:1.0.0-SNAPSHOT\"",
+        "serve": "http-server -c-1 --cors --port 4200 dist",
+        "babel-build": "browserify -t browserify-css components/es5-polyfill.js -t [ babelify --presets [ @babel/preset-env ] ] --standalone FormCreator > bundle_es5.js",
+        "babel-build-min": "browserify -t browserify-css components/es5-polyfill.js -t [ babelify --presets [ @babel/preset-env ] ] -g [ uglifyify -x .js ] --standalone FormCreator > bundle_es5.min.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/RobertSeidler/form-alpine.git"
+    },
+    "author": "Robert Seidler",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/RobertSeidler/form-alpine/issues"
+    },
+    "homepage": "https://github.com/RobertSeidler/form-alpine#readme",
+    "devDependencies": {
+        "@babel/cli": "^7.8.4",
+        "@babel/core": "^7.9.0",
+        "@babel/preset-env": "^7.9.5",
+        "babelify": "^10.0.0",
+        "browserify": "^16.5.0",
+        "browserify-css": "^0.15.0",
+        "http-server": "^0.12.1"
+    },
+    "dependencies": {
+        "@babel/polyfill": "^7.8.7",
+        "@webcomponents/webcomponentsjs": "^2.4.3",
+        "bluebird": "^3.7.2",
+        "core-js": "^3.6.5",
+        "cors": "^2.8.5",
+        "express": "^4.17.1",
+        "isomorphic-fetch": "^2.2.1",
+        "lodash": "^4.17.15",
+        "uglifyify": "^5.0.2",
+        "url-search-params-polyfill": "^8.0.0"
+    }
 }
