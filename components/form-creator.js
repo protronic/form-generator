@@ -430,7 +430,7 @@ class FormCreator extends InputFieldObject {
 
     uploadModelButtonClickListener(event) {
         if (this.checkValidity()) {
-            this.model = this.getModel();
+            this.model = {...this.getModel(), '#modelID': this.model['#modelID'] };
             if (this.model === undefined) {
                 console.log('empty model');
             } else {
