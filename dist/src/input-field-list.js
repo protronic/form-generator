@@ -1,27 +1,27 @@
 const { InputField } = require('./input-field.js');
 
 module.exports.InputFieldList = class extends InputField {
-  constructor(){
-      super();
-      this.defaultOptions = {
-          ...this.defaultOptions,
-          standard: [],
-          vorlage: [],
-          hinzufuegenLabel: '+',
-          entfernenLabel: '-'
-      };
-  }
+        constructor() {
+            super();
+            this.defaultOptions = {
+                ...this.defaultOptions,
+                standard: [],
+                vorlage: [],
+                hinzufuegenLabel: '+',
+                entfernenLabel: '-'
+            };
+        }
 
-  addListItemHandler(event){
-    let self = event.srcElement.parentElement.parentElement; 
-    let lfdNr = event.srcElement.previousElementSibling.childNodes.length ? 0 : event.srcElement.previousElementSibling.childNodes.length;
-    let newEle = self.getElementTemplate('', lfdNr);
-  
-    event.srcElement.previousElementSibling.insertAdjacentHTML('beforeend', newEle);
-  }
+        addListItemHandler(event) {
+            let self = event.srcElement.parentElement.parentElement;
+            let lfdNr = event.srcElement.previousElementSibling.childNodes.length ? 0 : event.srcElement.previousElementSibling.childNodes.length;
+            let newEle = self.getElementTemplate('', lfdNr);
 
-  applyTemplate(){
-      this.rootElement.insertAdjacentHTML('beforeend', `
+            event.srcElement.previousElementSibling.insertAdjacentHTML('beforeend', newEle);
+        }
+
+        applyTemplate() {
+                this.rootElement.insertAdjacentHTML('beforeend', `
           <div class="form-element">
               ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
               <div class="form-list" id="${this.options.name}" ${this.options.deaktiviert ? 'disabled' : ''}>
@@ -63,7 +63,7 @@ module.exports.InputFieldList = class extends InputField {
           model.push(listEle.getModel());
       });
       if(model.length === 0)
-          return undefined
+          return [];
       else
           return model;
   }
