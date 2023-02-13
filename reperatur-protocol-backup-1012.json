@@ -1,13 +1,12 @@
 {
     "formular": "Reparaturbericht",
-    "date": "2022-06-07",
     "felder": [{
             "name": "kundennummer",
             "feldtyp": "choose",
             "label": "Kundennummer:",
             "platzhalter": "zb: 10000",
             "muster": "[0-9]{5}",
-            "queryUrl": "https://database.protronic-gmbh.de/query?database=master",
+            "queryUrl": "https://10.19.28.94:8084/query?database=master",
             "listenQuery": "SELECT kto, Name1, LieferOrt FROM OLReweAbf.dbo.WIKI_Kundenauskunft WHERE kto IS NOT NULL AND kto < 70000",
             "formWert": "kto"
         },
@@ -73,7 +72,7 @@
                     "pflichtfeld": true,
                     "abhaengigFeld": "hat-abweichende-lieferadresse",
                     "wertSichtbar": true,
-                    "queryUrl": "https://database.protronic-gmbh.de/query?database=master",
+                    "queryUrl": "https://10.19.28.94:8084/query?database=master",
                     "listenQuery": "SELECT Adresse, Matchcode, CONCAT(&#39;<br>&#39;, LieferLand, &#39;, &#39;, LieferPLZ, &#39; &#39;, LieferOrt, &#39;<br>&#39;, LieferStrasse) AS Anschrift FROM OLReweAbf.dbo.KHKAdressen UNION SELECT 99999, &#39;Adresse angeben&#39;, &#39;&#39;",
                     "formWert": "Adresse"
                 },
@@ -98,7 +97,7 @@
             "feldtyp": "lookup",
             "platzhalter": "zb: 1006000061",
             "muster": "[0-9]{10}|[0-9]{7}",
-            "queryUrl": "https://database.protronic-gmbh.de/query?database=master",
+            "queryUrl": "https://10.19.28.94:8084/query?database=master",
             "query": "SELECT Artikelnummer, Matchcode, Dimensionstext FROM OLReweAbf.dbo.KHKArtikel WHERE Artikelnummer LIKE &#39;?&#39; OR Dimensionstext LIKE &#39;?&#39;",
             "history": "global"
         },
@@ -376,28 +375,6 @@
             }]
         },
         {
-            "name": "ergänzteartikel",
-            "feldtyp": "list",
-            "label": "Ergänzte Artikel",
-            "vorlage": [{
-                "name": "ergänzterartikel",
-                "feldtyp": "object",
-                "label": " ",
-                "subform": [{
-                        "name": "ea-komponente",
-                        "label": "Komponente:",
-                        "feldtyp": "text"
-                    },
-                    {
-                        "name": "ea-artikelnummer",
-                        "label": "Artikelnummer:",
-                        "feldtyp": "enumtextarea",
-                        "pflichtfeld": true
-                    }
-                ]
-            }]
-        },
-        {
             "name": "status",
             "label": "Aktueller Status",
             "feldtyp": "radio",
@@ -457,8 +434,7 @@
             "observed_fields": [
                 "ef-ersetzte-artikelnummern2",
                 "pf-ersetzte-artikelnummern",
-                "mf-ersetzte-artikelnummern",
-                "ea-artikelnummer"
+                "mf-ersetzte-artikelnummern"
             ]
         },
         {

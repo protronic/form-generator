@@ -1,0 +1,17 @@
+{
+    "formular": "Pruefprotokoll-Dauertest-Interval",
+    "felder": [{
+        "name": "artikelnummer",
+        "feldtyp": "lookup",
+        "label": "Artikelnummer",
+        "muster": "[0-9]{10}",
+        "queryUrl": "https://10.19.28.94:8084/query?database=master",
+        "query": "SELECT Artikelnummer, Matchcode FROM OLReweAbf.dbo.KHKArtikel WHERE Artikelnummer LIKE &#39;?&#39;",
+        "history": "global",
+        "pflichtfeld": true
+    }, {
+        "name": "interval",
+        "feldtyp": "number",
+        "label": "Interval"
+    }]
+}

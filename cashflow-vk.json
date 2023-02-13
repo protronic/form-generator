@@ -1,0 +1,51 @@
+{
+    "formular": "cashflow-vk",
+    "date": "2022-11-10",
+    "felder": [{
+        "name": "vkvorgang",
+        "label": "VKVorgang:",
+        "feldtyp": "lookup",
+        "platzhalter": "zb: 13803",
+        "muster": "[0-9]{1,6}",
+        "queryUrl": "https://database.protronic-gmbh.de/query?database=master",
+        "query": "SELECT TOP 1 VorID, A0Matchcode FROM OLReweAbf.dbo.KHKvkBelege WHERE vorID LIKE &#39;?&#39;",
+        "history": "global"
+    }, {
+        "name": "artikelnummer",
+        "label": "Artikelnummer:",
+        "feldtyp": "lookup",
+        "platzhalter": "zb: 1006000061",
+        "muster": "[0-9]{10}",
+        "queryUrl": "https://database.protronic-gmbh.de/query?database=master",
+        "query": "SELECT Artikelnummer, Matchcode FROM OLReweAbf.dbo.KHKArtikel WHERE Artikelnummer LIKE &#39;?&#39;",
+        "history": "global"
+    }, {
+        "name": "rahmenvertrag",
+        "feldtyp": "list",
+        "label": "Rahmenvertragsdaten",
+        "hintergrundFarbe": "#eeee0f40",
+        "vorlage": [{
+            "name": "rahmenvertragsdaten",
+            "feldtyp": "object",
+            "label": " ",
+            "subform": [{
+                "name": "jahr",
+                "label": "Rechnungsjahr:",
+                "feldtyp": "text",
+                "platzhalter": "zb: 2022",
+                "muster": "[0-9]{4}"
+            }, {
+                "name": "woche",
+                "label": "Rechnungswoche:",
+                "feldtyp": "text",
+                "platzhalter": "zb: 03",
+                "muster": "[0-9]{1,2}"
+            }, {
+                "name": "stück",
+                "label": "Stückzahl:",
+                "feldtyp": "text",
+                "muster": "[0-9]+"
+            }]
+        }]
+    }]
+}

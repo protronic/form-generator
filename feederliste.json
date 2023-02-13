@@ -1,0 +1,34 @@
+{
+    "formular": "Feederliste",
+    "felder": [{
+            "name": "halbschrittfeeder8mm",
+            "feldtyp": "number",
+            "label": "8mm Halb-Schritt-Feeder"
+        },
+        {
+            "name": "schrittfeeder8mm",
+            "feldtyp": "number",
+            "label": "8mm Schritt Feeder"
+        },
+        {
+            "name": "schrittfeeder12mm",
+            "feldtyp": "number",
+            "label": "12mm Schritt Feeder"
+        },
+        {
+            "name": "schrittfeeder16mm",
+            "feldtyp": "number",
+            "label": "16mm Schritt Feeder"
+        },
+        {
+            "name": "schrittfeeder24mm",
+            "feldtyp": "number",
+            "label": "24mm Schritt Feeder"
+        },
+        {
+            "name": "schrittfeeder45mm",
+            "feldtyp": "number",
+            "label": "45mm Schritt Feeder"
+        }
+    ]
+}

@@ -1,0 +1,67 @@
+{
+    "formular": "einkauf-bestellungen",
+    "date": "2023-01-26",
+    "felder": [{
+        "name": "lieferant",
+        "label": "Lieferant:",
+        "feldtyp": "dropdown",
+        "pflichtfeld": true,
+        "items": [
+            "Reichelt",
+            "Schukat",
+            "Pollin",
+            "ELV",
+            "Bürklin",
+            "Conrad",
+            "Proconnecting",
+            "Farnell",
+            "Amazon",
+            "Voelkner",
+            "Mouser",
+            "DIGIKEY",
+            "TME",
+            "Labelident",
+            "ComputerUniverse",
+            "Lumitronix",
+            "Schrauben&Norm.",
+            "RS-online",
+            "DataTec",
+            "Prüßner",
+            "Weidinger",
+            "Böttcher"
+        ]
+    }, {
+        "name": "bestellnummer",
+        "label": "Bestellnummer:",
+        "feldtyp": "text",
+        "pflichtfeld": true
+    }, {
+        "name": "bezeichnung",
+        "label": "Bezeichnung:",
+        "feldtyp": "text"
+    }, {
+        "name": "anzahl",
+        "label": "Anzahl:",
+        "feldtyp": "text",
+        "muster": "[0-9]+",
+        "pflichtfeld": true
+    }, {
+        "name": "enizelpreis",
+        "label": "Einzelpreis in €:",
+        "feldtyp": "text"
+    }, {
+        "name": "besteller",
+        "label": "Besteller:",
+        "feldtyp": "text",
+        "pflichtfeld": true
+    }, {
+        "name": "info",
+        "label": "Info:",
+        "feldtyp": "text"
+    }, {
+        "name": "bestellt",
+        "label": "Bestellt?",
+        "feldtyp": "boolean",
+        "standard": false
+    }]
+}
