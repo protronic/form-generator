@@ -19,26 +19,42 @@ module.exports.InputFieldList = class extends InputField {
 
             event.srcElement.previousElementSibling.insertAdjacentHTML('beforeend', newEle);
         }
+        addListItemHandler(event) {
+            let self = event.srcElement.parentElement.parentElement;
+            let lfdNr = event.srcElement.previousElementSibling.childNodes.length ? 0 : event.srcElement.previousElementSibling.childNodes.length;
+            let newEle = self.getElementTemplate('', lfdNr);
+
+            event.srcElement.previousElementSibling.insertAdjacentHTML('beforeend', newEle);
+        }
 
         applyTemplate() {
                 this.rootElement.insertAdjacentHTML('beforeend', `
-          <div class="form-element">
-              ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
-              <div class="form-list" id="${this.options.name}" ${this.options.deaktiviert ? 'disabled' : ''}>
-                  ${(this.options.initialModel.length > 0) ? this.options.initialModel.map((listItem, lfdNr) => {
-                      return this.getElementTemplate(listItem, lfdNr)
-                  }).join('\n') : ''}
-              </div>
-              <button id="${this.options.name}-button" type="button" class="form-list-addbtn">${this.options.hinzufuegenLabel}</button>
-              <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
-          </div>
-      `);
+        applyTemplate() {
+                this.rootElement.insertAdjacentHTML('beforeend', ` <
+                        div class = "form-element" >
+                        $ { this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : '' } <
+                        div class = "form-list"
+                        id = "${this.options.name}"
+                        $ { this.options.deaktiviert ? 'disabled' : '' } >
+                        $ {
+                            (this.options.initialModel.length > 0) ? this.options.initialModel.map((listItem, lfdNr) => {
+                                return this.getElementTemplate(listItem, lfdNr)
+                            }).join('\n'): ''
+                        } <
+                        /div> <
+                        button id = "${this.options.name}-button"
+                        type = "button"
+                        class = "form-list-addbtn" > $ { this.options.hinzufuegenLabel } < /button> <
+                        span class = "pflichtfeld"
+                        style = "font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};" > Pflichtfeld < /span> <
+                        /div>
+                        `);
       this.querySelector('button.form-list-addbtn').addEventListener('click', this.addListItemHandler)
   }
 
   getElementTemplate(listItem, lfdNr){
       return `
-          ${this.options.vorlage.map(formElement => `
+                        $ { this.options.vorlage.map(formElement => `
               <${this.mapFieldType(formElement.feldtyp)} 
                   ${Object.keys(formElement).map(key => `${key}='${this.saveValue(key, formElement[key], lfdNr)}'`).join(' ')}
                   initialModel='${this.saveValue('initialModel', listItem)}'

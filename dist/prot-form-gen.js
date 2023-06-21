@@ -1,679 +1,688 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.FormCreator = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-let ALERT_BUTTON_TEXT = "ok";
+(function(f) { if (typeof exports === "object" && typeof module !== "undefined") { module.exports = f() } else if (typeof define === "function" && define.amd) { define([], f) } else { var g; if (typeof window !== "undefined") { g = window } else if (typeof global !== "undefined") { g = global } else if (typeof self !== "undefined") { g = self } else { g = this }
+        g.FormCreator = f() } })(function() {
+        var define, module, exports;
+        return (function() {
+                function r(e, n, t) {
+                    function o(i, f) { if (!n[i]) { if (!e[i]) { var c = "function" == typeof require && require; if (!f && c) return c(i, !0); if (u) return u(i, !0); var a = new Error("Cannot find module '" + i + "'"); throw a.code = "MODULE_NOT_FOUND", a } var p = n[i] = { exports: {} };
+                            e[i][0].call(p.exports, function(r) { var n = e[i][1][r]; return o(n || r) }, p, p.exports, r, e, n, t) } return n[i].exports } for (var u = "function" == typeof require && require, i = 0; i < t.length; i++) o(t[i]); return o } return r })()({
+                    1: [function(require, module, exports) {
+                        let ALERT_BUTTON_TEXT = "ok";
 
-// level should be one of ["Fehler", "Warnung", "Info", "Erfolg", "Debug"]
-function createCustomAlert(txt, level) {
-    if (level == undefined)
-        level = "Fehler"
+                        // level should be one of ["Fehler", "Warnung", "Info", "Erfolg", "Debug"]
+                        function createCustomAlert(txt, level) {
+                            if (level == undefined)
+                                level = "Fehler"
 
-	if(document.getElementById("modalContainer")) return;
-	let mObj = document.body.appendChild(document.createElement("div"));
-	mObj.id = "modalContainer";
-	mObj.style.height = document.documentElement.scrollHeight + "px";
+                            if (document.getElementById("modalContainer")) return;
+                            let mObj = document.body.appendChild(document.createElement("div"));
+                            mObj.id = "modalContainer";
+                            mObj.style.height = document.documentElement.scrollHeight + "px";
 
-	let alertObj = mObj.appendChild(document.createElement("div"));
-    alertObj.id = "alertBox";
-    alertObj.classList.add(`${level.toLowerCase()}-alert`);
-	if(document.all && !window.opera) alertObj.style.top = document.documentElement.scrollTop + "px";
-	alertObj.style.left = (document.documentElement.scrollWidth - alertObj.offsetWidth)/2 + "px";
+                            let alertObj = mObj.appendChild(document.createElement("div"));
+                            alertObj.id = "alertBox";
+                            alertObj.classList.add(`${level.toLowerCase()}-alert`);
+                            if (document.all && !window.opera) alertObj.style.top = document.documentElement.scrollTop + "px";
+                            alertObj.style.left = (document.documentElement.scrollWidth - alertObj.offsetWidth) / 2 + "px";
 
-	let h1 = alertObj.appendChild(document.createElement("h1"));
-	h1.appendChild(document.createTextNode(level));
+                            let h1 = alertObj.appendChild(document.createElement("h1"));
+                            h1.appendChild(document.createTextNode(level));
 
-	let msg = alertObj.appendChild(document.createElement("p"));
-	msg.innerHTML = txt;
-	
-	let btn = alertObj.appendChild(document.createElement("a"));
-	btn.id = "closeBtn";
-	btn.appendChild(document.createTextNode(ALERT_BUTTON_TEXT));
-	btn.href = "#";
-	btn.onclick = function() { 
-        removeCustomAlert();
-        return false; 
-    }
-    document.addEventListener('keydown', enterPressedListener);
-}
+                            let msg = alertObj.appendChild(document.createElement("p"));
+                            msg.innerHTML = txt;
 
-function enterPressedListener(event){
-    if(event.which == 13) {
-        document.removeEventListener('keydown', enterPressedListener);
-        removeCustomAlert();
-        return false;
-    }
-}
+                            let btn = alertObj.appendChild(document.createElement("a"));
+                            btn.id = "closeBtn";
+                            btn.appendChild(document.createTextNode(ALERT_BUTTON_TEXT));
+                            btn.href = "#";
+                            btn.onclick = function() {
+                                removeCustomAlert();
+                                return false;
+                            }
+                            document.addEventListener('keydown', enterPressedListener);
+                        }
 
-function removeCustomAlert() {
-	document.getElementsByTagName("body")[0].removeChild(document.getElementById("modalContainer"));
-}
+                        function enterPressedListener(event) {
+                            if (event.which == 13) {
+                                document.removeEventListener('keydown', enterPressedListener);
+                                removeCustomAlert();
+                                return false;
+                            }
+                        }
 
-module.exports = {createCustomAlert};
-},{}],2:[function(require,module,exports){
-const { InputFieldText } = require('./input-field-generic.js');
+                        function removeCustomAlert() {
+                            document.getElementsByTagName("body")[0].removeChild(document.getElementById("modalContainer"));
+                        }
 
-const DependenceMixin = module.exports.DependenceMixin = superclass => class extends superclass {
-  constructor(){
-      super();
-      this.defaultOptions = {
-          ...this.defaultOptions,
-          abhaengigFeld: '',
-          wertSichtbar: '',
-          interval: 500,
-          //wertUnsichtbar: '',  erstmal default hidden, bei bedarf, kann logik erweitert werden.
-      }
-      this.visibility = true;
-      this.hideField();   
-  }
+                        module.exports = { createCustomAlert };
+                    }, {}],
+                    2: [function(require, module, exports) {
+                        const { InputFieldText } = require('./input-field-generic.js');
 
-  applyTemplate(){
-      super.applyTemplate();
-      this.linkDependency();
-  }
+                        const DependenceMixin = module.exports.DependenceMixin = superclass => class extends superclass {
+                            constructor() {
+                                super();
+                                this.defaultOptions = {
+                                    ...this.defaultOptions,
+                                    abhaengigFeld: '',
+                                    wertSichtbar: '',
+                                    interval: 500,
+                                    //wertUnsichtbar: '',  erstmal default hidden, bei bedarf, kann logik erweitert werden.
+                                }
+                                this.visibility = true;
+                                this.hideField();
+                            }
 
-  checkDependence(dependent, event){
-      if(dependent.getModel() === this.options.wertSichtbar){
-          this.showField();
-      } else {
-          this.hideField();
-      }
-  }
+                            applyTemplate() {
+                                super.applyTemplate();
+                                this.linkDependency();
+                            }
 
-  linkDependency(){
-      let dependent = this.parentElement.querySelector(`*[name='${this.saveValue('abhaengigFeld', this.options.abhaengigFeld)}']`);
-      dependent.addEventListener('form-valid', this.checkDependence.bind(this, dependent));
-      setInterval(this.checkDependence.bind(this, dependent), this.options.interval);
-  }
+                            checkDependence(dependent, event) {
+                                if (dependent.getModel() === this.options.wertSichtbar) {
+                                    this.showField();
+                                } else {
+                                    this.hideField();
+                                }
+                            }
 
-  hideField(){
-    if(this.visibility){
-        this.visibility = false;
-        this.classList.add('hidden');
-    }
-  }
+                            linkDependency() {
+                                let dependent = this.parentElement.querySelector(`*[name='${this.saveValue('abhaengigFeld', this.options.abhaengigFeld)}']`);
+                                dependent.addEventListener('form-valid', this.checkDependence.bind(this, dependent));
+                                setInterval(this.checkDependence.bind(this, dependent), this.options.interval);
+                            }
 
-  showField(){
-    if(!this.visibility){
-        this.visibility = true;
-        this.classList.remove('hidden');
-        this.checkValidity();    
-    }
-  }
+                            hideField() {
+                                if (this.visibility) {
+                                    this.visibility = false;
+                                    this.classList.add('hidden');
+                                }
+                            }
 
-  getModel(){
-      if(this.visibility){
-          return super.getModel();
-      } else {
-          return undefined;
-      }
-  }
+                            showField() {
+                                if (!this.visibility) {
+                                    this.visibility = true;
+                                    this.classList.remove('hidden');
+                                    this.checkValidity();
+                                }
+                            }
 
-  checkValidity(){
-      if(this.visibility){
-          return super.checkValidity();
-      } else {
-          return true;
-      }
-  }
-}
+                            getModel() {
+                                if (this.visibility) {
+                                    return super.getModel();
+                                } else {
+                                    return undefined;
+                                }
+                            }
 
-module.exports.InputFieldAbhaengig = class extends DependenceMixin(InputFieldText){
-  constructor(){
-    super();
-  }
-}
+                            checkValidity() {
+                                if (this.visibility) {
+                                    return super.checkValidity();
+                                } else {
+                                    return true;
+                                }
+                            }
+                        }
 
-
-/** evtl könnte es auch von InputFieldNachschlagen erben ... */
-// module.exports.test = class extends InputFieldText {
-//   constructor(){
-//       super();
-//       this.defaultOptions = {
-//           ...this.defaultOptions,
-//           abhaengigFeld: '',
-//           wertSichtbar: '',
-//           interval: 500,
-//           //wertUnsichtbar: '',  erstmal default hidden, bei bedarf, kann logik erweitert werden.
-//       }
-//       this.hideField();   
-//   }
-
-//   applyTemplate(){
-//       super.applyTemplate();
-//       setTimeout(() => (this.linkDependency()), 0);
-//   }
-
-//   checkDependence(dependent, event){
-//       if(dependent.getModel() === this.options.wertSichtbar){
-//           this.showField();
-//       } else {
-//           this.hideField();
-//       }
-//   };
-
-//   linkDependency(){
-//       let dependent = this.parentElement.querySelector(`*[name='${this.saveValue('abhaengigFeld', this.options.abhaengigFeld)}']`);
-//       dependent.addEventListener('focusout', this.checkDependence.bind(this, dependent));
-//       setInterval(this.checkDependence.bind(this, dependent), this.options.interval);
-//   }
-
-//   hideField(){
-//       this.classList.add('hidden');
-//   }
-
-//   showField(){
-//       this.classList.remove('hidden');
-//   }
-
-//   getModel(){
-//       if(this.visibility){
-//           return super.getModel();
-//       } else {
-//           return undefined;
-//       }
-//   }
-
-//   checkValidity(){
-//       if(this.visibility){
-//           return super.checkValidity();
-//       } else {
-//           return true;
-//       }
-//   }
-// }
-
-},{"./input-field-generic.js":10}],3:[function(require,module,exports){
-require('./history-input-extender.js');
-
-const { InputFieldObject } = require('./input-field-object.js');
-const { fieldTypeMap } = require('./formular-components.js');
-const { createCustomAlert } = require('./custom-alert-box.js');
-const { sendLogToLogstash } = require('./logging-connector.js');
+                        module.exports.InputFieldAbhaengig = class extends DependenceMixin(InputFieldText) {
+                            constructor() {
+                                super();
+                            }
+                        }
 
 
-// var baseUrl = ''
-var baseUrl = 'http://10.19.28.94:8087' // TESTCASE base URL
+                        /** evtl könnte es auch von InputFieldNachschlagen erben ... */
+                        // module.exports.test = class extends InputFieldText {
+                        //   constructor(){
+                        //       super();
+                        //       this.defaultOptions = {
+                        //           ...this.defaultOptions,
+                        //           abhaengigFeld: '',
+                        //           wertSichtbar: '',
+                        //           interval: 500,
+                        //           //wertUnsichtbar: '',  erstmal default hidden, bei bedarf, kann logik erweitert werden.
+                        //       }
+                        //       this.hideField();   
+                        //   }
 
-var schemaPath = '/schema'
-var modelPath = '/model'
+                        //   applyTemplate(){
+                        //       super.applyTemplate();
+                        //       setTimeout(() => (this.linkDependency()), 0);
+                        //   }
 
-Object.keys(fieldTypeMap).forEach(keyTag => {
-    customElements.define(fieldTypeMap[keyTag].tag, fieldTypeMap[keyTag].conName);
-});
+                        //   checkDependence(dependent, event){
+                        //       if(dependent.getModel() === this.options.wertSichtbar){
+                        //           this.showField();
+                        //       } else {
+                        //           this.hideField();
+                        //       }
+                        //   };
 
-function sendErrorReport(errorMsg, form, model, message) {
-    let errorObj = Object.assign({
-        appname: "json-form-creator",
-        audit: true,
-        form: form,
-        model: model,
-        error: errorMsg,
-        message: message
-    });
-    sendLogToLogstash(errorObj);
-    throw new Error(errorMsg);
-}
+                        //   linkDependency(){
+                        //       let dependent = this.parentElement.querySelector(`*[name='${this.saveValue('abhaengigFeld', this.options.abhaengigFeld)}']`);
+                        //       dependent.addEventListener('focusout', this.checkDependence.bind(this, dependent));
+                        //       setInterval(this.checkDependence.bind(this, dependent), this.options.interval);
+                        //   }
 
-class SearchParams {
-    constructor(search) {
-        let self = this;
-        search.slice(1).split('&').forEach(function(entry) {
-            let key = entry.split('=')[0];
-            let value = entry.split('=')[1];
+                        //   hideField(){
+                        //       this.classList.add('hidden');
+                        //   }
 
-            self[key] = value;
-        })
-    }
+                        //   showField(){
+                        //       this.classList.remove('hidden');
+                        //   }
 
-    append(key, value) {
-        this[key] = value;
-    }
+                        //   getModel(){
+                        //       if(this.visibility){
+                        //           return super.getModel();
+                        //       } else {
+                        //           return undefined;
+                        //       }
+                        //   }
 
-    get(key) {
-        return this[key];
-    }
+                        //   checkValidity(){
+                        //       if(this.visibility){
+                        //           return super.checkValidity();
+                        //       } else {
+                        //           return true;
+                        //       }
+                        //   }
+                        // }
 
-    set(key, value) {
-        this[key] = value;
-    }
+                    }, { "./input-field-generic.js": 10 }],
+                    3: [function(require, module, exports) {
+                        require('./history-input-extender.js');
 
-    delete(key) {
-        delete this[key];
-    }
+                        const { InputFieldObject } = require('./input-field-object.js');
+                        const { fieldTypeMap } = require('./formular-components.js');
+                        const { createCustomAlert } = require('./custom-alert-box.js');
+                        const { sendLogToLogstash } = require('./logging-connector.js');
 
-    toString() {
-        return ('?' + Object.keys(this).map(key => `${key}=${this[key]}`).join('&'));
-    }
-}
 
-function prepareModel(model, formular) {
-    let user = '';
-    let changedTime = (new Date()).getTime();
+                        // var baseUrl = ''
+                        var baseUrl = 'http://10.19.28.94:8087' // TESTCASE base URL
 
-    try {
-        user = wikiContext.UserName;
-    } catch (err) {
-        console.log('wikiContext not in scope.');
-    }
+                        var schemaPath = '/schema'
+                        var modelPath = '/model'
 
-    model['#parentForm'] = formular;
-    model['#changed_user'] = user;
-    model['#changed_time'] = changedTime;
+                        Object.keys(fieldTypeMap).forEach(keyTag => {
+                            customElements.define(fieldTypeMap[keyTag].tag, fieldTypeMap[keyTag].conName);
+                        });
 
-    return JSON.stringify(model);
-}
+                        function sendErrorReport(errorMsg, form, model, message) {
+                            let errorObj = Object.assign({
+                                appname: "json-form-creator",
+                                audit: true,
+                                form: form,
+                                model: model,
+                                error: errorMsg,
+                                message: message
+                            });
+                            sendLogToLogstash(errorObj);
+                            throw new Error(errorMsg);
+                        }
 
-function transformToHistoryModel(model) {
-    let result = {};
+                        class SearchParams {
+                            constructor(search) {
+                                let self = this;
+                                search.slice(1).split('&').forEach(function(entry) {
+                                    let key = entry.split('=')[0];
+                                    let value = entry.split('=')[1];
 
-    function unpackObj(obj, target) {
-        if (obj) Object.keys(obj).forEach((key) => {
-            if (typeof obj[key] === 'object') {
-                unpackObj(obj[key], target);
-            } else {
-                target[key] = obj[key];
-            }
-        });
-    }
-    unpackObj(model, result);
-    return result;
-}
+                                    self[key] = value;
+                                })
+                            }
 
-function fetchGlobalHistoryModels(parentForm) {
-    fetch(`${baseUrl}${modelPath}?parentForm=${parentForm}`)
-        .then(res => res.json())
-        .then(data => (data.map(entry => (entry.log))))
-        .then(data => {
-            return data.map(entry => {
-                try {
-                    return JSON.parse(entry);
-                } catch (e) {
-                    // console.error('failed');
-                }
-            })
-        })
-        // .then(data => data.filter(entry => entry ? entry['#parentForm'] == this.options.name  : false))
-        .then(data => data.map(model => transformToHistoryModel(model)))
-        .then(data => {
-            console.log(data);
-            window.postMessage(JSON.stringify({ messageType: 'history-source-models', messageData: data }));
-        })
-}
+                            append(key, value) {
+                                this[key] = value;
+                            }
 
-function uploadNewModel(model, formular) {
-    let serialModel = prepareModel(model, formular);
-    return fetch(`${baseUrl}${modelPath}`, {
-            method: 'POST',
-            body: `${serialModel}`,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then(response => {
-            if (response.ok)
-                return response.json()
-            else
-                sendErrorReport(
-                    `Verbindung zur Datenbank ist Fehlgeschlagen mit status ${response.status} und folgender Meldung: ${response.statusText}.`,
-                    JSON.stringify(formular),
-                    JSON.stringify(model),
-                    `URL: ${baseUrl}${modelPath}}`
-                );
-        })
-        .then(response => {
-            if (!typeof response === 'number' && !typeof response === 'string')
-                sendErrorReport(
-                    "Speichern des Models ist aus einem unbekannten Grund fehlgeschlagen. Für mehr Informationen mit 'r.seidler' in Verbindung setzen.",
-                    JSON.stringify(formular),
-                    JSON.stringify(model),
-                    `URL: ${baseUrl}${modelPath}}`
-                );
-            console.log(response);
-            return response['_id'];
-        });
-}
+                            get(key) {
+                                return this[key];
+                            }
 
-function uploadExistingModel(model, formular) {
-    let serialModel = prepareModel(model, formular);
-    return fetch(`${baseUrl}${modelPath}/${model['#modelID']}`, {
-        method: 'POST',
-        body: serialModel,
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    }).then(response => {
-        if (response.ok)
-            return response.json();
-        else
-            sendErrorReport(
-                `Verbindung zur Datenbank ist Fehlgeschlagen mit status ${response.status} und folgender Meldung: ${response.statusText}.`,
-                JSON.stringify(formular),
-                JSON.stringify(model),
-                `URL: ${baseUrl}${modelPath}/${model['#modelID']}`
-            );
-        // throw new Error(`Verbindung zur Datenbank ist Fehlgeschlagen mit status ${response.status} und folgender Meldung: ${response.statusText}.`);
-    }).then(response => {
-        if (Object.keys(response).length !== 0)
-            sendErrorReport(
-                "Speichern des Models ist aus einem unbekannten Grund fehlgeschlagen. Für mehr Informationen mit 'r.seidler' in Verbindung setzen.",
-                JSON.stringify(formular),
-                JSON.stringify(model),
-                `URL: ${baseUrl}${modelPath}/${model['#modelID']}`
-            );
-        // throw new Error("Speichern des Models ist aus einem unbekannten Grund fehlgeschlagen. Für mehr Informationen mit 'r.seidler' in Verbindung setzen.")
-        console.log(response)
-    })
-}
+                            set(key, value) {
+                                this[key] = value;
+                            }
 
-function removeExistingModel(model, formular) {
-    let modelId = model['#modelID'];
-    return fetch(`${baseUrl}${modelPath}/${modelId}`, { method: 'DELETE' })
-        .then(response => {
-            if (response.ok)
-                return;
-            else
-                sendErrorReport(
-                    `Beim Löschen des models hat die Datenbank einen Fehlercode zurückgegeben. Fehlercode: ${response.status}; Fehlernachricht: ${response.statusText}`,
-                    JSON.stringify(formular),
-                    JSON.stringify(model),
-                    `URL: ${baseUrl}${modelPath}/${modelId}`
-                );
-        })
-}
+                            delete(key) {
+                                delete this[key];
+                            }
 
-function loadModelFromDB(modelId, formular) {
-    return fetch(`${baseUrl}${modelPath}/${modelId}`)
-        .then(response => {
-            if (response.ok)
-                return response.json();
-            else
-                sendErrorReport(
-                    `Beim Laden des models hat die Datenbank einen Fehlercode zurückgegeben. Fehlercode: ${response.status}; Fehlernachricht: ${response.statusText}`,
-                    JSON.stringify(formular),
-                    "",
-                    `URL: ${baseUrl}${modelPath}/${modelId}`
-                );
-            // throw new Error(`Beim laden des models hat die Datenbank einen Fehlercode zurückgegeben. Fehlercode: ${response.status}; Fehlernachricht: ${response.statusText}`);
-        })
-        .then(data => {
-            console.log({ model: data });
-            data['#modelID'] = modelId;
-            return data
-        })
-}
+                            toString() {
+                                return ('?' + Object.keys(this).map(key => `${key}=${this[key]}`).join('&'));
+                            }
+                        }
 
-function loadSchemaFromDB(schemaId) {
-    if (schemaId == undefined)
-        createCustomAlert("Es ist kein Schema angegeben. In der URL muss der Parameter 'schema' mit einer gültigen schema ID angegeben sein (zB.: http://wiki.protronic-gmbh.de:8087/form-gen/prot-form-gen.html?schema=1012).");
-    else
-        return fetch(`${baseUrl}${schemaPath}/${schemaId}`)
-            .then(response => {
-                if (response.ok || response.status == 500) // status 500 wird im nächsten schritt behandelt
-                    return response.json();
-                else
-                    sendErrorReport(
-                        `Datenbank Anfrage gab Fehlercode ${response.status}, mit folgender Nachricht zurück: "${response.statusText}".`,
-                        "",
-                        "",
-                        `URL: ${baseUrl}${schemaPath}/${schemaId}`
-                    );
-                // throw new Error(`Datenbank Anfrage gab Fehlercode ${response.status}, mit folgender Nachricht zurück: "${response.statusText}".`);
-            })
-            .then(response => {
-                if (response.error != undefined)
-                    sendErrorReport(
-                        `Schema #${schemaId} konnte in der Datenbank nicht gefunden werden.`,
-                        "",
-                        "",
-                        `URL: ${baseUrl}${schemaPath}/${schemaId}`
-                    );
-                // throw new Error(`Schema #${schemaId} konnte in der Datenbank nicht gefunden werden.`);
-                else
-                    return response;
-            })
-}
+                        function prepareModel(model, formular) {
+                            let user = '';
+                            let changedTime = (new Date()).getTime();
 
-function getSchemaId() {
-    return (new SearchParams(location.search)).get('schema');
-}
+                            try {
+                                user = wikiContext.UserName;
+                            } catch (err) {
+                                console.log('wikiContext not in scope.');
+                            }
 
-class FormCreator extends InputFieldObject {
-    constructor() {
-        super();
-        this.model = {};
-    }
+                            model['#parentForm'] = formular;
+                            model['#changed_user'] = user;
+                            model['#changed_time'] = changedTime;
 
-    connectedCallback() {
-        this.rootElement = document.createElement('form');
-        this.rootElement.classList.add('form-root');
-        this.appendChild(this.rootElement);
-        baseUrl = this.getAttribute('data-url') ? this.getAttribute('data-url') : baseUrl;
+                            return JSON.stringify(model);
+                        }
 
-        loadSchemaFromDB(getSchemaId())
-            .then(schema => {
-                // console.log(schema)
-                this.applySchema(schema);
-            })
-            .catch(err => {
-                createCustomAlert(err.message);
-            })
+                        function transformToHistoryModel(model) {
+                            let result = {};
 
-        fetchGlobalHistoryModels();
-    }
+                            function unpackObj(obj, target) {
+                                if (obj) Object.keys(obj).forEach((key) => {
+                                    if (typeof obj[key] === 'object') {
+                                        unpackObj(obj[key], target);
+                                    } else {
+                                        target[key] = obj[key];
+                                    }
+                                });
+                            }
+                            unpackObj(model, result);
+                            return result;
+                        }
 
-    applySchema(schema) {
-        console.log({ schema: schema })
-        this.schema = schema;
-        this.options.name = schema.formular;
-        this.options.label = `${schema.formular}`;
-        this.options.subform = schema.felder;
+                        function fetchGlobalHistoryModels(parentForm) {
+                            fetch(`${baseUrl}${modelPath}?parentForm=${parentForm}`)
+                                .then(res => res.json())
+                                .then(data => (data.map(entry => (entry.log))))
+                                .then(data => {
+                                    return data.map(entry => {
+                                        try {
+                                            return JSON.parse(entry);
+                                        } catch (e) {
+                                            // console.error('failed');
+                                        }
+                                    })
+                                })
+                                // .then(data => data.filter(entry => entry ? entry['#parentForm'] == this.options.name  : false))
+                                .then(data => data.map(model => transformToHistoryModel(model)))
+                                .then(data => {
+                                    console.log(data);
+                                    window.postMessage(JSON.stringify({ messageType: 'history-source-models', messageData: data }));
+                                })
+                        }
 
-        try {
-            let modelId = this.modelId = (new SearchParams(location.search)).get('mid');
+                        function uploadNewModel(model, formular) {
+                            let serialModel = prepareModel(model, formular);
+                            return fetch(`${baseUrl}${modelPath}`, {
+                                    method: 'POST',
+                                    body: `${serialModel}`,
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    }
+                                })
+                                .then(response => {
+                                    if (response.ok)
+                                        return response.json()
+                                    else
+                                        sendErrorReport(
+                                            `Verbindung zur Datenbank ist Fehlgeschlagen mit status ${response.status} und folgender Meldung: ${response.statusText}.`,
+                                            JSON.stringify(formular),
+                                            JSON.stringify(model),
+                                            `URL: ${baseUrl}${modelPath}}`
+                                        );
+                                })
+                                .then(response => {
+                                    if (!typeof response === 'number' && !typeof response === 'string')
+                                        sendErrorReport(
+                                            "Speichern des Models ist aus einem unbekannten Grund fehlgeschlagen. Für mehr Informationen mit 'r.seidler' in Verbindung setzen.",
+                                            JSON.stringify(formular),
+                                            JSON.stringify(model),
+                                            `URL: ${baseUrl}${modelPath}}`
+                                        );
+                                    console.log(response);
+                                    return response['_id'];
+                                });
+                        }
 
-            if (modelId) {
-                loadModelFromDB(modelId, schema.formular)
-                    .then(model => {
-                        this.model = this.convertValue('initialModel', JSON.stringify(model));
-                        this.model['#modelID'] = modelId;
-                        this.options.name = schema.formular;
-                        this.options.label = `${this.options.label} ${modelId}`;
-                        this.options.initialModel = this.convertValue('initialModel', JSON.stringify(model));
-                        this.rootElement.options = this.options;
-                        this.applyTemplate();
-                    })
-                    .catch(err => createCustomAlert(err.message, "Fehler"));
-            } else {
-                this.options.initialModel = this.loadFromLocal();
-                this.rootElement.options = this.options;
-                this.applyTemplate()
-            }
-        } catch (err) {
-            console.log(this.options.initialModel);
-            console.error(err);
-        }
+                        function uploadExistingModel(model, formular) {
+                            let serialModel = prepareModel(model, formular);
+                            return fetch(`${baseUrl}${modelPath}/${model['#modelID']}`, {
+                                method: 'POST',
+                                body: serialModel,
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            }).then(response => {
+                                if (response.ok)
+                                    return response.json();
+                                else
+                                    sendErrorReport(
+                                        `Verbindung zur Datenbank ist Fehlgeschlagen mit status ${response.status} und folgender Meldung: ${response.statusText}.`,
+                                        JSON.stringify(formular),
+                                        JSON.stringify(model),
+                                        `URL: ${baseUrl}${modelPath}/${model['#modelID']}`
+                                    );
+                                // throw new Error(`Verbindung zur Datenbank ist Fehlgeschlagen mit status ${response.status} und folgender Meldung: ${response.statusText}.`);
+                            }).then(response => {
+                                if (Object.keys(response).length !== 0)
+                                    sendErrorReport(
+                                        "Speichern des Models ist aus einem unbekannten Grund fehlgeschlagen. Für mehr Informationen mit 'r.seidler' in Verbindung setzen.",
+                                        JSON.stringify(formular),
+                                        JSON.stringify(model),
+                                        `URL: ${baseUrl}${modelPath}/${model['#modelID']}`
+                                    );
+                                // throw new Error("Speichern des Models ist aus einem unbekannten Grund fehlgeschlagen. Für mehr Informationen mit 'r.seidler' in Verbindung setzen.")
+                                console.log(response)
+                            })
+                        }
 
-        this.createButtonContainer()
-        this.createExplanation();
-        this.renderGeneralInfo(schema);
-    }
+                        function removeExistingModel(model, formular) {
+                            let modelId = model['#modelID'];
+                            return fetch(`${baseUrl}${modelPath}/${modelId}`, { method: 'DELETE' })
+                                .then(response => {
+                                    if (response.ok)
+                                        return;
+                                    else
+                                        sendErrorReport(
+                                            `Beim Löschen des models hat die Datenbank einen Fehlercode zurückgegeben. Fehlercode: ${response.status}; Fehlernachricht: ${response.statusText}`,
+                                            JSON.stringify(formular),
+                                            JSON.stringify(model),
+                                            `URL: ${baseUrl}${modelPath}/${modelId}`
+                                        );
+                                })
+                        }
 
-    renderGeneralInfo(schema) {
-        this.insertAdjacentHTML('afterbegin', `
+                        function loadModelFromDB(modelId, formular) {
+                            return fetch(`${baseUrl}${modelPath}/${modelId}`)
+                                .then(response => {
+                                    if (response.ok)
+                                        return response.json();
+                                    else
+                                        sendErrorReport(
+                                            `Beim Laden des models hat die Datenbank einen Fehlercode zurückgegeben. Fehlercode: ${response.status}; Fehlernachricht: ${response.statusText}`,
+                                            JSON.stringify(formular),
+                                            "",
+                                            `URL: ${baseUrl}${modelPath}/${modelId}`
+                                        );
+                                    // throw new Error(`Beim laden des models hat die Datenbank einen Fehlercode zurückgegeben. Fehlercode: ${response.status}; Fehlernachricht: ${response.statusText}`);
+                                })
+                                .then(data => {
+                                    console.log({ model: data });
+                                    data['#modelID'] = modelId;
+                                    return data
+                                })
+                        }
+
+                        function loadSchemaFromDB(schemaId) {
+                            if (schemaId == undefined)
+                                createCustomAlert("Es ist kein Schema angegeben. In der URL muss der Parameter 'schema' mit einer gültigen schema ID angegeben sein (zB.: http://wiki.protronic-gmbh.de:8087/form-gen/prot-form-gen.html?schema=1012).");
+                            else
+                                return fetch(`${baseUrl}${schemaPath}/${schemaId}`)
+                                    .then(response => {
+                                        if (response.ok || response.status == 500) // status 500 wird im nächsten schritt behandelt
+                                            return response.json();
+                                        else
+                                            sendErrorReport(
+                                                `Datenbank Anfrage gab Fehlercode ${response.status}, mit folgender Nachricht zurück: "${response.statusText}".`,
+                                                "",
+                                                "",
+                                                `URL: ${baseUrl}${schemaPath}/${schemaId}`
+                                            );
+                                        // throw new Error(`Datenbank Anfrage gab Fehlercode ${response.status}, mit folgender Nachricht zurück: "${response.statusText}".`);
+                                    })
+                                    .then(response => {
+                                        if (response.error != undefined)
+                                            sendErrorReport(
+                                                `Schema #${schemaId} konnte in der Datenbank nicht gefunden werden.`,
+                                                "",
+                                                "",
+                                                `URL: ${baseUrl}${schemaPath}/${schemaId}`
+                                            );
+                                        // throw new Error(`Schema #${schemaId} konnte in der Datenbank nicht gefunden werden.`);
+                                        else
+                                            return response;
+                                    })
+                        }
+
+                        function getSchemaId() {
+                            return (new SearchParams(location.search)).get('schema');
+                        }
+
+                        class FormCreator extends InputFieldObject {
+                            constructor() {
+                                super();
+                                this.model = {};
+                            }
+
+                            connectedCallback() {
+                                this.rootElement = document.createElement('form');
+                                this.rootElement.classList.add('form-root');
+                                this.appendChild(this.rootElement);
+                                baseUrl = this.getAttribute('data-url') ? this.getAttribute('data-url') : baseUrl;
+
+                                loadSchemaFromDB(getSchemaId())
+                                    .then(schema => {
+                                        // console.log(schema)
+                                        this.applySchema(schema);
+                                    })
+                                    .catch(err => {
+                                        createCustomAlert(err.message);
+                                    })
+
+                                fetchGlobalHistoryModels();
+                            }
+
+                            applySchema(schema) {
+                                console.log({ schema: schema })
+                                this.schema = schema;
+                                this.options.name = schema.formular;
+                                this.options.label = `${schema.formular}`;
+                                this.options.subform = schema.felder;
+
+                                try {
+                                    let modelId = this.modelId = (new SearchParams(location.search)).get('mid');
+
+                                    if (modelId) {
+                                        loadModelFromDB(modelId, schema.formular)
+                                            .then(model => {
+                                                this.model = this.convertValue('initialModel', JSON.stringify(model));
+                                                this.model['#modelID'] = modelId;
+                                                this.options.name = schema.formular;
+                                                this.options.label = `${this.options.label} ${modelId}`;
+                                                this.options.initialModel = this.convertValue('initialModel', JSON.stringify(model));
+                                                this.rootElement.options = this.options;
+                                                this.applyTemplate();
+                                            })
+                                            .catch(err => createCustomAlert(err.message, "Fehler"));
+                                    } else {
+                                        this.options.initialModel = this.loadFromLocal();
+                                        this.rootElement.options = this.options;
+                                        this.applyTemplate()
+                                    }
+                                } catch (err) {
+                                    console.log(this.options.initialModel);
+                                    console.error(err);
+                                }
+
+                                this.createButtonContainer()
+                                this.createExplanation();
+                                this.renderGeneralInfo(schema);
+                            }
+
+                            renderGeneralInfo(schema) {
+                                this.insertAdjacentHTML('afterbegin', `
             <div class="formular-title">
                 <h2>${schema.formular}</h2>
             </div>
         `)
-    }
+                            }
 
-    testModelCreation() {
-        let btn = document.createElement('button');
-        btn.setAttribute('type', 'button');
-        btn.addEventListener('click', (event) => {
-            if (this.checkValidity()) {
-                this.model = {...this.model, ...this.getModel() };
-                this.saveFormLocal(this.model['#modelID'], this.model);
-            } else {
-                console.error('Einige Formular Elemente sind nicht korrekt ausgefüllt.');
-            }
-        });
-        btn.innerText = 'Erzeuge Model';
-        this.appendChild(btn)
-    }
+                            testModelCreation() {
+                                let btn = document.createElement('button');
+                                btn.setAttribute('type', 'button');
+                                btn.addEventListener('click', (event) => {
+                                    if (this.checkValidity()) {
+                                        this.model = {...this.model, ...this.getModel() };
+                                        this.saveFormLocal(this.model['#modelID'], this.model);
+                                    } else {
+                                        console.error('Einige Formular Elemente sind nicht korrekt ausgefüllt.');
+                                    }
+                                });
+                                btn.innerText = 'Erzeuge Model';
+                                this.appendChild(btn)
+                            }
 
-    createButtonContainer() {
-        this.buttonContainer = document.createElement('div');
-        this.buttonContainer.classList.add('btn-container');
-        this.appendChild(this.buttonContainer);
-        this.uploadModelButton();
-        this.newFormularButton();
-        this.removeButton();
-        this.copyModelButton();
-    }
+                            createButtonContainer() {
+                                this.buttonContainer = document.createElement('div');
+                                this.buttonContainer.classList.add('btn-container');
+                                this.appendChild(this.buttonContainer);
+                                this.uploadModelButton();
+                                this.newFormularButton();
+                                this.removeButton();
+                                this.copyModelButton();
+                            }
 
-    createNewFormURL(modelId) {
-        let uri = new URL(location.href);
-        let search = (new SearchParams(location.search));
-        search.set('lsid', 'null');
-        search.delete('mid');
-        if (modelId !== undefined) {
-            search.set('mid', modelId);
-            uri.search = search.toString();
-            history.pushState({ schema: search.get('schema'), mid: modelId }, '', uri.toString());
-        } else {
-            uri.search = search.toString();
-            history.pushState({ schema: search.get('schema') }, '', uri.toString());
-        }
-        return uri.href;
-    }
+                            createNewFormURL(modelId) {
+                                let uri = new URL(location.href);
+                                let search = (new SearchParams(location.search));
+                                search.set('lsid', 'null');
+                                search.delete('mid');
+                                if (modelId !== undefined) {
+                                    search.set('mid', modelId);
+                                    uri.search = search.toString();
+                                    history.pushState({ schema: search.get('schema'), mid: modelId }, '', uri.toString());
+                                } else {
+                                    uri.search = search.toString();
+                                    history.pushState({ schema: search.get('schema') }, '', uri.toString());
+                                }
+                                return uri.href;
+                            }
 
-    newFormularButton() {
-        let btn = document.createElement('button');
-        btn.setAttribute('type', 'button');
-        btn.addEventListener('click', this.newFormularButtonClickListener.bind(this));
-        document.addEventListener('keydown', this.newFormularButtonHotkeyListener.bind(this));
-        btn.innerText = 'Neu Anlegen';
-        this.buttonContainer.appendChild(btn);
-    }
+                            newFormularButton() {
+                                let btn = document.createElement('button');
+                                btn.setAttribute('type', 'button');
+                                btn.addEventListener('click', this.newFormularButtonClickListener.bind(this));
+                                document.addEventListener('keydown', this.newFormularButtonHotkeyListener.bind(this));
+                                btn.innerText = 'Neu Anlegen';
+                                this.buttonContainer.appendChild(btn);
+                            }
 
-    newFormularButtonHotkeyListener(event) {
-        if (event.ctrlKey && event.which == 45) {
-            this.newFormularButtonClickListener.bind(this, undefined)();
-            event.preventDefault();
-        }
-    }
+                            newFormularButtonHotkeyListener(event) {
+                                if (event.ctrlKey && event.which == 45) {
+                                    this.newFormularButtonClickListener.bind(this, undefined)();
+                                    event.preventDefault();
+                                }
+                            }
 
-    newFormularButtonClickListener(event) {
-        this.createNewFormURL();
-        this.remove();
-        document.body.append(document.createElement('prot-form-gen'));
-    }
+                            newFormularButtonClickListener(event) {
+                                this.createNewFormURL();
+                                this.remove();
+                                document.body.append(document.createElement('prot-form-gen'));
+                            }
 
-    removeButton() {
-        let btn = document.createElement('button');
-        btn.setAttribute('type', 'button');
-        btn.addEventListener('click', this.removeButtonClickListener.bind(this));
-        document.addEventListener('keydown', this.removeButtonHotkeyListener.bind(this));
-        btn.innerText = 'Löschen';
-        this.buttonContainer.appendChild(btn);
-    }
+                            removeButton() {
+                                let btn = document.createElement('button');
+                                btn.setAttribute('type', 'button');
+                                btn.addEventListener('click', this.removeButtonClickListener.bind(this));
+                                document.addEventListener('keydown', this.removeButtonHotkeyListener.bind(this));
+                                btn.innerText = 'Löschen';
+                                this.buttonContainer.appendChild(btn);
+                            }
 
-    removeButtonHotkeyListener(event) {
-        if (event.ctrlKey && event.which == 46) {
-            this.removeButtonClickListener.bind(this, undefined)();
-            event.preventDefault();
-        }
-    }
+                            removeButtonHotkeyListener(event) {
+                                if (event.ctrlKey && event.which == 46) {
+                                    this.removeButtonClickListener.bind(this, undefined)();
+                                    event.preventDefault();
+                                }
+                            }
 
-    removeButtonClickListener(event) {
-        if (this.model['#modelID'] && confirm(`Are you sure, you want to renove model with id: ${this.model['#modelID']}?`)) {
-            removeExistingModel(this.model, this.schema.formular)
-                .then(() => {
-                    this.createNewFormURL();
-                    this.remove();
-                    document.body.append(document.createElement('prot-form-gen'));
-                })
-                .catch(err => createCustomAlert(err.message, "Fehler"));
-        }
-    }
+                            removeButtonClickListener(event) {
+                                if (this.model['#modelID'] && confirm(`Are you sure, you want to renove model with id: ${this.model['#modelID']}?`)) {
+                                    removeExistingModel(this.model, this.schema.formular)
+                                        .then(() => {
+                                            this.createNewFormURL();
+                                            this.remove();
+                                            document.body.append(document.createElement('prot-form-gen'));
+                                        })
+                                        .catch(err => createCustomAlert(err.message, "Fehler"));
+                                }
+                            }
 
-    uploadModelButton() {
-        let btn = document.createElement('button');
-        btn.setAttribute('type', 'button');
-        btn.addEventListener('click', this.uploadModelButtonClickListener.bind(this));
-        document.addEventListener('keydown', this.uploadModelButtonHotkeyListener.bind(this));
-        btn.innerText = 'Speichern';
-        this.buttonContainer.appendChild(btn);
-    }
+                            uploadModelButton() {
+                                let btn = document.createElement('button');
+                                btn.setAttribute('type', 'button');
+                                btn.addEventListener('click', this.uploadModelButtonClickListener.bind(this));
+                                document.addEventListener('keydown', this.uploadModelButtonHotkeyListener.bind(this));
+                                btn.innerText = 'Speichern';
+                                this.buttonContainer.appendChild(btn);
+                            }
 
-    uploadModelButtonHotkeyListener(event) {
-        if (event.ctrlKey && event.which == 83) {
-            this.uploadModelButtonClickListener.bind(this, undefined)();
-            event.preventDefault();
-        }
-    }
+                            uploadModelButtonHotkeyListener(event) {
+                                if (event.ctrlKey && event.which == 83) {
+                                    this.uploadModelButtonClickListener.bind(this, undefined)();
+                                    event.preventDefault();
+                                }
+                            }
 
-    uploadModelButtonClickListener(event) {
-        if (this.checkValidity()) {
-            this.model = {...this.getModel(), '#modelID': this.model['#modelID'] };
-            if (this.model === undefined) {
-                console.log('empty model');
-            } else {
-                // this.model = {...this.model, ...modelResult }; //#TODO: assign this.getModel() to this.model; remove: modelResult, 
-                window.postMessage(JSON.stringify({ messageType: 'submit-msg', messageData: transformToHistoryModel(this.model) }));
-                this.saveFormLocal(this.model['#modelID'], this.model);
-                if (this.model['#modelID']) {
-                    console.log(this.model)
-                    uploadExistingModel(this.model, this.schema.formular)
-                        .then(() => createCustomAlert(`Änderungen an ${this.model['#modelID']} wurden gespeichert.`, "Erfolg"))
-                        .catch(err => createCustomAlert(err.message, "Fehler"))
-                } else {
-                    uploadNewModel(this.model, this.schema.formular)
-                        .then(modelId => {
-                            this.model['#modelID'] = modelId;
-                            this.createNewFormURL(modelId);
-                            this.querySelector(`label[for="${this.schema.formular}"]`).innerText = `${this.options.label} ${modelId}`;
-                            createCustomAlert(`Daten wurden erfolgreich in der Datenbank unter folgender ID abgelegt.\n${modelId}`, "Erfolg");
-                        })
-                        .catch(err => createCustomAlert(err.message, "Fehler"));
-                }
-            }
-        } else {
-            console.log('invalid')
-        }
-    }
+                            uploadModelButtonClickListener(event) {
+                                if (this.checkValidity()) {
+                                    this.model = {...this.getModel(), '#modelID': this.model['#modelID'] };
+                                    if (this.model === undefined) {
+                                        console.log('empty model');
+                                    } else {
+                                        // this.model = {...this.model, ...modelResult }; //#TODO: assign this.getModel() to this.model; remove: modelResult, 
+                                        window.postMessage(JSON.stringify({ messageType: 'submit-msg', messageData: transformToHistoryModel(this.model) }));
+                                        this.saveFormLocal(this.model['#modelID'], this.model);
+                                        if (this.model['#modelID']) {
+                                            console.log(this.model)
+                                            uploadExistingModel(this.model, this.schema.formular)
+                                                .then(() => createCustomAlert(`Änderungen an ${this.model['#modelID']} wurden gespeichert.`, "Erfolg"))
+                                                .catch(err => createCustomAlert(err.message, "Fehler"))
+                                        } else {
+                                            uploadNewModel(this.model, this.schema.formular)
+                                                .then(modelId => {
+                                                    this.model['#modelID'] = modelId;
+                                                    this.createNewFormURL(modelId);
+                                                    this.querySelector(`label[for="${this.schema.formular}"]`).innerText = `${this.options.label} ${modelId}`;
+                                                    createCustomAlert(`Daten wurden erfolgreich in der Datenbank unter folgender ID abgelegt.\n${modelId}`, "Erfolg");
+                                                })
+                                                .catch(err => createCustomAlert(err.message, "Fehler"));
+                                        }
+                                    }
+                                } else {
+                                    console.log('invalid')
+                                }
+                            }
 
-    copyModelButton() {
-        let btn = document.createElement('button');
-        btn.setAttribute('type', 'button');
-        btn.addEventListener('click', this.copyModelButtonClickListener.bind(this));
-        document.addEventListener('keydown', this.copyModelButtonHotkeyListener.bind(this));
-        btn.innerText = 'Kopieren';
-        this.buttonContainer.appendChild(btn);
-    }
+                            copyModelButton() {
+                                let btn = document.createElement('button');
+                                btn.setAttribute('type', 'button');
+                                btn.addEventListener('click', this.copyModelButtonClickListener.bind(this));
+                                document.addEventListener('keydown', this.copyModelButtonHotkeyListener.bind(this));
+                                btn.innerText = 'Kopieren';
+                                this.buttonContainer.appendChild(btn);
+                            }
 
-    copyModelButtonHotkeyListener(event) {
-        if (event.ctrlKey && event.which == 75) {
-            this.copyModelButtonClickListener.bind(this, undefined)();
-            event.preventDefault();
-        }
-    }
+                            copyModelButtonHotkeyListener(event) {
+                                if (event.ctrlKey && event.which == 75) {
+                                    this.copyModelButtonClickListener.bind(this, undefined)();
+                                    event.preventDefault();
+                                }
+                            }
 
-    copyModelButtonClickListener(event) {
-        this.model = this.getModel();
-        this.remove();
-        this.model['#modelID'] = undefined;
-        uploadNewModel(this.model, this.schema.formular)
-            .then(modelId => {
-                this.model['#modelID'] = modelId;
-                location.href = this.createNewFormURL(modelId);
-                // document.body.append(document.createElement('prot-form-gen'));
-            })
-            .catch(err => createCustomAlert(err.message, "Fehler"));
-    }
+                            copyModelButtonClickListener(event) {
+                                this.model = this.getModel();
+                                this.remove();
+                                this.model['#modelID'] = undefined;
+                                uploadNewModel(this.model, this.schema.formular)
+                                    .then(modelId => {
+                                        this.model['#modelID'] = modelId;
+                                        location.href = this.createNewFormURL(modelId);
+                                        // document.body.append(document.createElement('prot-form-gen'));
+                                    })
+                                    .catch(err => createCustomAlert(err.message, "Fehler"));
+                            }
 
-    createExplanation() {
-        let explanationContainer = document.createElement('div');
-        explanationContainer.classList.add('explanation-container');
-        explanationContainer.innerHTML = `
+                            createExplanation() {
+                                let explanationContainer = document.createElement('div');
+                                explanationContainer.classList.add('explanation-container');
+                                explanationContainer.innerHTML = `
             <h2>Hotkeys/Schaltflächen</h2>
             <p><b>Speichern</b> - [<b>strg</b>] + [<b>s</b>]:
                 <p>Sichert die Eingabe des aktiven Formulars in der Datenbank. Vor dem Speichern werden validitäts Prüfungen durchgeführt.</p>
@@ -710,453 +719,456 @@ class FormCreator extends InputFieldObject {
             
         `;
 
-        this.append(explanationContainer);
-    }
+                                this.append(explanationContainer);
+                            }
 
-    loadFromLocal(localStorageId) {
-        if (!localStorageId) {
-            localStorageId = (new SearchParams(location.search)).get('lsid')
-            localStorageId = localStorageId === null ? 'last' : localStorageId;
-        }
+                            loadFromLocal(localStorageId) {
+                                if (!localStorageId) {
+                                    localStorageId = (new SearchParams(location.search)).get('lsid')
+                                    localStorageId = localStorageId === null ? 'last' : localStorageId;
+                                }
 
-        return this.convertValue('initialModel', localStorage.getItem(localStorageId));
-    }
+                                return this.convertValue('initialModel', localStorage.getItem(localStorageId));
+                            }
 
-    saveFormLocal(modelId, model) {
-        let serializedModel = this.saveValue('model', model);
+                            saveFormLocal(modelId, model) {
+                                let serializedModel = this.saveValue('model', model);
 
-        console.group('saving model to localStorage')
+                                console.group('saving model to localStorage')
 
-        if (modelId) {
-            localStorage.setItem(`${modelId}-${this.schema.formular}`, serializedModel);
-            console.log('saved as:', `${modelId}-${this.schema.formular}`);
-        }
+                                if (modelId) {
+                                    localStorage.setItem(`${modelId}-${this.schema.formular}`, serializedModel);
+                                    console.log('saved as:', `${modelId}-${this.schema.formular}`);
+                                }
 
-        let lastSaves = parseInt(localStorage.getItem('last-x'));
+                                let lastSaves = parseInt(localStorage.getItem('last-x'));
 
-        if (Number.isNaN(lastSaves) || lastSaves >= 10) {
-            localStorage.setItem('last-x', 0);
-            localStorage.setItem('last-0', serializedModel);
-            console.log('saved as:', 'last-0');
-        } else {
-            localStorage.setItem('last-x', lastSaves + 1);
-            localStorage.setItem(`last-${lastSaves + 1}`, serializedModel);
-            console.log('saved as:', `last-${lastSaves + 1}`);
-        }
+                                if (Number.isNaN(lastSaves) || lastSaves >= 10) {
+                                    localStorage.setItem('last-x', 0);
+                                    localStorage.setItem('last-0', serializedModel);
+                                    console.log('saved as:', 'last-0');
+                                } else {
+                                    localStorage.setItem('last-x', lastSaves + 1);
+                                    localStorage.setItem(`last-${lastSaves + 1}`, serializedModel);
+                                    console.log('saved as:', `last-${lastSaves + 1}`);
+                                }
 
-        localStorage.setItem('last', serializedModel);
-        console.log('saved as:', `last`);
+                                localStorage.setItem('last', serializedModel);
+                                console.log('saved as:', `last`);
 
-        console.groupEnd();
-    }
-}
+                                console.groupEnd();
+                            }
+                        }
 
-customElements.define('prot-form-gen', FormCreator);
-},{"./custom-alert-box.js":1,"./formular-components.js":4,"./history-input-extender.js":5,"./input-field-object.js":13,"./logging-connector.js":17}],4:[function(require,module,exports){
-const { InputFieldText, InputFieldEnumListText, EnumListableMixin, InputFieldEmail, InputFieldTel, InputFieldDate, InputFieldNumber } = require('./input-field-generic.js');
-const { InputFieldTextarea } = require('./input-field-textarea.js');
-const { InputFieldBoolean } = require('./input-field-boolean.js');
-const { InputFieldDropdown } = require('./input-field-dropdown.js');
-const { InputFieldRadio } = require('./input-field-radio.js');
-const { InputFieldLookup } = require('./input-field-lookup.js');
-const { InputFieldAbhaengig, DependenceMixin } = require('./dependent-fields.js');
-const { InputFieldList } = require('./input-field-list.js');
-const { InputFieldObject } = require('./input-field-object.js');
-const { InputFieldChooseList } = require('./input-field-choose-list.js');
-const { InfoFieldSummary } = require('./info-field-summary.js');
+                        customElements.define('prot-form-gen', FormCreator);
+                    }, { "./custom-alert-box.js": 1, "./formular-components.js": 4, "./history-input-extender.js": 5, "./input-field-object.js": 13, "./logging-connector.js": 17 }],
+                    4: [function(require, module, exports) {
+                        const { InputFieldText, InputFieldEnumListText, EnumListableMixin, InputFieldEmail, InputFieldTel, InputFieldDate, InputFieldNumber } = require('./input-field-generic.js');
+                        const { InputFieldTextarea } = require('./input-field-textarea.js');
+                        const { InputFieldBoolean } = require('./input-field-boolean.js');
+                        const { InputFieldDropdown } = require('./input-field-dropdown.js');
+                        const { InputFieldRadio } = require('./input-field-radio.js');
+                        const { InputFieldLookup } = require('./input-field-lookup.js');
+                        const { InputFieldAbhaengig, DependenceMixin } = require('./dependent-fields.js');
+                        const { InputFieldList } = require('./input-field-list.js');
+                        const { InputFieldObject } = require('./input-field-object.js');
+                        const { InputFieldChooseList } = require('./input-field-choose-list.js');
+                        const { InfoFieldSummary } = require('./info-field-summary.js');
 
-const InputFieldDependentEnumTextarea = class extends EnumListableMixin(DependenceMixin(InputFieldTextarea)){
-    constructor(){
-        super();
-    }
-}
+                        const InputFieldDependentEnumTextarea = class extends EnumListableMixin(DependenceMixin(InputFieldTextarea)) {
+                            constructor() {
+                                super();
+                            }
+                        }
 
-const InputFieldEnumTextArea = class extends EnumListableMixin(InputFieldTextarea){
-    constructor(){
-        super();
-    }
-}
+                        const InputFieldEnumTextArea = class extends EnumListableMixin(InputFieldTextarea) {
+                            constructor() {
+                                super();
+                            }
+                        }
 
-const InputFieldDependentChooseList = class extends DependenceMixin(InputFieldChooseList){
-    constructor(){
-        super();
-    }
-}
+                        const InputFieldDependentChooseList = class extends DependenceMixin(InputFieldChooseList) {
+                            constructor() {
+                                super();
+                            }
+                        }
 
-const fieldTypeMap = module.exports.fieldTypeMap = {
-    'text': {
-        tag: 'input-field-text',
-        conName: InputFieldText,
-    },
-    'enumtext': {
-        tag: 'input-field-enumlisttext',
-        conName: InputFieldEnumListText,
-    },
-    'enumtextarea': {
-        tag: 'input-field-enumlisttextarea',
-        conName: InputFieldEnumTextArea,
-    },
-    'dependentenumtextarea': {
-        tag: 'input-field-dependentenumtextarea',
-        conName: InputFieldDependentEnumTextarea,
-    },
-    'email': {
-        tag: 'input-field-email',
-        conName: InputFieldEmail,
-    },
-    'tel': {
-        tag: 'input-field-tel',
-        conName: InputFieldTel,
-    },
-    'date': {
-        tag: 'input-field-date',
-        conName: InputFieldDate,
-    },
-    'number': {
-        tag: 'input-field-number',
-        conName: InputFieldNumber,
-    },
-    'textarea': {
-        tag: 'input-field-textarea',
-        conName: InputFieldTextarea,
-    },
-    'boolean': {
-        tag: 'input-field-boolean',
-        conName: InputFieldBoolean,
-    },
-    'dropdown': {
-        tag: 'input-field-dropdown',
-        conName: InputFieldDropdown,
-    },
-    'radio': {
-        tag: 'input-field-radio',
-        conName: InputFieldRadio,
-    },
-    'lookup': {
-        tag: 'input-field-lookup',
-        conName: InputFieldLookup,
-    },
-    'dependenttext': {
-        tag: 'input-field-abhaengig',
-        conName: InputFieldAbhaengig,
-    },
-    'list': {
-        tag: 'input-field-list',
-        conName: InputFieldList,
-    },
-    'object': {
-        tag: 'input-field-object',
-        conName: InputFieldObject,
-    },
-    'choose': {
-        tag: 'input-field-choose-list',
-        conName: InputFieldChooseList,
-    },
-    'dependentchoose': {
-        tag: 'input-field-dependent-choose-list',
-        conName: InputFieldDependentChooseList,
-    },
-    'infosummary': {
-        tag: 'info-field-summary',
-        conName: InfoFieldSummary,
-    }
-};
+                        const fieldTypeMap = module.exports.fieldTypeMap = {
+                            'text': {
+                                tag: 'input-field-text',
+                                conName: InputFieldText,
+                            },
+                            'enumtext': {
+                                tag: 'input-field-enumlisttext',
+                                conName: InputFieldEnumListText,
+                            },
+                            'enumtextarea': {
+                                tag: 'input-field-enumlisttextarea',
+                                conName: InputFieldEnumTextArea,
+                            },
+                            'dependentenumtextarea': {
+                                tag: 'input-field-dependentenumtextarea',
+                                conName: InputFieldDependentEnumTextarea,
+                            },
+                            'email': {
+                                tag: 'input-field-email',
+                                conName: InputFieldEmail,
+                            },
+                            'tel': {
+                                tag: 'input-field-tel',
+                                conName: InputFieldTel,
+                            },
+                            'date': {
+                                tag: 'input-field-date',
+                                conName: InputFieldDate,
+                            },
+                            'number': {
+                                tag: 'input-field-number',
+                                conName: InputFieldNumber,
+                            },
+                            'textarea': {
+                                tag: 'input-field-textarea',
+                                conName: InputFieldTextarea,
+                            },
+                            'boolean': {
+                                tag: 'input-field-boolean',
+                                conName: InputFieldBoolean,
+                            },
+                            'dropdown': {
+                                tag: 'input-field-dropdown',
+                                conName: InputFieldDropdown,
+                            },
+                            'radio': {
+                                tag: 'input-field-radio',
+                                conName: InputFieldRadio,
+                            },
+                            'lookup': {
+                                tag: 'input-field-lookup',
+                                conName: InputFieldLookup,
+                            },
+                            'dependenttext': {
+                                tag: 'input-field-abhaengig',
+                                conName: InputFieldAbhaengig,
+                            },
+                            'list': {
+                                tag: 'input-field-list',
+                                conName: InputFieldList,
+                            },
+                            'object': {
+                                tag: 'input-field-object',
+                                conName: InputFieldObject,
+                            },
+                            'choose': {
+                                tag: 'input-field-choose-list',
+                                conName: InputFieldChooseList,
+                            },
+                            'dependentchoose': {
+                                tag: 'input-field-dependent-choose-list',
+                                conName: InputFieldDependentChooseList,
+                            },
+                            'infosummary': {
+                                tag: 'info-field-summary',
+                                conName: InfoFieldSummary,
+                            }
+                        };
 
-// const tagClassMap = {
-//     'input-field-text': InputFieldText,
-//     'input-field-enumlisttext': InputFieldEnumListText,
-//     'input-field-dependentenumtextarea': InputFieldDependentEnumTextarea,
-//     'input-field-email': InputFieldEmail,
-//     'input-field-tel': InputFieldTel,
-//     'input-field-date': InputFieldDate,
-//     'input-field-textarea': InputFieldTextarea,
-//     'input-field-boolean': InputFieldBoolean,
-//     'input-field-dropdown': InputFieldDropdown,
-//     'input-field-radio': InputFieldRadio,
-//     'input-field-lookup': InputFieldLookup,
-//     'input-field-abhaengig': InputFieldAbhaengig,
-//     'input-field-list': InputFieldList,
-//     'input-field-object': InputFieldObject,
-//   }
-  
-},{"./dependent-fields.js":2,"./info-field-summary.js":6,"./input-field-boolean.js":7,"./input-field-choose-list.js":8,"./input-field-dropdown.js":9,"./input-field-generic.js":10,"./input-field-list.js":11,"./input-field-lookup.js":12,"./input-field-object.js":13,"./input-field-radio.js":14,"./input-field-textarea.js":15}],5:[function(require,module,exports){
-function generateRandomString() {
-    let length = Math.floor(Math.random() * 10) + 1;
-    return [...(new Array(length))].map(() => String.fromCharCode(Math.floor((Math.random() * 26) + 97))).join('');
-}
+                        // const tagClassMap = {
+                        //     'input-field-text': InputFieldText,
+                        //     'input-field-enumlisttext': InputFieldEnumListText,
+                        //     'input-field-dependentenumtextarea': InputFieldDependentEnumTextarea,
+                        //     'input-field-email': InputFieldEmail,
+                        //     'input-field-tel': InputFieldTel,
+                        //     'input-field-date': InputFieldDate,
+                        //     'input-field-textarea': InputFieldTextarea,
+                        //     'input-field-boolean': InputFieldBoolean,
+                        //     'input-field-dropdown': InputFieldDropdown,
+                        //     'input-field-radio': InputFieldRadio,
+                        //     'input-field-lookup': InputFieldLookup,
+                        //     'input-field-abhaengig': InputFieldAbhaengig,
+                        //     'input-field-list': InputFieldList,
+                        //     'input-field-object': InputFieldObject,
+                        //   }
 
-function removeDuplicates(list) {
-    let result = [];
-    list.forEach(entry => {
-        if (!result.includes(entry)) {
-            result.push(entry);
-        }
-    })
-    return result;
-}
+                    }, { "./dependent-fields.js": 2, "./info-field-summary.js": 6, "./input-field-boolean.js": 7, "./input-field-choose-list.js": 8, "./input-field-dropdown.js": 9, "./input-field-generic.js": 10, "./input-field-list.js": 11, "./input-field-lookup.js": 12, "./input-field-object.js": 13, "./input-field-radio.js": 14, "./input-field-textarea.js": 15 }],
+                    5: [function(require, module, exports) {
+                        function generateRandomString() {
+                            let length = Math.floor(Math.random() * 10) + 1;
+                            return [...(new Array(length))].map(() => String.fromCharCode(Math.floor((Math.random() * 26) + 97))).join('');
+                        }
+
+                        function removeDuplicates(list) {
+                            let result = [];
+                            list.forEach(entry => {
+                                if (!result.includes(entry)) {
+                                    result.push(entry);
+                                }
+                            })
+                            return result;
+                        }
 
 
-class HistoryInputExtender extends HTMLElement {
-    constructor() {
-        super();
-    }
+                        class HistoryInputExtender extends HTMLElement {
+                            constructor() {
+                                super();
+                            }
 
-    connectedCallback() {
-        this.historySource = this.getAttribute('history-source') || 'local'; // one of ['local', 'global']
-        this.historyInputSelector = this.getAttribute('history-input-selector') || 'input'; // selector to get the input element referenced
-        this.historyInputResultAttr = this.getAttribute('history-input-result-attr') || 'value';
-        this.elements = {
-            root: document.querySelector('prot-form-gen') || { schema: { formular: 'test_form' }, modelId: 100 },
-            in: this.parentElement.querySelector(this.historyInputSelector),
-            ul: undefined,
-            li: [],
-        };
-        this.storageName = `${this.elements.root.schema.formular}.${this.elements.root.modelId}.${this.elements.in.id}`;
-        this.markedItem = -1;
-        if (!this.historyInputResultAttr in this.elements.in) {
-            throw new Error(`Referenced ELement has no ${this.historyInputResultAttr} attribute;`);
-        };
-        this.obtainHistorySource();
-    }
+                            connectedCallback() {
+                                this.historySource = this.getAttribute('history-source') || 'local'; // one of ['local', 'global']
+                                this.historyInputSelector = this.getAttribute('history-input-selector') || 'input'; // selector to get the input element referenced
+                                this.historyInputResultAttr = this.getAttribute('history-input-result-attr') || 'value';
+                                this.elements = {
+                                    root: document.querySelector('prot-form-gen') || { schema: { formular: 'test_form' }, modelId: 100 },
+                                    in: this.parentElement.querySelector(this.historyInputSelector),
+                                    ul: undefined,
+                                    li: [],
+                                };
+                                this.storageName = `${this.elements.root.schema.formular}.${this.elements.root.modelId}.${this.elements.in.id}`;
+                                this.markedItem = -1;
+                                if (!this.historyInputResultAttr in this.elements.in) {
+                                    throw new Error(`Referenced ELement has no ${this.historyInputResultAttr} attribute;`);
+                                };
+                                this.obtainHistorySource();
+                            }
 
-    obtainHistorySource() {
-        if (this.historySource === 'local') {
-            this.history = this.filteredHistory = JSON.parse(localStorage.getItem(this.storageName) || '[]');
-            // this.history = this.filteredHistory = [...(new Array(20))].map(() => generateRandomString());
-            this.createHistory();
-        } else if (this.historySource === 'global') {
-            window.addEventListener('message', this.onMessageSourceListener.bind(this, this.createHistory));
-        }
-    }
+                            obtainHistorySource() {
+                                if (this.historySource === 'local') {
+                                    this.history = this.filteredHistory = JSON.parse(localStorage.getItem(this.storageName) || '[]');
+                                    // this.history = this.filteredHistory = [...(new Array(20))].map(() => generateRandomString());
+                                    this.createHistory();
+                                } else if (this.historySource === 'global') {
+                                    window.addEventListener('message', this.onMessageSourceListener.bind(this, this.createHistory));
+                                }
+                            }
 
-    createHistory() {
-        this.createDropdown();
-        this.setupListeners();
-    }
+                            createHistory() {
+                                this.createDropdown();
+                                this.setupListeners();
+                            }
 
-    applyFilter() {
-        this.filteredHistory = this.history.filter(value => Boolean(value)).filter(value => value.toLowerCase().startsWith(this.elements.in[this.historyInputResultAttr].toLowerCase()));
-        this.createListElements();
-    }
+                            applyFilter() {
+                                this.filteredHistory = this.history.filter(value => Boolean(value)).filter(value => value.toLowerCase().startsWith(this.elements.in[this.historyInputResultAttr].toLowerCase()));
+                                this.createListElements();
+                            }
 
-    createDropdown() {
-        this.isVisible = false;
-        this.className = 'history hidden';
-        this.elements.ul = document.createElement('ul');
-        this.createListElements();
-        this.append(this.elements.ul);
-    }
+                            createDropdown() {
+                                this.isVisible = false;
+                                this.className = 'history hidden';
+                                this.elements.ul = document.createElement('ul');
+                                this.createListElements();
+                                this.append(this.elements.ul);
+                            }
 
-    showDropdown() {
-        this.classList.remove('hidden');
-        this.isVisible = true;
-    }
+                            showDropdown() {
+                                this.classList.remove('hidden');
+                                this.isVisible = true;
+                            }
 
-    hideDropdown() {
-        this.classList.add('hidden');
-        let markedLiElement = document.querySelector('li.marked');
-        if (markedLiElement) markedLiElement.classList.remove('marked');
-        this.markedItem = -1;
-        this.isVisible = false;
-    }
+                            hideDropdown() {
+                                this.classList.add('hidden');
+                                let markedLiElement = document.querySelector('li.marked');
+                                if (markedLiElement) markedLiElement.classList.remove('marked');
+                                this.markedItem = -1;
+                                this.isVisible = false;
+                            }
 
-    chooseEntry(chosenEntry) {
-        this.elements.in[this.historyInputResultAttr] = chosenEntry;
-        // console.log({chosen: chosenEntry});
-        this.elements.in.dispatchEvent(new Event(
-            'input', {
-                bubbles: true,
-                cancelable: true,
-            }
-        ));
-        this.hideDropdown();
-    }
+                            chooseEntry(chosenEntry) {
+                                this.elements.in[this.historyInputResultAttr] = chosenEntry;
+                                // console.log({chosen: chosenEntry});
+                                this.elements.in.dispatchEvent(new Event(
+                                    'input', {
+                                        bubbles: true,
+                                        cancelable: true,
+                                    }
+                                ));
+                                this.hideDropdown();
+                            }
 
-    createListElements(premarked) {
-        this.elements.li = [];
-        this.elements.ul.innerHTML = "";
-        this.markedItem = this.markedItem > -1 ? (premarked || 0) : -1;
-        this.filteredHistory.forEach((entry, index) => {
-            let liElement = document.createElement('li');
-            this.elements.li.push(liElement);
-            if (index === this.markedItem) liElement.classList.add('marked');
-            liElement.innerText = entry;
-            this.elements.ul.append(liElement);
-        });
-    }
+                            createListElements(premarked) {
+                                this.elements.li = [];
+                                this.elements.ul.innerHTML = "";
+                                this.markedItem = this.markedItem > -1 ? (premarked || 0) : -1;
+                                this.filteredHistory.forEach((entry, index) => {
+                                    let liElement = document.createElement('li');
+                                    this.elements.li.push(liElement);
+                                    if (index === this.markedItem) liElement.classList.add('marked');
+                                    liElement.innerText = entry;
+                                    this.elements.ul.append(liElement);
+                                });
+                            }
 
-    moveMarkedItem(fromIndex, direction /* either 1 or -1 */ ) {
-        if (fromIndex !== -1) this.elements.li[fromIndex].classList.remove('marked');
-        if (fromIndex === -1) {
-            this.markedItem = (direction === -1) ? (this.filteredHistory.length - 1) : 0;
-        } else if (this.filteredHistory.length === 1) {
-            this.markedItem = fromIndex === 0 ? -1 : 0;
-        } else if (fromIndex === 0) {
-            this.markedItem = (direction === -1) ? -1 : (fromIndex + direction);
-        } else if (fromIndex === (this.filteredHistory.length - 1)) {
-            this.markedItem = (direction === -1) ? (fromIndex + direction) : -1;
-        } else {
-            this.markedItem = fromIndex + direction;
-        }
-        if (this.markedItem !== -1) {
-            this.elements.li[this.markedItem].classList.add('marked');
-            this.elements.ul.scrollTo(0, this.elements.li[this.markedItem].offsetTop);
-            // this.elements.li[this.markedItem].scrollIntoView(false);
-        }
+                            moveMarkedItem(fromIndex, direction /* either 1 or -1 */ ) {
+                                if (fromIndex !== -1) this.elements.li[fromIndex].classList.remove('marked');
+                                if (fromIndex === -1) {
+                                    this.markedItem = (direction === -1) ? (this.filteredHistory.length - 1) : 0;
+                                } else if (this.filteredHistory.length === 1) {
+                                    this.markedItem = fromIndex === 0 ? -1 : 0;
+                                } else if (fromIndex === 0) {
+                                    this.markedItem = (direction === -1) ? -1 : (fromIndex + direction);
+                                } else if (fromIndex === (this.filteredHistory.length - 1)) {
+                                    this.markedItem = (direction === -1) ? (fromIndex + direction) : -1;
+                                } else {
+                                    this.markedItem = fromIndex + direction;
+                                }
+                                if (this.markedItem !== -1) {
+                                    this.elements.li[this.markedItem].classList.add('marked');
+                                    this.elements.ul.scrollTo(0, this.elements.li[this.markedItem].offsetTop);
+                                    // this.elements.li[this.markedItem].scrollIntoView(false);
+                                }
 
-    }
+                            }
 
-    onClickListener(event) {
-        if (event.target.nodeName === 'LI') {
-            event.preventDefault();
-            this.chooseEntry(event.target.innerText);
-            // this.elements.in[this.historyInputResultAttr] = event.target.innerText;
-            // this.hideDropdown();
-        }
-    }
+                            onClickListener(event) {
+                                if (event.target.nodeName === 'LI') {
+                                    event.preventDefault();
+                                    this.chooseEntry(event.target.innerText);
+                                    // this.elements.in[this.historyInputResultAttr] = event.target.innerText;
+                                    // this.hideDropdown();
+                                }
+                            }
 
-    onFocusListener(event) {
-        this.applyFilter();
-        if (this.filteredHistory.length > 0) {
-            this.showDropdown();
-        }
-    }
+                            onFocusListener(event) {
+                                this.applyFilter();
+                                if (this.filteredHistory.length > 0) {
+                                    this.showDropdown();
+                                }
+                            }
 
-    onBlurListener(event) {
-        this.hideDropdown();
-    }
+                            onBlurListener(event) {
+                                this.hideDropdown();
+                            }
 
-    onMouseDownListener(event) {
-        event.preventDefault();
-    }
+                            onMouseDownListener(event) {
+                                event.preventDefault();
+                            }
 
-    onKeyListener(event) {
-        if (event.which == 13) {
-            if (this.markedItem !== -1) {
-                this.chooseEntry(this.filteredHistory[this.markedItem]);
-                // this.elements.in[this.historyInputResultAttr] = this.filteredHistory[this.markedItem];
-                // let rootField = this.parentElement.parentElement;
-                // rootField.dispatchEvent.bind(rootField, 'form-input')();
-                // this.hideDropdown();
-            }
-        }
-        if (event.which == 27) {
-            if (this.isVisible) {
-                this.hideDropdown();
-                event.preventDefault();
-            }
-        }
-        if (event.which == 38 && (this.filteredHistory.length > 0)) {
-            this.moveMarkedItem(this.markedItem, -1);
-            this.showDropdown();
-            event.preventDefault();
-        }
-        if (event.which == 40 && (this.filteredHistory.length > 0)) {
-            this.moveMarkedItem(this.markedItem, 1);
-            this.showDropdown();
-            event.preventDefault();
-        }
-        if (!event.ctrlKey && event.which == 46 && this.historySource === 'local') {
-            if (this.markedItem !== -1) {
-                this.removeValue(this.filteredHistory[this.markedItem]);
-                if (this.history.length === 0) {
-                    this.hideDropdown();
-                }
-                event.preventDefault();
-            }
-        }
-    }
+                            onKeyListener(event) {
+                                if (event.which == 13) {
+                                    if (this.markedItem !== -1) {
+                                        this.chooseEntry(this.filteredHistory[this.markedItem]);
+                                        // this.elements.in[this.historyInputResultAttr] = this.filteredHistory[this.markedItem];
+                                        // let rootField = this.parentElement.parentElement;
+                                        // rootField.dispatchEvent.bind(rootField, 'form-input')();
+                                        // this.hideDropdown();
+                                    }
+                                }
+                                if (event.which == 27) {
+                                    if (this.isVisible) {
+                                        this.hideDropdown();
+                                        event.preventDefault();
+                                    }
+                                }
+                                if (event.which == 38 && (this.filteredHistory.length > 0)) {
+                                    this.moveMarkedItem(this.markedItem, -1);
+                                    this.showDropdown();
+                                    event.preventDefault();
+                                }
+                                if (event.which == 40 && (this.filteredHistory.length > 0)) {
+                                    this.moveMarkedItem(this.markedItem, 1);
+                                    this.showDropdown();
+                                    event.preventDefault();
+                                }
+                                if (!event.ctrlKey && event.which == 46 && this.historySource === 'local') {
+                                    if (this.markedItem !== -1) {
+                                        this.removeValue(this.filteredHistory[this.markedItem]);
+                                        if (this.history.length === 0) {
+                                            this.hideDropdown();
+                                        }
+                                        event.preventDefault();
+                                    }
+                                }
+                            }
 
-    onInputListener(event) {
-        this.applyFilter();
-    }
+                            onInputListener(event) {
+                                this.applyFilter();
+                            }
 
-    onMessageListener(event) {
-        try {
-            let msg = JSON.parse(event.data);
-            if (msg.messageType === 'submit-msg' && this.historySource === 'local') {
-                this.recordValue(msg.messageData[this.elements.in.id])
-            } else if (msg.messageType === 'clear-storage' && this.historySource === 'local') {
-                if (msg.messageData[this.elements.in.id]) {
-                    localStorage.setItem(this.storageName, '[]');
-                }
-            }
-        } catch (err) {
-            // ignore
-        }
+                            onMessageListener(event) {
+                                try {
+                                    let msg = JSON.parse(event.data);
+                                    if (msg.messageType === 'submit-msg' && this.historySource === 'local') {
+                                        this.recordValue(msg.messageData[this.elements.in.id])
+                                    } else if (msg.messageType === 'clear-storage' && this.historySource === 'local') {
+                                        if (msg.messageData[this.elements.in.id]) {
+                                            localStorage.setItem(this.storageName, '[]');
+                                        }
+                                    }
+                                } catch (err) {
+                                    // ignore
+                                }
 
-    }
+                            }
 
-    onMessageSourceListener(callback, event) {
-        let msg = JSON.parse(event.data);
-        if (msg.messageType === 'history-source-models') {
-            // should contain an Array of models for messageData
-            this.history = this.filteredHistory = removeDuplicates(msg.messageData.map(model => model[this.elements.in.id]));
-            callback.bind(this)();
-        }
-    }
+                            onMessageSourceListener(callback, event) {
+                                let msg = JSON.parse(event.data);
+                                if (msg.messageType === 'history-source-models') {
+                                    // should contain an Array of models for messageData
+                                    this.history = this.filteredHistory = removeDuplicates(msg.messageData.map(model => model[this.elements.in.id]));
+                                    callback.bind(this)();
+                                }
+                            }
 
-    setupListeners() {
-        this.elements.ul.addEventListener('click', this.onClickListener.bind(this));
-        this.elements.ul.addEventListener('mousedown', this.onMouseDownListener.bind(this));
-        this.elements.in.addEventListener('focus', this.onFocusListener.bind(this));
-        this.elements.in.addEventListener('blur', this.onBlurListener.bind(this));
-        this.elements.in.addEventListener('keydown', this.onKeyListener.bind(this));
-        this.elements.in.addEventListener('input', this.onInputListener.bind(this));
-        window.addEventListener('message', this.onMessageListener.bind(this));
-    }
+                            setupListeners() {
+                                this.elements.ul.addEventListener('click', this.onClickListener.bind(this));
+                                this.elements.ul.addEventListener('mousedown', this.onMouseDownListener.bind(this));
+                                this.elements.in.addEventListener('focus', this.onFocusListener.bind(this));
+                                this.elements.in.addEventListener('blur', this.onBlurListener.bind(this));
+                                this.elements.in.addEventListener('keydown', this.onKeyListener.bind(this));
+                                this.elements.in.addEventListener('input', this.onInputListener.bind(this));
+                                window.addEventListener('message', this.onMessageListener.bind(this));
+                            }
 
-    recordValue(value) {
-        console.log({ operation: 'record', element: this.elements.in.id, value: value });
-        if (!Boolean(value)) return;
-        let index = this.history.findIndex((entry) => (value.toLowerCase() === entry.toLowerCase()));
-        if (index === -1) {
-            this.history.push(value);
-        }
-        localStorage.setItem(this.storageName, JSON.stringify(this.history));
-    }
+                            recordValue(value) {
+                                console.log({ operation: 'record', element: this.elements.in.id, value: value });
+                                if (!Boolean(value)) return;
+                                let index = this.history.findIndex((entry) => (value.toLowerCase() === entry.toLowerCase()));
+                                if (index === -1) {
+                                    this.history.push(value);
+                                }
+                                localStorage.setItem(this.storageName, JSON.stringify(this.history));
+                            }
 
-    removeValue(value) {
-        console.log({ operation: 'remove', element: this.elements.in.id, value: value });
-        this.history = this.history.filter(entry => (entry.toLowerCase() !== value.toLowerCase()));
-        this.filteredHistory = this.history.filter(value => Boolean(value)).filter(value => value.toLowerCase().startsWith(this.elements.in[this.historyInputResultAttr].toLowerCase()));
-        if (this.markedItem === this.filteredHistory.length) this.markedItem -= 1;
-        localStorage.setItem(this.storageName, JSON.stringify(this.history));
-        this.createListElements(this.markedItem);
-    }
-}
+                            removeValue(value) {
+                                console.log({ operation: 'remove', element: this.elements.in.id, value: value });
+                                this.history = this.history.filter(entry => (entry.toLowerCase() !== value.toLowerCase()));
+                                this.filteredHistory = this.history.filter(value => Boolean(value)).filter(value => value.toLowerCase().startsWith(this.elements.in[this.historyInputResultAttr].toLowerCase()));
+                                if (this.markedItem === this.filteredHistory.length) this.markedItem -= 1;
+                                localStorage.setItem(this.storageName, JSON.stringify(this.history));
+                                this.createListElements(this.markedItem);
+                            }
+                        }
 
-customElements.define('history-input-extender', HistoryInputExtender);
-},{}],6:[function(require,module,exports){
-const { InputField } = require('./input-field.js');
+                        customElements.define('history-input-extender', HistoryInputExtender);
+                    }, {}],
+                    6: [function(require, module, exports) {
+                                const { InputField } = require('./input-field.js');
 
-module.exports.InfoFieldSummary = class extends InputField{
-  constructor(){
-      super();
-      this.defaultOptions = {
-          ...this.defaultOptions,
-          observed_fields: []
-      };
-  }
+                                module.exports.InfoFieldSummary = class extends InputField {
+                                        constructor() {
+                                            super();
+                                            this.defaultOptions = {
+                                                ...this.defaultOptions,
+                                                observed_fields: []
+                                            };
+                                        }
 
-  countFields(){
-    let result = {};
-    this.options.observed_fields.forEach((field) => {
-      let foundObjs = document.querySelectorAll(`#${field}`);
-      foundObjs.forEach((foundObj) => {
-        let fieldObj = foundObj.parentElement.parentElement;
-        let model = fieldObj.getModel();
-        if(model) model.forEach((item) => {
-          result[item] = result[item] === undefined ? 1 : result[item] + 1;
-        })
-      });      
-    })
-    return result;
-  }
+                                        countFields() {
+                                            let result = {};
+                                            this.options.observed_fields.forEach((field) => {
+                                                let foundObjs = document.querySelectorAll(`#${field}`);
+                                                foundObjs.forEach((foundObj) => {
+                                                    let fieldObj = foundObj.parentElement.parentElement;
+                                                    let model = fieldObj.getModel();
+                                                    if (model) model.forEach((item) => {
+                                                        result[item] = result[item] === undefined ? 1 : result[item] + 1;
+                                                    })
+                                                });
+                                            })
+                                            return result;
+                                        }
 
-  runCounting(){
-    let countedFields = this.countFields();
-    this.resultList.innerHTML = `${Object.keys(countedFields).map((item) => `<li>${countedFields[item]} x <span class="span-fett">${item}</span></li>`).join('')}`;
+                                        runCounting() {
+                                                let countedFields = this.countFields();
+                                                this.resultList.innerHTML = `${Object.keys(countedFields).map((item) => `<li>${countedFields[item]} x <span class="span-fett">${item}</span></li>`).join('')}`;
   }
 
   applyTemplate(){
