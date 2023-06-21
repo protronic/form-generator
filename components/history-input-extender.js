@@ -1,12 +1,12 @@
-function generateRandomString(){
+function generateRandomString() {
     let length = Math.floor(Math.random() * 10) + 1;
     return [...(new Array(length))].map(() => String.fromCharCode(Math.floor((Math.random() * 26) + 97))).join('');
 }
 
-function removeDuplicates(list){
+function removeDuplicates(list) {
     let result = [];
     list.forEach(entry => {
-        if(!result.includes(entry)){
+        if (!result.includes(entry)) {
             result.push(entry);
         }
     })
@@ -15,49 +15,49 @@ function removeDuplicates(list){
 
 
 class HistoryInputExtender extends HTMLElement {
-    constructor(){
+    constructor() {
         super();
     }
 
-    connectedCallback(){
+    connectedCallback() {
         this.historySource = this.getAttribute('history-source') || 'local'; // one of ['local', 'global']
         this.historyInputSelector = this.getAttribute('history-input-selector') || 'input'; // selector to get the input element referenced
         this.historyInputResultAttr = this.getAttribute('history-input-result-attr') || 'value';
         this.elements = {
-            root: document.querySelector('prot-form-gen') || {schema: {formular: 'test_form'}, modelId: 100},
+            root: document.querySelector('prot-form-gen') || { schema: { formular: 'test_form' }, modelId: 100 },
             in: this.parentElement.querySelector(this.historyInputSelector),
             ul: undefined,
             li: [],
         };
         this.storageName = `${this.elements.root.schema.formular}.${this.elements.root.modelId}.${this.elements.in.id}`;
         this.markedItem = -1;
-        if(!this.historyInputResultAttr in this.elements.in){
+        if (!this.historyInputResultAttr in this.elements.in) {
             throw new Error(`Referenced ELement has no ${this.historyInputResultAttr} attribute;`);
         };
         this.obtainHistorySource();
     }
 
-    obtainHistorySource(){
-        if(this.historySource === 'local'){
+    obtainHistorySource() {
+        if (this.historySource === 'local') {
             this.history = this.filteredHistory = JSON.parse(localStorage.getItem(this.storageName) || '[]');
             // this.history = this.filteredHistory = [...(new Array(20))].map(() => generateRandomString());
             this.createHistory();
-        } else if (this.historySource === 'global'){
+        } else if (this.historySource === 'global') {
             window.addEventListener('message', this.onMessageSourceListener.bind(this, this.createHistory));
         }
     }
 
-    createHistory(){
+    createHistory() {
         this.createDropdown();
         this.setupListeners();
     }
 
-    applyFilter(){
+    applyFilter() {
         this.filteredHistory = this.history.filter(value => Boolean(value)).filter(value => value.toLowerCase().startsWith(this.elements.in[this.historyInputResultAttr].toLowerCase()));
         this.createListElements();
     }
 
-    createDropdown(){
+    createDropdown() {
         this.isVisible = false;
         this.className = 'history hidden';
         this.elements.ul = document.createElement('ul');
@@ -65,12 +65,12 @@ class HistoryInputExtender extends HTMLElement {
         this.append(this.elements.ul);
     }
 
-    showDropdown(){
+    showDropdown() {
         this.classList.remove('hidden');
         this.isVisible = true;
     }
 
-    hideDropdown(){
+    hideDropdown() {
         this.classList.add('hidden');
         let markedLiElement = document.querySelector('li.marked');
         if (markedLiElement) markedLiElement.classList.remove('marked');
@@ -78,7 +78,7 @@ class HistoryInputExtender extends HTMLElement {
         this.isVisible = false;
     }
 
-    chooseEntry(chosenEntry){
+    chooseEntry(chosenEntry) {
         this.elements.in[this.historyInputResultAttr] = chosenEntry;
         // console.log({chosen: chosenEntry});
         this.elements.in.dispatchEvent(new Event(
@@ -90,46 +90,42 @@ class HistoryInputExtender extends HTMLElement {
         this.hideDropdown();
     }
 
-    createListElements(premarked){
+    createListElements(premarked) {
         this.elements.li = [];
         this.elements.ul.innerHTML = "";
         this.markedItem = this.markedItem > -1 ? (premarked || 0) : -1;
         this.filteredHistory.forEach((entry, index) => {
             let liElement = document.createElement('li');
             this.elements.li.push(liElement);
-            if(index === this.markedItem) liElement.classList.add('marked');
+            if (index === this.markedItem) liElement.classList.add('marked');
             liElement.innerText = entry;
             this.elements.ul.append(liElement);
         });
     }
 
-    moveMarkedItem(fromIndex, direction /* either 1 or -1 */){
-        if(fromIndex !== -1) this.elements.li[fromIndex].classList.remove('marked');
-        if(fromIndex === -1) {
+    moveMarkedItem(fromIndex, direction /* either 1 or -1 */ ) {
+        if (fromIndex !== -1) this.elements.li[fromIndex].classList.remove('marked');
+        if (fromIndex === -1) {
             this.markedItem = (direction === -1) ? (this.filteredHistory.length - 1) : 0;
-        }
-        else if (this.filteredHistory.length === 1) {
+        } else if (this.filteredHistory.length === 1) {
             this.markedItem = fromIndex === 0 ? -1 : 0;
-        }
-        else if (fromIndex === 0) {
+        } else if (fromIndex === 0) {
             this.markedItem = (direction === -1) ? -1 : (fromIndex + direction);
-        }
-        else if (fromIndex === (this.filteredHistory.length - 1)) {
+        } else if (fromIndex === (this.filteredHistory.length - 1)) {
             this.markedItem = (direction === -1) ? (fromIndex + direction) : -1;
-        }
-        else {
+        } else {
             this.markedItem = fromIndex + direction;
         }
-        if(this.markedItem !== -1) {
+        if (this.markedItem !== -1) {
             this.elements.li[this.markedItem].classList.add('marked');
             this.elements.ul.scrollTo(0, this.elements.li[this.markedItem].offsetTop);
             // this.elements.li[this.markedItem].scrollIntoView(false);
         }
-        
+
     }
 
-    onClickListener(event){
-        if(event.target.nodeName === 'LI'){
+    onClickListener(event) {
+        if (event.target.nodeName === 'LI') {
             event.preventDefault();
             this.chooseEntry(event.target.innerText);
             // this.elements.in[this.historyInputResultAttr] = event.target.innerText;
@@ -137,24 +133,24 @@ class HistoryInputExtender extends HTMLElement {
         }
     }
 
-    onFocusListener(event){
+    onFocusListener(event) {
         this.applyFilter();
-        if(this.filteredHistory.length > 0){
+        if (this.filteredHistory.length > 0) {
             this.showDropdown();
         }
     }
 
-    onBlurListener(event){
+    onBlurListener(event) {
         this.hideDropdown();
     }
 
-    onMouseDownListener(event){
+    onMouseDownListener(event) {
         event.preventDefault();
     }
 
-    onKeyListener(event){
-        if(event.which == 13){
-            if(this.markedItem !== -1) {
+    onKeyListener(event) {
+        if (event.which == 13) {
+            if (this.markedItem !== -1) {
                 this.chooseEntry(this.filteredHistory[this.markedItem]);
                 // this.elements.in[this.historyInputResultAttr] = this.filteredHistory[this.markedItem];
                 // let rootField = this.parentElement.parentElement;
@@ -162,26 +158,26 @@ class HistoryInputExtender extends HTMLElement {
                 // this.hideDropdown();
             }
         }
-        if(event.which == 27){
-            if(this.isVisible){
+        if (event.which == 27) {
+            if (this.isVisible) {
                 this.hideDropdown();
                 event.preventDefault();
             }
         }
-        if(event.which == 38 && (this.filteredHistory.length > 0)){
+        if (event.which == 38 && (this.filteredHistory.length > 0)) {
             this.moveMarkedItem(this.markedItem, -1);
             this.showDropdown();
             event.preventDefault();
         }
-        if(event.which == 40 && (this.filteredHistory.length > 0)){
+        if (event.which == 40 && (this.filteredHistory.length > 0)) {
             this.moveMarkedItem(this.markedItem, 1);
             this.showDropdown();
             event.preventDefault();
         }
-        if(!event.ctrlKey && event.which == 46 && this.historySource === 'local'){
-            if(this.markedItem !== -1){
+        if (!event.ctrlKey && event.which == 46 && this.historySource === 'local') {
+            if (this.markedItem !== -1) {
                 this.removeValue(this.filteredHistory[this.markedItem]);
-                if(this.history.length === 0) {
+                if (this.history.length === 0) {
                     this.hideDropdown();
                 }
                 event.preventDefault();
@@ -189,31 +185,36 @@ class HistoryInputExtender extends HTMLElement {
         }
     }
 
-    onInputListener(event){
+    onInputListener(event) {
         this.applyFilter();
     }
 
-    onMessageListener(event){
-        let msg = JSON.parse(event.data);
-        if(msg.messageType === 'submit-msg' && this.historySource === 'local'){
-            this.recordValue(msg.messageData[this.elements.in.id])
-        } else if (msg.messageType === 'clear-storage' && this.historySource === 'local'){
-            if(msg.messageData[this.elements.in.id]){
-                localStorage.setItem(this.storageName, '[]');
+    onMessageListener(event) {
+        try {
+            let msg = JSON.parse(event.data);
+            if (msg.messageType === 'submit-msg' && this.historySource === 'local') {
+                this.recordValue(msg.messageData[this.elements.in.id])
+            } else if (msg.messageType === 'clear-storage' && this.historySource === 'local') {
+                if (msg.messageData[this.elements.in.id]) {
+                    localStorage.setItem(this.storageName, '[]');
+                }
             }
+        } catch (err) {
+            // ignore
         }
+
     }
 
-    onMessageSourceListener(callback, event){
+    onMessageSourceListener(callback, event) {
         let msg = JSON.parse(event.data);
-        if (msg.messageType === 'history-source-models'){
+        if (msg.messageType === 'history-source-models') {
             // should contain an Array of models for messageData
             this.history = this.filteredHistory = removeDuplicates(msg.messageData.map(model => model[this.elements.in.id]));
             callback.bind(this)();
         }
     }
 
-    setupListeners(){
+    setupListeners() {
         this.elements.ul.addEventListener('click', this.onClickListener.bind(this));
         this.elements.ul.addEventListener('mousedown', this.onMouseDownListener.bind(this));
         this.elements.in.addEventListener('focus', this.onFocusListener.bind(this));
@@ -223,23 +224,23 @@ class HistoryInputExtender extends HTMLElement {
         window.addEventListener('message', this.onMessageListener.bind(this));
     }
 
-    recordValue(value){
-        console.log({operation: 'record', element: this.elements.in.id, value: value});
-        if(!Boolean(value)) return;
+    recordValue(value) {
+        console.log({ operation: 'record', element: this.elements.in.id, value: value });
+        if (!Boolean(value)) return;
         let index = this.history.findIndex((entry) => (value.toLowerCase() === entry.toLowerCase()));
-        if (index === -1){
+        if (index === -1) {
             this.history.push(value);
-        } 
+        }
         localStorage.setItem(this.storageName, JSON.stringify(this.history));
     }
 
-    removeValue(value){
-        console.log({operation: 'remove', element: this.elements.in.id, value: value});
+    removeValue(value) {
+        console.log({ operation: 'remove', element: this.elements.in.id, value: value });
         this.history = this.history.filter(entry => (entry.toLowerCase() !== value.toLowerCase()));
         this.filteredHistory = this.history.filter(value => Boolean(value)).filter(value => value.toLowerCase().startsWith(this.elements.in[this.historyInputResultAttr].toLowerCase()));
-        if(this.markedItem === this.filteredHistory.length) this.markedItem -= 1;
+        if (this.markedItem === this.filteredHistory.length) this.markedItem -= 1;
         localStorage.setItem(this.storageName, JSON.stringify(this.history));
-        this.createListElements(this.markedItem);        
+        this.createListElements(this.markedItem);
     }
 }
 

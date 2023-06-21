@@ -6,8 +6,8 @@ const { createCustomAlert } = require('./custom-alert-box.js');
 const { sendLogToLogstash } = require('./logging-connector.js');
 
 
-var baseUrl = ''
-    // var baseUrl = 'http://10.19.28.94:8087'  // TESTCASE base URL
+// var baseUrl = ''
+var baseUrl = 'http://10.19.28.94:8087' // TESTCASE base URL
 
 var schemaPath = '/schema'
 var modelPath = '/model'
@@ -430,11 +430,11 @@ class FormCreator extends InputFieldObject {
 
     uploadModelButtonClickListener(event) {
         if (this.checkValidity()) {
-            let modelResult = this.getModel();
-            if (modelResult === undefined) {
+            this.model = {...this.getModel(), '#modelID': this.model['#modelID'] };
+            if (this.model === undefined) {
                 console.log('empty model');
             } else {
-                this.model = {...this.model, ...modelResult }; //#TODO: assign this.getModel() to this.model; remove: modelResult, 
+                // this.model = {...this.model, ...modelResult }; //#TODO: assign this.getModel() to this.model; remove: modelResult, 
                 window.postMessage(JSON.stringify({ messageType: 'submit-msg', messageData: transformToHistoryModel(this.model) }));
                 this.saveFormLocal(this.model['#modelID'], this.model);
                 if (this.model['#modelID']) {

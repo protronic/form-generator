@@ -6,8 +6,8 @@ const { createCustomAlert } = require('./custom-alert-box.js');
 const { sendLogToLogstash } = require('./logging-connector.js');
 
 
-var baseUrl = ''
-    // var baseUrl = 'http://10.19.28.94:8087'  // TESTCASE base URL
+// var baseUrl = ''
+var baseUrl = 'http://10.19.28.94:8087' // TESTCASE base URL
 
 var schemaPath = '/schema'
 var modelPath = '/model'
