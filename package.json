@@ -11,7 +11,7 @@
         "build-all": "npm run build && npm run build-min",
         "git-push": "bash git-push.sh",
         "deploy": "npm run build-all && scp -r ./dist/* rseidler@prot-subuntu:/media/daten/theia/project/java/json-mirror/src/main/resources/META-INF/resources/form-gen/",
-        "deploy-all": "npm run git-push && npm run deploy && ssh protronic@prot-subuntu \"cd /media/daten/theia/project/java/json-mirror && docker stop json-mirror && sudo ./mvnw package -Pnative -Dquarkus.native.container-build=true -Dquarkus.container-image.build=true && docker rm json-mirror && docker run -p 8087:8080 -d --restart always --name json-mirror root/json-mirror:1.0.0-SNAPSHOT\"",
+        "deploy-all": "npm run deploy && ssh protronic@prot-subuntu \"cd /media/daten/theia/project/java/json-mirror && docker stop json-mirror && sudo ./mvnw package -Pnative -Dquarkus.native.container-build=true -Dquarkus.container-image.build=true && docker rm json-mirror && docker run -p 8087:8080 -d --restart always --name json-mirror root/json-mirror:1.0.0-SNAPSHOT\"",
         "serve": "http-server -c-1 --cors --port 4200 dist",
         "babel-build": "browserify -t browserify-css components/es5-polyfill.js -t [ babelify --presets [ @babel/preset-env ] ] --standalone FormCreator > bundle_es5.js",
         "babel-build-min": "browserify -t browserify-css components/es5-polyfill.js -t [ babelify --presets [ @babel/preset-env ] ] -g [ uglifyify -x .js ] --standalone FormCreator > bundle_es5.min.js"
