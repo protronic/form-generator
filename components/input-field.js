@@ -17,15 +17,15 @@ const fieldTypeMap = {
     'lookup': 'input-field-lookup',
     'dependenttext': 'input-field-abhaengig',
     'list': 'input-field-list',
-    'object': 'input-field-object', 
+    'object': 'input-field-object',
     'choose': 'input-field-choose-list',
     'dependentchoose': 'input-field-dependent-choose-list',
     'infosummary': 'info-field-summary',
 };
 
 module.exports.InputField = class extends HTMLElement {
-    
-    constructor(){
+
+    constructor() {
         super();
         this.schema = {};
         this.template = '';
@@ -44,10 +44,10 @@ module.exports.InputField = class extends HTMLElement {
         this.model = {};
         this.valid = true;
         this.validityMessage = undefined;
-        this.addEventListener('form-input', debounce(this.formInputHandler, 1000, {leading: false, trailing: true}));
+        this.addEventListener('form-input', debounce(this.formInputHandler, 1000, { leading: false, trailing: true }));
     }
 
-    connectedCallback(){
+    connectedCallback() {
         Object.keys(this.defaultOptions).forEach(key => {
             // console.log(key, this.getAttribute(key) || this.defaultOptions[key])
 
@@ -55,11 +55,11 @@ module.exports.InputField = class extends HTMLElement {
             this.options[key] = this.convertValue(key, this.getAttribute(key)) || this.defaultOptions[key];
         });
 
-        if(this.options.initialModel == undefined || this.options.initialModel == ''){
+        if (this.options.initialModel == undefined || this.options.initialModel == '') {
             this.options.initialModel = this.options.standard;
         }
 
-        if(this.options.beschreibung === ''){
+        if (this.options.beschreibung === '') {
             this.options.beschreibung = this.options.name;
         }
 
@@ -67,24 +67,24 @@ module.exports.InputField = class extends HTMLElement {
         this.querySelector('.form-element').style.backgroundColor = this.options.hintergrundFarbe;
     }
 
-    applyTemplate(){
+    applyTemplate() {
         throw Error('Not Implemented');
     }
 
-    convertValue(key, value){
-        try{
-            if(value != undefined)
+    convertValue(key, value) {
+        try {
+            if (value != undefined)
                 return JSON.parse(value);
-            else 
+            else
                 return '';
-        } catch(err){
+        } catch (err) {
             console.error(err)
             console.log(key, value.toSource(), typeof value);
         }
     }
 
-    saveValue(key, value){
-        if(key === 'query' || key === 'listenQuery') value = value.split("'").join("&#39;");
+    saveValue(key, value) {
+        if (key === 'query' || key === 'listenQuery') value = value.split("'").join("&#39;");
         return JSON.stringify(value);
     }
 
@@ -92,8 +92,8 @@ module.exports.InputField = class extends HTMLElement {
      * 
      * @param {boolean} doneValidityCheck - pass false, when validity check continues after this call.
      */
-    checkValidity(){
-        if (this.options.pflichtfeld && this.getModel() == undefined){
+    checkValidity() {
+        if (this.options.pflichtfeld && this.getModel() == undefined) {
             this.setValidityStatus(false, 'Dies ist ein Pflichtfeld, und muss ausgefüllt werden.');
             return false;
         } else {
@@ -102,7 +102,7 @@ module.exports.InputField = class extends HTMLElement {
         }
     }
 
-    setValidityStatus(valid, message, warning){
+    setValidityStatus(valid, message, warning) {
         // if(valid) this.dispatchCustomEvent('form-valid', {target: this});
         // if(!valid) this.dispatchCustomEvent('form-invalid', {target: this});
         this.valid = valid;
@@ -111,45 +111,45 @@ module.exports.InputField = class extends HTMLElement {
 
         let messageField = this.querySelector('.validity-message');
 
-        if((!valid || warning) && messageField) messageField.innerText = message;
+        if ((!valid || warning) && messageField) messageField.innerText = message;
 
-        if(valid){
+        if (valid) {
             this.classList.remove('invalid');
-            if(!warning) this.classList.remove('warning');
+            if (!warning) this.classList.remove('warning');
         } else {
             this.classList.add('invalid');
         }
-        if(warning) this.classList.add('warning');
+        if (warning) this.classList.add('warning');
     }
 
-    setModel(){
+    setModel() {
         throw Error('Not Implemented')
     }
 
-    getModel(){
+    getModel() {
         throw Error('Not Implemented');
     }
 
-    mapFieldType(fieldType){
+    mapFieldType(fieldType) {
         return fieldTypeMap[fieldType];
     }
 
-    dispatchCustomEvent(eventName, event){
+    dispatchCustomEvent(eventName, event) {
         // if(eventName === 'form-input') this.checkValidity(true);
         return this.dispatchEvent(new Event(eventName, {
             bubbles: true,
             target: this,
             value: this.getModel(),
-        }));        
+        }));
     }
 
-    formInputHandler(event){
+    formInputHandler(event) {
         // console.log({'form-input': event});
         let valid = event.target.checkValidity();
-        if(valid) {
-            this.dispatchCustomEvent('form-valid', {target: this})
-
+        if (valid) {
+            this.dispatchCustomEvent('form-valid', { target: this });
+        } else {
+            this.dispatchCustomEvent('form-invalid', { target: this });
         }
-        else this.dispatchCustomEvent('form-invalid', {target: this});
     }
 }

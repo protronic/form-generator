@@ -1,19 +1,19 @@
 const { InputField } = require('./input-field.js');
 
-class GenericInputField extends InputField{
-  constructor(inputType){
-      super();
-      this.defaultOptions = {
-          ...this.defaultOptions,
-          platzhalter: '',
-          muster: '.*',
-          inputType: inputType,
-          history: 'local', // one of ['local', 'global', 'none']
-      };
-  }
+class GenericInputField extends InputField {
+    constructor(inputType) {
+        super();
+        this.defaultOptions = {
+            ...this.defaultOptions,
+            platzhalter: '',
+            muster: '.*',
+            inputType: inputType,
+            history: 'local', // one of ['local', 'global', 'none']
+        };
+    }
 
-  applyTemplate(){
-      this.rootElement.insertAdjacentHTML('beforeend', `
+    applyTemplate() {
+            this.rootElement.insertAdjacentHTML('beforeend', `
           <div class="form-element">
               ${this.options.label ? `<label for="${this.options.name}">${this.options.label}</label><br>` : ''}
               <input 
@@ -48,7 +48,7 @@ class GenericInputField extends InputField{
       if(!inputValidity){
           this.setValidityStatus(false, input.validationMessage);
       } else {
-          this.setValidityStatus(true, '');
+          // this.setValidityStatus(true, '');
       }
 
       return valid && inputValidity;
@@ -122,5 +122,3 @@ module.exports.InputFieldEnumListText = class extends EnumListableMixin(InputFie
     super();
   }
 }
-
-

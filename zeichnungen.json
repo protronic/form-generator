@@ -1,0 +1,22 @@
+{
+    "formular": "zeichnungsliste",
+    "felder": [{
+            "name": "zeichnungsnummer",
+            "feldtyp": "text",
+            "label": "Zeichnungsnummer:",
+            "platzhalter": "zb.: Ze. 34.2"
+        },
+        {
+            "name": "filename",
+            "feldtyp": "text",
+            "label": "Dateiname:",
+            "platzhalter": "z.B: file.pdf"
+        },
+        {
+            "name": "filepath",
+            "feldtyp": "text",
+            "label": "Dateiverzeichniss:",
+            "platzhalter": "z.B: z:\\zeichnungen\\"
+        }
+    ]
+}
