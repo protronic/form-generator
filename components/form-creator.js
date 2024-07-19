@@ -115,9 +115,9 @@ function fetchGlobalHistoryModels(parentForm) {
         })
 }
 
-function uploadNewModel(model, formular) {
+function uploadNewModel(model, formular, altTable) {
     let serialModel = prepareModel(model, formular);
-    return fetch(`${baseUrl}${modelPath}`, {
+    return fetch(`${baseUrl}${modelPath}${(altTable && !altTable == "Archiv") ? `?table=${altTable}` : ""}`, {
             method: 'POST',
             body: `${serialModel}`,
             headers: {
@@ -148,9 +148,9 @@ function uploadNewModel(model, formular) {
         });
 }
 
-function uploadExistingModel(model, formular) {
+function uploadExistingModel(model, formular, altTable) {
     let serialModel = prepareModel(model, formular);
-    return fetch(`${baseUrl}${modelPath}/${model['#modelID']}`, {
+    return fetch(`${baseUrl}${modelPath}/${model['#modelID']}${altTable ? `?table=${altTable}` : ""}`, {
         method: 'POST',
         body: serialModel,
         headers: {
@@ -180,9 +180,9 @@ function uploadExistingModel(model, formular) {
     })
 }
 
-function removeExistingModel(model, formular) {
+function removeExistingModel(model, formular, altTable) {
     let modelId = model['#modelID'];
-    return fetch(`${baseUrl}${modelPath}/${modelId}`, { method: 'DELETE' })
+    return fetch(`${baseUrl}${modelPath}/${modelId}${altTable ? `?table=${altTable}` : ""}`, { method: 'DELETE' })
         .then(response => {
             if (response.ok)
                 return;
@@ -196,8 +196,8 @@ function removeExistingModel(model, formular) {
         })
 }
 
-function loadModelFromDB(modelId, formular) {
-    return fetch(`${baseUrl}${modelPath}/${modelId}`)
+function loadModelFromDB(modelId, formular, altTable) {
+    return fetch(`${baseUrl}${modelPath}/${modelId}${altTable ? `?table=${altTable}` : ""}`)
         .then(response => {
             if (response.ok)
                 return response.json();
@@ -262,6 +262,7 @@ class FormCreator extends InputFieldObject {
         this.rootElement = document.createElement('form');
         this.rootElement.classList.add('form-root');
         this.appendChild(this.rootElement);
+        this.altTable = (new URL(document.location)).searchParams.get("table");
         baseUrl = this.getAttribute('data-url') ? this.getAttribute('data-url') : baseUrl;
 
         loadSchemaFromDB(getSchemaId())
@@ -287,7 +288,8 @@ class FormCreator extends InputFieldObject {
             let modelId = this.modelId = (new SearchParams(location.search)).get('mid');
 
             if (modelId) {
-                loadModelFromDB(modelId, schema.formular)
+                console.log({altTable: this.altTable});
+                loadModelFromDB(modelId, schema.formular, this.altTable)
                     .then(model => {
                         this.model = this.convertValue('initialModel', JSON.stringify(model));
                         this.model['#modelID'] = modelId;
@@ -317,8 +319,9 @@ class FormCreator extends InputFieldObject {
         this.insertAdjacentHTML('afterbegin', `
             <div class="formular-title">
                 <h2>${schema.formular}</h2>
+                ${this.altTable ? `<h3>${this.altTable}</h3>` : ""}
             </div>
-        `)
+        `);
     }
 
     testModelCreation() {
@@ -402,7 +405,7 @@ class FormCreator extends InputFieldObject {
 
     removeButtonClickListener(event) {
         if (this.model['#modelID'] && confirm(`Are you sure, you want to renove model with id: ${this.model['#modelID']}?`)) {
-            removeExistingModel(this.model, this.schema.formular)
+            removeExistingModel(this.model, this.schema.formular, this.altTable)
                 .then(() => {
                     this.createNewFormURL();
                     this.remove();
@@ -439,11 +442,11 @@ class FormCreator extends InputFieldObject {
                 this.saveFormLocal(this.model['#modelID'], this.model);
                 if (this.model['#modelID']) {
                     console.log(this.model)
-                    uploadExistingModel(this.model, this.schema.formular)
+                    uploadExistingModel(this.model, this.schema.formular, this.altTable)
                         .then(() => createCustomAlert(`Änderungen an ${this.model['#modelID']} wurden gespeichert.`, "Erfolg"))
                         .catch(err => createCustomAlert(err.message, "Fehler"))
                 } else {
-                    uploadNewModel(this.model, this.schema.formular)
+                    uploadNewModel(this.model, this.schema.formular, this.altTable)
                         .then(modelId => {
                             this.model['#modelID'] = modelId;
                             this.createNewFormURL(modelId);
@@ -478,7 +481,7 @@ class FormCreator extends InputFieldObject {
         this.model = this.getModel();
         this.remove();
         this.model['#modelID'] = undefined;
-        uploadNewModel(this.model, this.schema.formular)
+        uploadNewModel(this.model, this.schema.formular, this.altTable)
             .then(modelId => {
                 this.model['#modelID'] = modelId;
                 location.href = this.createNewFormURL(modelId);
