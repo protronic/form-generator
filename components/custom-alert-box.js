@@ -45,4 +45,4 @@ function removeCustomAlert() {
 	document.getElementsByTagName("body")[0].removeChild(document.getElementById("modalContainer"));
 }
 
-module.exports = {createCustomAlert};
+module.exports.createCustomAlert = createCustomAlert;

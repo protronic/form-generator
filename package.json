@@ -1,8 +1,10 @@
 {
     "name": "json-form-gen",
-    "version": "1.0.0",
+    "version": "1.2.0",
     "description": "",
-    "main": "index.js",
+    "main": "dist/prot-form-gen.js",
+    "browser": "dist/prot-form-gen.js",
+    "module": "components/form-creator.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "test-history": "http-server -c-1 --cors --port 4200 components",

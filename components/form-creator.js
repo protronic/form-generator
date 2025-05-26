@@ -572,3 +572,9 @@ class FormCreator extends InputFieldObject {
 }
 
 customElements.define('prot-form-gen', FormCreator);
+
+module.exports.FormCreator = FormCreator;
+module.exports.getSchemaId = getSchemaId;
+module.exports.prepareModel = prepareModel;
+module.exports.transformToHistoryModel = transformToHistoryModel;
+module.exports.fetchGlobalHistoryModels =  fetchGlobalHistoryModels;

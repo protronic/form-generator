@@ -11,4 +11,4 @@ function sendLogToLogstash(errorObj) {
         })
 }
 
-module.exports = {sendLogToLogstash};
+module.exports.sendLogToLogstash = sendLogToLogstash;
