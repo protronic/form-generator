@@ -2,9 +2,14 @@
     "name": "json-form-gen",
     "version": "1.2.0",
     "description": "",
-    "main": "dist/prot-form-gen.js",
-    "browser": "dist/prot-form-gen.js",
-    "module": "components/form-creator.js",
+    "main": "./dist/prot-form-gen.js",
+    "exports": {
+        ".": "./dist/prot-form-gen.js",
+        "./css/*.css": "./dist/*.css",
+        "./html/*.html": "./dist/*.html"
+    },
+    "browser": "./dist/prot-form-gen.js",
+    "module": "./components/form-creator.js",
     "scripts": {
         "test": "echo \"Error: no test specified\" && exit 1",
         "test-history": "http-server -c-1 --cors --port 4200 components",
@@ -18,6 +23,10 @@
         "babel-build": "browserify -t browserify-css components/es5-polyfill.js -t [ babelify --presets [ @babel/preset-env ] ] --standalone FormCreator > bundle_es5.js",
         "babel-build-min": "browserify -t browserify-css components/es5-polyfill.js -t [ babelify --presets [ @babel/preset-env ] ] -g [ uglifyify -x .js ] --standalone FormCreator > bundle_es5.min.js"
     },
+    "files": [
+        "public/**/*",
+        "dist/**/*"
+    ],
     "repository": {
         "type": "git",
         "url": "git+https://github.com/RobertSeidler/form-alpine.git"
