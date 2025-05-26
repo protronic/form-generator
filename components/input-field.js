@@ -79,6 +79,7 @@ module.exports.InputField = class extends HTMLElement {
                 return '';
         } catch (err) {
             console.error(err)
+            console.log(key, value);
             console.log(key, value.toSource(), typeof value);
         }
     }

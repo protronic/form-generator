@@ -49,6 +49,7 @@ module.exports.InputFieldList = class extends InputField {
   }
 
   saveValue(key, value, index){
+      if (key === 'query' || key === 'listenQuery') value = value.split("'").join("&#39;");
       if(key === 'name'){
           // console.log(JSON.stringify(`${value}-${index}`))
           return JSON.stringify(`${value}-${index}`);
