@@ -1,6 +1,6 @@
 {
     "name": "json-form-gen",
-    "version": "1.2.0",
+    "version": "1.2.1",
     "description": "",
     "main": "./dist/prot-form-gen.js",
     "exports": {

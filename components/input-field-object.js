@@ -60,6 +60,25 @@ module.exports.InputFieldObject = class extends InputField {
       this.querySelector('button.form-object-collapse').addEventListener('click', this.collapseObjectGroupHandler);
   }
 
+  applyFocusPriority(){
+    try {
+        console.log(Object.keys(this.options.subform).map(key => this.options.subform[key].focusPrioritaet ? this.options.subform[key].focusPrioritaet : 0));
+        let maxFocusPrio = Math.max(...Object.keys(this.options.subform).map(key => this.options.subform[key].focusPrioritaet ? this.options.subform[key].focusPrioritaet : 0));
+        let children = [...this.querySelectorAll('.form-element > .form-group > *')];
+        // let focusableElements = [...this.rootElement.querySelectorAll(`${}`)].filter(child => child.focusPrioritaet === maxFocusPrio);
+        let samePrio = children.filter(child => child.options.focusPrioritaet === maxFocusPrio);
+        console.log({maxPrio: maxFocusPrio, maxPrioElements: samePrio, children: children, });
+        if(samePrio.length > 0){
+            // console.log(`Applying focus to ${samePrio[0].options.name}!`);
+            samePrio[0].applyFocusPriority();
+        } else {
+            // console.log(`Applying focus to ${children[0].options.name}!`);
+            children[0].applyFocusPriority();
+            // console.warn(`No focusable elements found in ${this.rootElement}`);
+        }
+    } catch(err){console.error(err);}
+  }
+
   getModel(){
       let model = {};
       [...this.querySelector(`#${this.options.name}`).children].forEach(objProps => {

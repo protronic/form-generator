@@ -274,7 +274,8 @@ class FormCreator extends InputFieldObject {
                 createCustomAlert(err.message);
             })
 
-        fetchGlobalHistoryModels();
+        fetchGlobalHistoryModels(this.schema.formular);
+        setTimeout(() => {this.applyFocusPriority()}, 500);
     }
 
     applySchema(schema) {
