@@ -1,0 +1,26 @@
+{
+    "formular": "Feederliste2",
+    "felder": [{
+            "name": "feedername",
+            "feldtyp": "text",
+            "label": "Feeder Name (wie im Sage):",
+            "platzhalter": "zb.: 8mm Schritt Feeder"
+        },
+        {
+            "name": "feederfarbe",
+            "feldtyp": "text",
+            "label": "Farbe:"
+        },
+        {
+            "name": "feederids",
+            "feldtyp": "list",
+            "label": "Feeder IDs:",
+            "vorlage": [{
+                "name": "feederid",
+                "feldtyp": "text",
+                "label": "Feeder ID:",
+                "muster": "[0-9]{8}"
+            }]
+        }
+    ]
+}

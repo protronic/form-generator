@@ -55,7 +55,7 @@ module.exports.InputFieldList = class extends InputField {
                         ${(this.options.initialModel.length > 0) ? this.options.initialModel.map((listItem, lfdNr) => {
                             return this.getElementTemplate(listItem, lfdNr)
                         }).join('\n') : ''}
-                        ${this.options.initialModel.slice(-1) || this.options.initialModel.length == 0 ? this.getElementTemplate('', this.options.initialModel.length) : ''}
+                        ${(this.options.initialModel.slice(-1) || this.options.initialModel.length == 0) && (this.options.autohinzufuegen || this.options.keineLeeren) ? this.getElementTemplate('', this.options.initialModel.length) : ''}
                     </div>
                     <button id="${this.options.name}-button" type="button" class="form-list-addbtn">${this.options.hinzufuegenLabel}</button>
                     <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
