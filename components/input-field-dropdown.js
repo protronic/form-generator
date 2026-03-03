@@ -17,8 +17,8 @@ module.exports.InputFieldDropdown = class extends InputField {
                   id="${this.options.name}" 
                   ${this.options.deaktiviert ? 'disabled' : ''}
               >
-                  
-                  ${this.options.items.map(item => `<option value="${item}" ${this.options.initialModel === item ? 'selected' : ''}>${item}</option>`).join('/n')}
+                  <option value="" selected disabled hidden>Bitte wählen...</option>
+                  ${this.options.items.map(item => `<option value="${item}" ${this.options.initialModel === item ? 'selected' : ''}>${item}</option>`).join('\n')}
               </select>
               <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
           </div>
@@ -28,5 +28,15 @@ module.exports.InputFieldDropdown = class extends InputField {
   getModel(){
       let model = this.querySelector('select').value;
       return model;
+  }
+
+  checkValidity(){
+    if(this.getModel() === ''){
+        this.setValidityStatus(false, 'Bitte wählen Sie eine Option aus.');
+        return false;
+    } else {
+        this.setValidityStatus(true);
+        return true;
+    }
   }
 }

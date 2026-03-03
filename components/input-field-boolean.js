@@ -26,6 +26,19 @@ module.exports.InputFieldBoolean = class extends InputField{
       this.querySelector('input').addEventListener('input', (event) => (console.log('checked', event), this.dispatchCustomEvent.bind(this, 'form-input')(event)))
   }
 
+  checkValidity(){
+    if (this.options.pflichtfeld){
+        if(this.getModel()){
+            return true;
+        } else {
+            this.setValidityStatus(false, "Dieses Feld ist ein Pflichtfeld und muss ausgefüllt werden.");
+            return false;
+        }
+    } else {
+        return true;
+    }
+  }
+
   getModel(){
       let model = this.querySelector(`#${this.options.name}`).checked;
       return model;

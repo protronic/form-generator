@@ -1,0 +1,21 @@
+{
+    "formular": "tracking-programmierung",
+    "date": "2025-06-18",
+    "felder": [
+        
+        {
+            "name": "benutzer",
+            "label": "Benutzer:",
+            "feldtyp": "text",
+            "inaktiv": true,
+            "pflichtfeld": true
+        },
+        {
+            "name": "geprüft",
+            "label": "Geprüft:",
+            "feldtyp": "checkbox",
+            "inaktiv": true,
+            "pflichtfeld": true
+        }
+    ]
+}
