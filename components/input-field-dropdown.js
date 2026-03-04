@@ -17,7 +17,7 @@ module.exports.InputFieldDropdown = class extends InputField {
                   id="${this.options.name}" 
                   ${this.options.deaktiviert ? 'disabled' : ''}
               >
-                  <option value="" selected disabled hidden>Bitte wählen...</option>
+                  <option value="" ${!this.options.initialModel ? 'selected' : ''} disabled hidden>Bitte wählen...</option>
                   ${this.options.items.map(item => `<option value="${item}" ${this.options.initialModel === item ? 'selected' : ''}>${item}</option>`).join('\n')}
               </select>
               <span class="pflichtfeld" style="font-style: italic; visibility: ${this.options.pflichtfeld ? 'visible' : 'hidden'};">Pflichtfeld</span>
